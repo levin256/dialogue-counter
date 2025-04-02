@@ -1,7 +1,7 @@
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { escapeRegExp } from './utils/string';
 
 const App = () => {
@@ -33,8 +33,8 @@ const App = () => {
     return textWithoutIgnoreString;
   };
 
-  const ignoreStringRef = useRef<HTMLInputElement>(null!);
-  const ignoreLineRef = useRef<HTMLInputElement>(null!);
+  const ignoreStringRef = useRef<HTMLInputElement>(null);
+  const ignoreLineRef = useRef<HTMLInputElement>(null);
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
   const [ignoreStrings, setIgnoreStrings] = useState<string[]>([
@@ -84,7 +84,7 @@ const App = () => {
       alert('改行を指定できません。');
       return false;
     }
-    if (string.match(/^(\s|　)+$/)) {
+    if (string.match(/^(\s|u3000)+$/)) {
       alert('空白を指定できません。');
       return false;
     }
@@ -131,7 +131,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex-column gap05rem">
+    <div className="gap05rem flex-column">
       <h1>台詞カウンター</h1>
       <details>
         <summary>説明をみる（クリックで展開）</summary>
@@ -183,6 +183,7 @@ const App = () => {
               <div className="display-flex padding-block">
                 <code className="code-label">{ignoreString}</code>
                 <button
+                  type="button"
                   className="trash-btn"
                   onClick={() => deleteIgnoreString(index)}
                 >
@@ -198,7 +199,7 @@ const App = () => {
             placeholder="Enter ignore string."
             ref={ignoreStringRef}
           />
-          <button onClick={addIgnoreString}>
+          <button type="button" onClick={addIgnoreString}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
@@ -211,6 +212,7 @@ const App = () => {
               <div className="display-flex padding-block">
                 <code className="code-label">{ignoreLine}</code>
                 <button
+                  type="button"
                   className="trash-btn"
                   onClick={() => deleteIgnoreLine(index)}
                 >
@@ -226,7 +228,7 @@ const App = () => {
             placeholder="Enter ignore line."
             ref={ignoreLineRef}
           />
-          <button className="add-btn" onClick={addIgnoreLine}>
+          <button type="button" className="add-btn" onClick={addIgnoreLine}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
@@ -234,7 +236,7 @@ const App = () => {
       <div className="flex-column">
         <h3>テキスト（文字数: {textCount}）</h3>
         <textarea
-          className="radius-6p flex-column height-500"
+          className="radius-6p height-500 flex-column"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter text."
