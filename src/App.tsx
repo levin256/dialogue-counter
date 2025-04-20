@@ -2,6 +2,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import { HowToUse } from './HowToUse';
 import { escapeRegExp } from './utils/string';
 
 const App = () => {
@@ -133,29 +134,7 @@ const App = () => {
   return (
     <div className="gap05rem flex-column">
       <h1>台詞カウンター</h1>
-      <details>
-        <summary>説明をみる（クリックで展開）</summary>
-        <fieldset>
-          <p>
-            <b>テキスト</b>
-            に入力された文字数をリアルタイムにカウントするツールです。
-            <br />
-            カウントには、以下のルールを設定できます。
-          </p>
-          <h3>特殊文字のカウント設定</h3>
-          <ul>
-            <li>空白・改行をカウントするかの設定ができます</li>
-          </ul>
-          <h3>カウントしない文字</h3>
-          <ul>
-            <li>指定した文字はカウントされません</li>
-          </ul>
-          <h3>カウントしない行</h3>
-          <ul>
-            <li>指定した文字で始まる行はカウントされません</li>
-          </ul>
-        </fieldset>
-      </details>
+      <HowToUse />
       <fieldset className="display-flex gap1rem">
         <legend>特殊文字のカウント設定</legend>
         <label>
