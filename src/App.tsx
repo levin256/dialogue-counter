@@ -2,20 +2,26 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import { v4 as uuidv4 } from 'uuid';
 import { HowToUse } from './HowToUse';
+import type { IgnoreLinePrefix, IgnoreString } from './schemas';
 import { escapeRegExp } from './utils/string';
 
 const App = () => {
   const excludeInogreString = (text: string) => {
-    const textWithoutIgnoreLine = ignoreLines.reduce(
-      (currentText, ignoreLine) => {
+    const textWithoutIgnoreLine = ignoreLinePrefixes.reduce(
+      (currentText, { ignoreLinePrefix }) => {
         const lines = currentText.split(/\n/);
-        return lines.filter((line) => !line.startsWith(ignoreLine)).join('\n');
+        return lines
+          .filter((line) => !line.startsWith(ignoreLinePrefix))
+          .join('\n');
       },
       text,
     );
 
-    const currentIgnoreStrings = [...ignoreStrings];
+    const currentIgnoreStrings = [
+      ...ignoreStrings.map(({ ignoreString }) => ignoreString),
+    ];
     if (isIgnoreSpace) {
       currentIgnoreStrings.push(' ');
       currentIgnoreStrings.push('\u3000');
@@ -34,32 +40,31 @@ const App = () => {
     return textWithoutIgnoreString;
   };
 
-  const ignoreStringRef = useRef<HTMLInputElement>(null);
-  const ignoreLineRef = useRef<HTMLInputElement>(null);
+  const ignoreStringRef = useRef<HTMLInputElement>(null!);
+  const ignoreLinePrefixRef = useRef<HTMLInputElement>(null!);
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
-  const [ignoreStrings, setIgnoreStrings] = useState<string[]>([
-    '、',
-    '。',
-    '「',
-    '」',
-    '…',
-    '！',
-    '？',
-  ]);
-  const [ignoreLines, setIgnoreLines] = useState<string[]>(['//']);
+  const [ignoreStrings, setIgnoreStrings] = useState<IgnoreString[]>(
+    ['、', '。', '「', '」', '…', '！', '？'].map((ignoreString) => ({
+      id: uuidv4(),
+      ignoreString,
+    })),
+  );
+  const [ignoreLinePrefixes, setIgnoreLinePrefixes] = useState<
+    IgnoreLinePrefix[]
+  >(['//'].map((ignoreLinePrefix) => ({ id: uuidv4(), ignoreLinePrefix })));
   const [text, setText] = useState('');
   const [textCount, setTextCount] = useState(excludeInogreString(text).length);
 
   useEffect(() => {
-    const lsIgnoreStrings = localStorage.getItem('ignoreStrings');
-    if (lsIgnoreStrings) {
-      setIgnoreStrings(JSON.parse(lsIgnoreStrings));
+    const ignoreStringsJson = localStorage.getItem('ignoreStrings');
+    if (ignoreStringsJson) {
+      setIgnoreStrings(JSON.parse(ignoreStringsJson));
     }
 
-    const lsIgnoreLines = localStorage.getItem('ignoreLines');
-    if (lsIgnoreLines) {
-      setIgnoreLines(JSON.parse(lsIgnoreLines));
+    const ignoreLinePrefixesJson = localStorage.getItem('ignoreLinePrefixes');
+    if (ignoreLinePrefixesJson) {
+      setIgnoreLinePrefixes(JSON.parse(ignoreLinePrefixesJson));
     }
 
     const handleBeforeUnload = (event: Event) => {
@@ -73,7 +78,13 @@ const App = () => {
 
   useEffect(() => {
     setTextCount(excludeInogreString(text).length);
-  }, [text, isIgnoreSpace, isIgnoreLineBreak, ignoreStrings, ignoreLines]);
+  }, [
+    text,
+    isIgnoreSpace,
+    isIgnoreLineBreak,
+    ignoreStrings,
+    ignoreLinePrefixes,
+  ]);
 
   const isValidInput = (string: string) => {
     if (!string) {
@@ -96,39 +107,51 @@ const App = () => {
     const inputIgnoreString = ignoreStringRef.current?.value;
     if (!isValidInput(inputIgnoreString)) return;
 
-    const newIgnoreStrings = [...ignoreStrings, inputIgnoreString];
+    const newIgnoreStrings = [
+      ...ignoreStrings,
+      { id: uuidv4(), ignoreString: inputIgnoreString },
+    ];
     setIgnoreStrings(newIgnoreStrings);
     localStorage.setItem('ignoreStrings', JSON.stringify(newIgnoreStrings));
     ignoreStringRef.current.value = '';
   };
 
-  const addIgnoreLine = () => {
-    const inputIgnoreLine = ignoreLineRef.current.value;
-    if (!isValidInput(inputIgnoreLine)) return;
+  const addIgnoreLinePrefix = () => {
+    const inputIgnoreLinePrefix = ignoreLinePrefixRef.current.value;
+    if (!isValidInput(inputIgnoreLinePrefix)) return;
 
-    const newIgnoreLines = [...ignoreLines, inputIgnoreLine];
-    setIgnoreLines(newIgnoreLines);
-    localStorage.setItem('ignoreLines', JSON.stringify(newIgnoreLines));
-    ignoreLineRef.current.value = '';
+    const newIgnoreLinePrefixes = [
+      ...ignoreLinePrefixes,
+      { id: uuidv4(), ignoreLinePrefix: inputIgnoreLinePrefix },
+    ];
+    setIgnoreLinePrefixes(newIgnoreLinePrefixes);
+    localStorage.setItem(
+      'ignoreLinePrefixes',
+      JSON.stringify(newIgnoreLinePrefixes),
+    );
+    ignoreLinePrefixRef.current.value = '';
   };
 
-  const deleteIgnoreString = (deleteKeyIndex: number) => {
-    const afterDeleteignoreStrings = ignoreStrings.filter(
-      (_, index) => index !== deleteKeyIndex,
+  const deleteIgnoreString = (deleteIgnoreStringId: string) => {
+    const afterDeleteIgnoreStrings = ignoreStrings.filter(
+      ({ id }) => id !== deleteIgnoreStringId,
     );
-    setIgnoreStrings(afterDeleteignoreStrings);
+    setIgnoreStrings(afterDeleteIgnoreStrings);
     localStorage.setItem(
       'ignoreStrings',
-      JSON.stringify(afterDeleteignoreStrings),
+      JSON.stringify(afterDeleteIgnoreStrings),
     );
   };
 
-  const deleteIgnoreLine = (deleteKeyIndex: number) => {
-    const afterDeleteignoreLines = ignoreLines.filter(
-      (_, index) => index !== deleteKeyIndex,
+  const deleteIgnoreLinePrefix = (deleteIgnoreLinePrefixId: string) => {
+    const afterDeleteIgnoreLinePrefixes = ignoreLinePrefixes.filter(
+      ({ id }) => id !== deleteIgnoreLinePrefixId,
     );
-    setIgnoreLines(afterDeleteignoreLines);
-    localStorage.setItem('ignoreLines', JSON.stringify(afterDeleteignoreLines));
+    setIgnoreLinePrefixes(afterDeleteIgnoreLinePrefixes);
+    localStorage.setItem(
+      'ignoreLinePrefixes',
+      JSON.stringify(afterDeleteIgnoreLinePrefixes),
+    );
   };
 
   return (
@@ -157,14 +180,14 @@ const App = () => {
       <fieldset>
         <legend>カウントしない文字</legend>
         <ul>
-          {ignoreStrings.map((ignoreString, index) => (
-            <li key={index}>
+          {ignoreStrings.map(({ id, ignoreString }) => (
+            <li key={id}>
               <div className="display-flex padding-block">
                 <code className="code-label">{ignoreString}</code>
                 <button
                   type="button"
                   className="trash-btn"
-                  onClick={() => deleteIgnoreString(index)}
+                  onClick={() => deleteIgnoreString(id)}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
@@ -186,14 +209,14 @@ const App = () => {
       <fieldset>
         <legend>カウントしない行</legend>
         <ul>
-          {ignoreLines.map((ignoreLine, index) => (
-            <li key={index}>
+          {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
+            <li key={id}>
               <div className="display-flex padding-block">
-                <code className="code-label">{ignoreLine}</code>
+                <code className="code-label">{ignoreLinePrefix}</code>
                 <button
                   type="button"
                   className="trash-btn"
-                  onClick={() => deleteIgnoreLine(index)}
+                  onClick={() => deleteIgnoreLinePrefix(id)}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
@@ -205,9 +228,13 @@ const App = () => {
           <input
             type="text"
             placeholder="Enter ignore line."
-            ref={ignoreLineRef}
+            ref={ignoreLinePrefixRef}
           />
-          <button type="button" className="add-btn" onClick={addIgnoreLine}>
+          <button
+            type="button"
+            className="add-btn"
+            onClick={addIgnoreLinePrefix}
+          >
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>

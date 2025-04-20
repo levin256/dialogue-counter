@@ -33,11 +33,6 @@ ul {
   padding-inline-start: 2rem;
 }
 
-summary {
-  cursor: pointer;
-  color: darkcyan;
-}
-
 textarea {
   background-color: rgba(255, 255, 255, 0.09);
   border-radius: 6px;
