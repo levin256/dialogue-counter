@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { HowToUse } from './HowToUse';
-import type { IgnoreLinePrefix, IgnoreString } from './schemas';
+import {
+  type IgnoreLinePrefix,
+  type IgnoreString,
+  validateIgnoreLinePrefix,
+  validateIgnoreString,
+} from './schemas';
 import { escapeRegExp } from './utils/string';
 
 const App = () => {
@@ -86,43 +91,36 @@ const App = () => {
     ignoreLinePrefixes,
   ]);
 
-  const isValidInput = (string: string) => {
-    if (!string) {
-      alert('文字を入力してください');
-      return false;
-    }
-    // TODO: なぜか機能しない
-    if (['\n'].includes(string)) {
-      alert('改行を指定できません。');
-      return false;
-    }
-    if (string.match(/^(\s|u3000)+$/)) {
-      alert('空白を指定できません。');
-      return false;
-    }
-    return true;
-  };
-
   const addIgnoreString = () => {
-    const inputIgnoreString = ignoreStringRef.current?.value;
-    if (!isValidInput(inputIgnoreString)) return;
+    const inputIgnoreString = {
+      id: uuidv4(),
+      ignoreString: ignoreStringRef.current?.value,
+    };
+    const result = validateIgnoreString(inputIgnoreString);
+    if (!result.success) {
+      alert(result.messages);
+      return;
+    }
 
-    const newIgnoreStrings = [
-      ...ignoreStrings,
-      { id: uuidv4(), ignoreString: inputIgnoreString },
-    ];
+    const newIgnoreStrings = [...ignoreStrings, inputIgnoreString];
     setIgnoreStrings(newIgnoreStrings);
     localStorage.setItem('ignoreStrings', JSON.stringify(newIgnoreStrings));
     ignoreStringRef.current.value = '';
   };
 
   const addIgnoreLinePrefix = () => {
-    const inputIgnoreLinePrefix = ignoreLinePrefixRef.current.value;
-    if (!isValidInput(inputIgnoreLinePrefix)) return;
-
+    const inputIgnoreLinePrefix = {
+      id: uuidv4(),
+      ignoreLinePrefix: ignoreLinePrefixRef.current?.value,
+    };
+    const result = validateIgnoreLinePrefix(inputIgnoreLinePrefix);
+    if (!result.success) {
+      alert(result.messages);
+      return;
+    }
     const newIgnoreLinePrefixes = [
       ...ignoreLinePrefixes,
-      { id: uuidv4(), ignoreLinePrefix: inputIgnoreLinePrefix },
+      inputIgnoreLinePrefix,
     ];
     setIgnoreLinePrefixes(newIgnoreLinePrefixes);
     localStorage.setItem(
