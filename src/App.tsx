@@ -18,7 +18,7 @@ const App = () => {
     const currentIgnoreStrings = [...ignoreStrings];
     if (isIgnoreSpace) {
       currentIgnoreStrings.push(' ');
-      currentIgnoreStrings.push('　');
+      currentIgnoreStrings.push('\u3000');
     }
     if (isIgnoreLineBreak) {
       currentIgnoreStrings.push('\n');
