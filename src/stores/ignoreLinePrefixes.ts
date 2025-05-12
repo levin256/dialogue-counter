@@ -5,7 +5,7 @@ import type { IgnoreLinePrefix } from '../schemas';
 
 type IgnoreLinePrefixStore = {
   ignoreLinePrefixes: IgnoreLinePrefix[];
-  addIgnoreLinePrefix: (ignoreLinePrefix: IgnoreLinePrefix) => void;
+  addIgnoreLinePrefix: (ignoreLinePrefix: string) => void;
   removeIgnoreLinePrefix: (id: string) => void;
   clearIgnoreLinePrefixes: () => void;
 };
@@ -20,7 +20,10 @@ export const useIgnoreLinePrefixStore = create<IgnoreLinePrefixStore>()(
       ignoreLinePrefixes: DEFAULT_IGNORE_LINE_PREFIX,
       addIgnoreLinePrefix: (ignoreLinePrefix) =>
         set((state) => ({
-          ignoreLinePrefixes: [...state.ignoreLinePrefixes, ignoreLinePrefix],
+          ignoreLinePrefixes: [
+            ...state.ignoreLinePrefixes,
+            { id: uuidv4(), ignoreLinePrefix },
+          ],
         })),
       removeIgnoreLinePrefix: (id) =>
         set((state) => ({

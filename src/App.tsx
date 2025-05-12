@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { HowToUse } from './HowToUse';
-import { validateIgnoreLinePrefix, validateIgnoreString } from './schemas';
+import { IgnoreStringForm } from './features/dialogueCounter/ignoreStringForm';
+import { validateIgnoreLinePrefix } from './schemas';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
 import { escapeRegExp } from './utils/string';
@@ -42,12 +43,10 @@ const App = () => {
     return textWithoutIgnoreString;
   };
 
-  const [ignoreString, setIgnoreString] = useState<string>('');
   const [ignoreLinePrefix, setIgnoreLinePrefix] = useState<string>('');
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
-  const { ignoreStrings, addIgnoreString, removeIgnoreString } =
-    useIgnoreStringStore();
+  const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
   const { ignoreLinePrefixes, addIgnoreLinePrefix, removeIgnoreLinePrefix } =
     useIgnoreLinePrefixStore();
   const [text, setText] = useState('');
@@ -73,21 +72,6 @@ const App = () => {
     ignoreLinePrefixes,
   ]);
 
-  const _addIgnoreString = () => {
-    const inputIgnoreString = {
-      id: uuidv4(),
-      ignoreString,
-    };
-    const result = validateIgnoreString(inputIgnoreString);
-    if (!result.success) {
-      alert(result.messages);
-      return;
-    }
-
-    addIgnoreString(inputIgnoreString);
-    setIgnoreString('');
-  };
-
   const _addIgnoreLinePrefix = () => {
     const inputIgnoreLinePrefix = {
       id: uuidv4(),
@@ -98,7 +82,7 @@ const App = () => {
       alert(result.messages);
       return;
     }
-    addIgnoreLinePrefix(inputIgnoreLinePrefix);
+    addIgnoreLinePrefix(ignoreLinePrefix);
     setIgnoreLinePrefix('');
   };
 
@@ -143,17 +127,7 @@ const App = () => {
             </li>
           ))}
         </ul>
-        <div className="btn-container">
-          <input
-            type="text"
-            placeholder="Enter ignore string."
-            value={ignoreString}
-            onChange={(e) => setIgnoreString(e.target.value)}
-          />
-          <button type="button" onClick={_addIgnoreString}>
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-        </div>
+        <IgnoreStringForm />
       </fieldset>
       <fieldset>
         <legend>カウントしない行</legend>

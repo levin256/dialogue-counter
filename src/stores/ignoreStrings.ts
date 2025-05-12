@@ -5,7 +5,7 @@ import type { IgnoreString } from '../schemas';
 
 type IgnoreStringStore = {
   ignoreStrings: IgnoreString[];
-  addIgnoreString: (ignoreString: IgnoreString) => void;
+  addIgnoreString: (ignoreString: string) => void;
   removeIgnoreString: (id: string) => void;
   clearIgnoreStrings: () => void;
 };
@@ -26,7 +26,10 @@ export const useIgnoreStringStore = create<IgnoreStringStore>()(
       ignoreStrings: DEFAULT_IGNORE_STRING,
       addIgnoreString: (ignoreString) =>
         set((state) => ({
-          ignoreStrings: [...state.ignoreStrings, ignoreString],
+          ignoreStrings: [
+            ...state.ignoreStrings,
+            { id: uuidv4(), ignoreString },
+          ],
         })),
       removeIgnoreString: (id) =>
         set((state) => ({
