@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { IgnoreLinePrefix } from '../schemas';
@@ -5,22 +6,26 @@ import type { IgnoreLinePrefix } from '../schemas';
 type IgnoreLinePrefixStore = {
   ignoreLinePrefixes: IgnoreLinePrefix[];
   addIgnoreLinePrefix: (ignoreLinePrefix: IgnoreLinePrefix) => void;
-  removeIgnoreLinePrefix: (ignoreLinePrefix: IgnoreLinePrefix) => void;
+  removeIgnoreLinePrefix: (id: string) => void;
   clearIgnoreLinePrefixes: () => void;
 };
+
+const DEFAULT_IGNORE_LINE_PREFIX: IgnoreLinePrefix[] = ['//'].map(
+  (ignoreLinePrefix) => ({ id: uuidv4(), ignoreLinePrefix }),
+);
 
 export const useIgnoreLinePrefixStore = create<IgnoreLinePrefixStore>()(
   persist(
     (set) => ({
-      ignoreLinePrefixes: [],
+      ignoreLinePrefixes: DEFAULT_IGNORE_LINE_PREFIX,
       addIgnoreLinePrefix: (ignoreLinePrefix) =>
         set((state) => ({
           ignoreLinePrefixes: [...state.ignoreLinePrefixes, ignoreLinePrefix],
         })),
-      removeIgnoreLinePrefix: (ignoreLinePrefix) =>
+      removeIgnoreLinePrefix: (id) =>
         set((state) => ({
           ignoreLinePrefixes: state.ignoreLinePrefixes.filter(
-            (str) => str.id !== ignoreLinePrefix.id,
+            (ignoreLinePrefix) => id !== ignoreLinePrefix.id,
           ),
         })),
       clearIgnoreLinePrefixes: () => set({ ignoreLinePrefixes: [] }),

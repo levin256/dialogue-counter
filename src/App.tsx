@@ -1,15 +1,12 @@
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 import { HowToUse } from './HowToUse';
-import {
-  type IgnoreLinePrefix,
-  type IgnoreString,
-  validateIgnoreLinePrefix,
-  validateIgnoreString,
-} from './schemas';
+import { validateIgnoreLinePrefix, validateIgnoreString } from './schemas';
+import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
+import { useIgnoreStringStore } from './stores/ignoreStrings';
 import { escapeRegExp } from './utils/string';
 
 const App = () => {
@@ -45,33 +42,18 @@ const App = () => {
     return textWithoutIgnoreString;
   };
 
-  const ignoreStringRef = useRef<HTMLInputElement>(null!);
-  const ignoreLinePrefixRef = useRef<HTMLInputElement>(null!);
+  const [ignoreString, setIgnoreString] = useState<string>('');
+  const [ignoreLinePrefix, setIgnoreLinePrefix] = useState<string>('');
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
-  const [ignoreStrings, setIgnoreStrings] = useState<IgnoreString[]>(
-    ['、', '。', '「', '」', '…', '！', '？'].map((ignoreString) => ({
-      id: uuidv4(),
-      ignoreString,
-    })),
-  );
-  const [ignoreLinePrefixes, setIgnoreLinePrefixes] = useState<
-    IgnoreLinePrefix[]
-  >(['//'].map((ignoreLinePrefix) => ({ id: uuidv4(), ignoreLinePrefix })));
+  const { ignoreStrings, addIgnoreString, removeIgnoreString } =
+    useIgnoreStringStore();
+  const { ignoreLinePrefixes, addIgnoreLinePrefix, removeIgnoreLinePrefix } =
+    useIgnoreLinePrefixStore();
   const [text, setText] = useState('');
   const [textCount, setTextCount] = useState(excludeInogreString(text).length);
 
   useEffect(() => {
-    const ignoreStringsJson = localStorage.getItem('ignoreStrings');
-    if (ignoreStringsJson) {
-      setIgnoreStrings(JSON.parse(ignoreStringsJson));
-    }
-
-    const ignoreLinePrefixesJson = localStorage.getItem('ignoreLinePrefixes');
-    if (ignoreLinePrefixesJson) {
-      setIgnoreLinePrefixes(JSON.parse(ignoreLinePrefixesJson));
-    }
-
     const handleBeforeUnload = (event: Event) => {
       event.preventDefault();
     };
@@ -91,10 +73,10 @@ const App = () => {
     ignoreLinePrefixes,
   ]);
 
-  const addIgnoreString = () => {
+  const _addIgnoreString = () => {
     const inputIgnoreString = {
       id: uuidv4(),
-      ignoreString: ignoreStringRef.current?.value,
+      ignoreString,
     };
     const result = validateIgnoreString(inputIgnoreString);
     if (!result.success) {
@@ -102,54 +84,22 @@ const App = () => {
       return;
     }
 
-    const newIgnoreStrings = [...ignoreStrings, inputIgnoreString];
-    setIgnoreStrings(newIgnoreStrings);
-    localStorage.setItem('ignoreStrings', JSON.stringify(newIgnoreStrings));
-    ignoreStringRef.current.value = '';
+    addIgnoreString(inputIgnoreString);
+    setIgnoreString('');
   };
 
-  const addIgnoreLinePrefix = () => {
+  const _addIgnoreLinePrefix = () => {
     const inputIgnoreLinePrefix = {
       id: uuidv4(),
-      ignoreLinePrefix: ignoreLinePrefixRef.current?.value,
+      ignoreLinePrefix,
     };
     const result = validateIgnoreLinePrefix(inputIgnoreLinePrefix);
     if (!result.success) {
       alert(result.messages);
       return;
     }
-    const newIgnoreLinePrefixes = [
-      ...ignoreLinePrefixes,
-      inputIgnoreLinePrefix,
-    ];
-    setIgnoreLinePrefixes(newIgnoreLinePrefixes);
-    localStorage.setItem(
-      'ignoreLinePrefixes',
-      JSON.stringify(newIgnoreLinePrefixes),
-    );
-    ignoreLinePrefixRef.current.value = '';
-  };
-
-  const deleteIgnoreString = (deleteIgnoreStringId: string) => {
-    const afterDeleteIgnoreStrings = ignoreStrings.filter(
-      ({ id }) => id !== deleteIgnoreStringId,
-    );
-    setIgnoreStrings(afterDeleteIgnoreStrings);
-    localStorage.setItem(
-      'ignoreStrings',
-      JSON.stringify(afterDeleteIgnoreStrings),
-    );
-  };
-
-  const deleteIgnoreLinePrefix = (deleteIgnoreLinePrefixId: string) => {
-    const afterDeleteIgnoreLinePrefixes = ignoreLinePrefixes.filter(
-      ({ id }) => id !== deleteIgnoreLinePrefixId,
-    );
-    setIgnoreLinePrefixes(afterDeleteIgnoreLinePrefixes);
-    localStorage.setItem(
-      'ignoreLinePrefixes',
-      JSON.stringify(afterDeleteIgnoreLinePrefixes),
-    );
+    addIgnoreLinePrefix(inputIgnoreLinePrefix);
+    setIgnoreLinePrefix('');
   };
 
   return (
@@ -185,7 +135,7 @@ const App = () => {
                 <button
                   type="button"
                   className="trash-btn"
-                  onClick={() => deleteIgnoreString(id)}
+                  onClick={() => removeIgnoreString(id)}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
@@ -197,9 +147,10 @@ const App = () => {
           <input
             type="text"
             placeholder="Enter ignore string."
-            ref={ignoreStringRef}
+            value={ignoreString}
+            onChange={(e) => setIgnoreString(e.target.value)}
           />
-          <button type="button" onClick={addIgnoreString}>
+          <button type="button" onClick={_addIgnoreString}>
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
@@ -214,7 +165,7 @@ const App = () => {
                 <button
                   type="button"
                   className="trash-btn"
-                  onClick={() => deleteIgnoreLinePrefix(id)}
+                  onClick={() => removeIgnoreLinePrefix(id)}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
@@ -226,12 +177,13 @@ const App = () => {
           <input
             type="text"
             placeholder="Enter ignore line."
-            ref={ignoreLinePrefixRef}
+            value={ignoreLinePrefix}
+            onChange={(e) => setIgnoreLinePrefix(e.target.value)}
           />
           <button
             type="button"
             className="add-btn"
-            onClick={addIgnoreLinePrefix}
+            onClick={_addIgnoreLinePrefix}
           >
             <FontAwesomeIcon icon={faPlus} />
           </button>
