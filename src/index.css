@@ -13,6 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", monospace;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -29,25 +33,30 @@ body {
   width: 100%;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
+h2,
+legend {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+fieldset {
+  border-width: 1px;
+  border-color: gray;
+  border-style: solid;
+  border-radius: 6px;
+}
+
+/* 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -59,4 +68,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */

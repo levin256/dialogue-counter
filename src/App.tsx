@@ -1,6 +1,7 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import './App.css';
+import { Field, Textarea } from '@headlessui/react';
 import { HowToUse } from './HowToUse';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/ignoreLinePrefixForm';
@@ -74,7 +75,7 @@ const App = () => {
     <div className="flex flex-col justify-start gap-y-3 p-4">
       <h1>台詞カウンター</h1>
       <HowToUse />
-      <fieldset className="display-flex gap1rem">
+      <fieldset className="flex gap-x-3 px-3 pt-1 pb-3">
         <legend>特殊文字のカウント設定</legend>
         <label>
           <input
@@ -93,7 +94,7 @@ const App = () => {
           改行をカウントしない
         </label>
       </fieldset>
-      <fieldset>
+      <fieldset className="px-3 pt-1 pb-3">
         <legend>カウントしない文字</legend>
         <ul className="flex flex-col gap-y-2">
           {ignoreStrings.map(({ id, ignoreString }) => (
@@ -104,7 +105,7 @@ const App = () => {
                   icon: faTrash,
                   onClick: () => removeIgnoreString(id),
                   isDanger: true,
-                  className: 'rounded-e-md trash-btn',
+                  className: 'rounded-e-md',
                 }}
               />
             </li>
@@ -112,7 +113,7 @@ const App = () => {
         </ul>
         <IgnoreStringForm />
       </fieldset>
-      <fieldset>
+      <fieldset className="px-3 pt-1 pb-3">
         <legend>カウントしない行</legend>
         <ul className="flex flex-col gap-y-2">
           {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
@@ -123,7 +124,7 @@ const App = () => {
                   icon: faTrash,
                   onClick: () => removeIgnoreLinePrefix(id),
                   isDanger: true,
-                  className: 'rounded-e-md trash-btn',
+                  className: 'rounded-e-md',
                 }}
               />
             </li>
@@ -131,15 +132,15 @@ const App = () => {
         </ul>
         <IgnoreLinePrefixForm />
       </fieldset>
-      <div className="flex-column">
+      <Field className="flex flex-col">
         <h3>テキスト（文字数: {textCount}）</h3>
-        <textarea
-          className="radius-6p height-500 flex-column"
+        <Textarea
+          className="h-[32rem] rounded-md border-none bg-neutral-600 p-3 outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter text."
         />
-      </div>
+      </Field>
     </div>
   );
 };
