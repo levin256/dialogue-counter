@@ -1,7 +1,7 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { InputWithButton } from '../../components/ui/InputWithButton';
 import {
   type IgnoreStringForm as IgnoreStringFormType,
   ignoreStringFormSchema,
@@ -26,14 +26,11 @@ export const IgnoreStringForm = () => {
 
   return (
     <div className="btn-container">
-      <input {...register('ignoreString')} placeholder="Enter ignore string." />
-      <button
-        type="button"
-        className="add-btn"
-        onClick={handleSubmit(onSubmit)}
-      >
-        <FontAwesomeIcon icon={faPlus} />
-      </button>
+      <InputWithButton
+        register={register('ignoreString')}
+        inputProps={{ placeholder: 'Enter ignore string' }}
+        buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
+      />
       {/* TODO: エラー表示いい感じにする */}
       {errors.ignoreString && (
         <p className="error-text">{errors.ignoreString.message}</p>

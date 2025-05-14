@@ -1,7 +1,7 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { InputWithButton } from '../../components/ui/InputWithButton';
 import {
   type IgnoreLinePrefixForm as IgnoreLinePrefixFormType,
   ignoreLinePrefixFormSchema,
@@ -26,17 +26,11 @@ export const IgnoreLinePrefixForm = () => {
 
   return (
     <div className="btn-container">
-      <input
-        {...register('ignoreLinePrefix')}
-        placeholder="Enter ignore line."
+      <InputWithButton
+        register={register('ignoreLinePrefix')}
+        inputProps={{ placeholder: 'Enter ignore line prefix.' }}
+        buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
       />
-      <button
-        type="button"
-        className="add-btn"
-        onClick={handleSubmit(onSubmit)}
-      >
-        <FontAwesomeIcon icon={faPlus} />
-      </button>
       {/* TODO: エラー表示いい感じにする */}
       {errors.ignoreLinePrefix && (
         <p className="error-text">{errors.ignoreLinePrefix.message}</p>
