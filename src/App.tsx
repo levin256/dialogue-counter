@@ -1,8 +1,8 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import './App.css';
 import { HowToUse } from './HowToUse';
+import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/ignoreLinePrefixForm';
 import { IgnoreStringForm } from './features/dialogueCounter/ignoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
@@ -95,19 +95,18 @@ const App = () => {
       </fieldset>
       <fieldset>
         <legend>カウントしない文字</legend>
-        <ul>
+        <ul className="flex flex-col gap-y-2">
           {ignoreStrings.map(({ id, ignoreString }) => (
-            <li key={id}>
-              <div className="display-flex padding-block">
-                <code className="code-label">{ignoreString}</code>
-                <button
-                  type="button"
-                  className="trash-btn"
-                  onClick={() => removeIgnoreString(id)}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
+            <li key={id} className="flex w-60">
+              <CodeLabelWithButton
+                codeLabelProps={{ label: ignoreString }}
+                buttonProps={{
+                  icon: faTrash,
+                  onClick: () => removeIgnoreString(id),
+                  isDanger: true,
+                  className: 'rounded-e-md trash-btn',
+                }}
+              />
             </li>
           ))}
         </ul>
@@ -115,19 +114,18 @@ const App = () => {
       </fieldset>
       <fieldset>
         <legend>カウントしない行</legend>
-        <ul>
+        <ul className="flex flex-col gap-y-2">
           {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
-            <li key={id}>
-              <div className="display-flex padding-block">
-                <code className="code-label">{ignoreLinePrefix}</code>
-                <button
-                  type="button"
-                  className="trash-btn"
-                  onClick={() => removeIgnoreLinePrefix(id)}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
+            <li key={id} className="flex w-60">
+              <CodeLabelWithButton
+                codeLabelProps={{ label: ignoreLinePrefix }}
+                buttonProps={{
+                  icon: faTrash,
+                  onClick: () => removeIgnoreLinePrefix(id),
+                  isDanger: true,
+                  className: 'rounded-e-md trash-btn',
+                }}
+              />
             </li>
           ))}
         </ul>
