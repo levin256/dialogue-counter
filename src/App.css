@@ -11,10 +11,6 @@
   flex-flow: column;
 }
 
-.gap05rem {
-  gap: 0.5rem;
-}
-
 .gap1rem {
   gap: 1rem;
 }
@@ -84,15 +80,10 @@ fieldset {
 .trash-btn {
   background: none;
   border: none;
-  color: #888;
   font-size: 16px;
   cursor: pointer;
   padding: 4px;
   transition: color 0.2s ease-in-out;
-}
-
-.trash-btn:hover {
-  color: red;
 }
 
 .display-flex {
@@ -130,10 +121,8 @@ fieldset {
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 0 6px 6px 0;
-  transition: all 0.2s ease;
 }
 
-.btn-container button:hover {
+button:hover {
   filter: brightness(80%);
 }

@@ -71,7 +71,7 @@ const App = () => {
   ]);
 
   return (
-    <div className="gap05rem flex-column">
+    <div className="flex flex-col justify-start gap-y-3 p-4">
       <h1>台詞カウンター</h1>
       <HowToUse />
       <fieldset className="display-flex gap1rem">
