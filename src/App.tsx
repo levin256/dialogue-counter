@@ -1,11 +1,10 @@
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { v4 as uuidv4 } from 'uuid';
 import { HowToUse } from './HowToUse';
+import { IgnoreLinePrefixForm } from './features/dialogueCounter/ignoreLinePrefixForm';
 import { IgnoreStringForm } from './features/dialogueCounter/ignoreStringForm';
-import { validateIgnoreLinePrefix } from './schemas';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
 import { escapeRegExp } from './utils/string';
@@ -43,11 +42,10 @@ const App = () => {
     return textWithoutIgnoreString;
   };
 
-  const [ignoreLinePrefix, setIgnoreLinePrefix] = useState<string>('');
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
   const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
-  const { ignoreLinePrefixes, addIgnoreLinePrefix, removeIgnoreLinePrefix } =
+  const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
     useIgnoreLinePrefixStore();
   const [text, setText] = useState('');
   const [textCount, setTextCount] = useState(excludeInogreString(text).length);
@@ -71,20 +69,6 @@ const App = () => {
     ignoreStrings,
     ignoreLinePrefixes,
   ]);
-
-  const _addIgnoreLinePrefix = () => {
-    const inputIgnoreLinePrefix = {
-      id: uuidv4(),
-      ignoreLinePrefix,
-    };
-    const result = validateIgnoreLinePrefix(inputIgnoreLinePrefix);
-    if (!result.success) {
-      alert(result.messages);
-      return;
-    }
-    addIgnoreLinePrefix(ignoreLinePrefix);
-    setIgnoreLinePrefix('');
-  };
 
   return (
     <div className="gap05rem flex-column">
@@ -147,21 +131,7 @@ const App = () => {
             </li>
           ))}
         </ul>
-        <div className="btn-container">
-          <input
-            type="text"
-            placeholder="Enter ignore line."
-            value={ignoreLinePrefix}
-            onChange={(e) => setIgnoreLinePrefix(e.target.value)}
-          />
-          <button
-            type="button"
-            className="add-btn"
-            onClick={_addIgnoreLinePrefix}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-        </div>
+        <IgnoreLinePrefixForm />
       </fieldset>
       <div className="flex-column">
         <h3>テキスト（文字数: {textCount}）</h3>
