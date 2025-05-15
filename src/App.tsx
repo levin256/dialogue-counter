@@ -8,48 +8,24 @@ import { IgnoreLinePrefixForm } from './features/dialogueCounter/ignoreLinePrefi
 import { IgnoreStringForm } from './features/dialogueCounter/ignoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
-import { escapeRegExp } from './utils/string';
+import { excludeIgnoreString } from './utils/string';
 
 const App = () => {
-  const excludeInogreString = (text: string) => {
-    const textWithoutIgnoreLine = ignoreLinePrefixes.reduce(
-      (currentText, { ignoreLinePrefix }) => {
-        const lines = currentText.split(/\n/);
-        return lines
-          .filter((line) => !line.startsWith(ignoreLinePrefix))
-          .join('\n');
-      },
-      text,
-    );
-
-    const currentIgnoreStrings = [
-      ...ignoreStrings.map(({ ignoreString }) => ignoreString),
-    ];
-    if (isIgnoreSpace) {
-      currentIgnoreStrings.push(' ');
-      currentIgnoreStrings.push('\u3000');
-    }
-    if (isIgnoreLineBreak) {
-      currentIgnoreStrings.push('\n');
-    }
-    const textWithoutIgnoreString = currentIgnoreStrings.reduce(
-      (currentText, string) => {
-        const escapeString = escapeRegExp(string);
-        const regex = new RegExp(escapeString, 'g');
-        return currentText.replaceAll(regex, '');
-      },
-      textWithoutIgnoreLine,
-    );
-    return textWithoutIgnoreString;
-  };
-
-  const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
-  const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
   const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
   const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
     useIgnoreLinePrefixStore();
+  const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
+  const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
   const [text, setText] = useState('');
-  const [textCount, setTextCount] = useState(excludeInogreString(text).length);
+  const [textCount, setTextCount] = useState(
+    excludeIgnoreString(
+      text,
+      ignoreStrings,
+      ignoreLinePrefixes,
+      isIgnoreSpace,
+      isIgnoreLineBreak,
+    ).length,
+  );
 
   useEffect(() => {
     const handleBeforeUnload = (event: Event) => {
@@ -62,7 +38,15 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    setTextCount(excludeInogreString(text).length);
+    setTextCount(
+      excludeIgnoreString(
+        text,
+        ignoreStrings,
+        ignoreLinePrefixes,
+        isIgnoreSpace,
+        isIgnoreLineBreak,
+      ).length,
+    );
   }, [
     text,
     isIgnoreSpace,
