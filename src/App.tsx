@@ -9,11 +9,13 @@ import { IgnoreStringForm } from './features/dialogueCounter/ignoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
 import { excludeIgnoreString } from './utils/string';
+import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
   const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
   const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
     useIgnoreLinePrefixStore();
+
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
   const [text, setText] = useState('');
@@ -26,16 +28,6 @@ const App = () => {
       isIgnoreLineBreak,
     ).length,
   );
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: Event) => {
-      event.preventDefault();
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
 
   useEffect(() => {
     setTextCount(
@@ -54,6 +46,8 @@ const App = () => {
     ignoreStrings,
     ignoreLinePrefixes,
   ]);
+
+  useWarnIfUnsavedChanges(text.length > 0);
 
   return (
     <div className="flex flex-col justify-start gap-y-3 p-4">
