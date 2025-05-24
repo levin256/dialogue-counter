@@ -4,6 +4,8 @@ import './App.css';
 import { Field, Textarea } from '@headlessui/react';
 import { HowToUse } from './HowToUse';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
+import { Heading } from './components/ui/Heading';
+import { HowToUse } from './components/ui/HowToUse';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
@@ -51,7 +53,7 @@ const App = () => {
 
   return (
     <div className="flex flex-col justify-start gap-y-3 p-4">
-      <h1>台詞カウンター</h1>
+      <Heading level={1}>台詞カウンター</Heading>
       <HowToUse />
       <fieldset className="flex gap-x-3 px-3 pt-1 pb-3">
         <legend>特殊文字のカウント設定</legend>
@@ -111,7 +113,7 @@ const App = () => {
         <IgnoreLinePrefixForm />
       </fieldset>
       <Field className="flex flex-col">
-        <h3>テキスト（文字数: {textCount}）</h3>
+        <Heading level={3}>テキスト（文字数: {textCount}）</Heading>
         <Textarea
           className="h-[32rem] rounded-md border-none bg-neutral-600 p-3 outline-none"
           value={text}
