@@ -12,7 +12,7 @@ export const Heading = ({
   className = '',
 }: HeadingProps) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-  const baseStyles = 'font-bold tracking-tight text-gray-900';
+  const baseStyles = 'font-bold tracking-tight';
 
   const sizeMap = {
     1: 'text-4xl',

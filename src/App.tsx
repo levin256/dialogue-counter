@@ -1,15 +1,9 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import './App.css';
-import {
-  Field,
-  Fieldset,
-  Label,
-  Legend,
-  Switch,
-  Textarea,
-} from '@headlessui/react';
+import { Field, Label, Switch, Textarea } from '@headlessui/react';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
+import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
 import { HowToUse } from './components/ui/HowToUse';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
@@ -61,8 +55,10 @@ const App = () => {
     <div className="flex flex-col justify-start gap-y-3 p-4">
       <Heading level={1}>台詞カウンター</Heading>
       <HowToUse />
-      <Fieldset className="flex flex-col gap-x-3 px-3 pt-1 pb-3">
-        <Legend>特殊文字のカウント設定</Legend>
+      <FieldsetGroup
+        legend="特殊文字のカウント設定"
+        className="flex flex-col gap-x-3"
+      >
         <Field>
           <Label> 空白をカウントしない </Label>
           <Switch
@@ -85,9 +81,8 @@ const App = () => {
             <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
           </Switch>
         </Field>
-      </Fieldset>
-      <Fieldset className="px-3 pt-1 pb-3">
-        <Legend>カウントしない文字</Legend>
+      </FieldsetGroup>
+      <FieldsetGroup legend="カウントしない文字">
         <ul className="flex flex-col gap-y-2">
           {ignoreStrings.map(({ id, ignoreString }) => (
             <li key={id} className="flex w-60">
@@ -104,9 +99,8 @@ const App = () => {
           ))}
         </ul>
         <IgnoreStringForm />
-      </Fieldset>
-      <Fieldset className="px-3 pt-1 pb-3">
-        <Legend>カウントしない行</Legend>
+      </FieldsetGroup>
+      <FieldsetGroup legend="カウントしない行">
         <ul className="flex flex-col gap-y-2">
           {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
             <li key={id} className="flex w-60">
@@ -123,7 +117,7 @@ const App = () => {
           ))}
         </ul>
         <IgnoreLinePrefixForm />
-      </Fieldset>
+      </FieldsetGroup>
       <Field className="flex flex-col">
         <Heading level={3}>テキスト（文字数: {textCount}）</Heading>
         <Textarea
