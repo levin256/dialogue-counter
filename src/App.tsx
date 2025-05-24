@@ -1,8 +1,14 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { Field, Textarea } from '@headlessui/react';
-import { HowToUse } from './HowToUse';
+import {
+  Field,
+  Fieldset,
+  Label,
+  Legend,
+  Switch,
+  Textarea,
+} from '@headlessui/react';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
 import { Heading } from './components/ui/Heading';
 import { HowToUse } from './components/ui/HowToUse';
@@ -55,27 +61,33 @@ const App = () => {
     <div className="flex flex-col justify-start gap-y-3 p-4">
       <Heading level={1}>台詞カウンター</Heading>
       <HowToUse />
-      <fieldset className="flex gap-x-3 px-3 pt-1 pb-3">
-        <legend>特殊文字のカウント設定</legend>
-        <label>
-          <input
-            type="checkbox"
+      <Fieldset className="flex flex-col gap-x-3 px-3 pt-1 pb-3">
+        <Legend>特殊文字のカウント設定</Legend>
+        <Field>
+          <Label> 空白をカウントしない </Label>
+          <Switch
             checked={isIgnoreSpace}
-            onChange={(event) => setIsIgnoreSpace(event.target.checked)}
-          />
-          空白をカウントしない
-        </label>
-        <label>
-          <input
-            type="checkbox"
+            onChange={setIsIgnoreSpace}
+            name="terms-of-service"
+            className="group inline-flex h-6 w-11 items-center rounded-full bg-neutral-600 transition data-checked:bg-teal-600"
+          >
+            <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
+          </Switch>
+        </Field>
+        <Field>
+          <Label> 改行をカウントしない </Label>
+          <Switch
             checked={isIgnoreLineBreak}
-            onChange={(event) => setIsIgnoreLineBreak(event.target.checked)}
-          />
-          改行をカウントしない
-        </label>
-      </fieldset>
-      <fieldset className="px-3 pt-1 pb-3">
-        <legend>カウントしない文字</legend>
+            onChange={setIsIgnoreLineBreak}
+            name="terms-of-service"
+            className="group inline-flex h-6 w-11 items-center rounded-full bg-neutral-600 transition data-checked:bg-teal-600"
+          >
+            <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
+          </Switch>
+        </Field>
+      </Fieldset>
+      <Fieldset className="px-3 pt-1 pb-3">
+        <Legend>カウントしない文字</Legend>
         <ul className="flex flex-col gap-y-2">
           {ignoreStrings.map(({ id, ignoreString }) => (
             <li key={id} className="flex w-60">
@@ -92,9 +104,9 @@ const App = () => {
           ))}
         </ul>
         <IgnoreStringForm />
-      </fieldset>
-      <fieldset className="px-3 pt-1 pb-3">
-        <legend>カウントしない行</legend>
+      </Fieldset>
+      <Fieldset className="px-3 pt-1 pb-3">
+        <Legend>カウントしない行</Legend>
         <ul className="flex flex-col gap-y-2">
           {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
             <li key={id} className="flex w-60">
@@ -111,7 +123,7 @@ const App = () => {
           ))}
         </ul>
         <IgnoreLinePrefixForm />
-      </fieldset>
+      </Fieldset>
       <Field className="flex flex-col">
         <Heading level={3}>テキスト（文字数: {textCount}）</Heading>
         <Textarea
