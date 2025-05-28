@@ -79,7 +79,6 @@ const App = () => {
                   icon: faTrash,
                   onClick: () => removeIgnoreString(id),
                   isDanger: true,
-                  className: 'rounded-e-md',
                 }}
               />
             </li>
@@ -97,7 +96,6 @@ const App = () => {
                   icon: faTrash,
                   onClick: () => removeIgnoreLinePrefix(id),
                   isDanger: true,
-                  className: 'rounded-e-md',
                 }}
               />
             </li>

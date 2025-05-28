@@ -13,7 +13,7 @@ export const CodeLabelWithButton = ({
   return (
     <>
       <CodeLabel {...codeLabelProps} />
-      <IconButton {...buttonProps} />
+      <IconButton {...buttonProps} className="rounded-l-none" />
     </>
   );
 };
