@@ -1,11 +1,12 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { Field, Label, Switch, Textarea } from '@headlessui/react';
+import { Field, Label, Textarea } from '@headlessui/react';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
 import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
 import { HowToUse } from './components/ui/HowToUse';
+import { Toggle } from './components/ui/Toggle';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
@@ -61,25 +62,11 @@ const App = () => {
       >
         <Field>
           <Label> 空白をカウントしない </Label>
-          <Switch
-            checked={isIgnoreSpace}
-            onChange={setIsIgnoreSpace}
-            name="terms-of-service"
-            className="group inline-flex h-6 w-11 items-center rounded-full bg-neutral-600 transition data-checked:bg-teal-600"
-          >
-            <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
-          </Switch>
+          <Toggle checked={isIgnoreSpace} onChange={setIsIgnoreSpace} />
         </Field>
         <Field>
           <Label> 改行をカウントしない </Label>
-          <Switch
-            checked={isIgnoreLineBreak}
-            onChange={setIsIgnoreLineBreak}
-            name="terms-of-service"
-            className="group inline-flex h-6 w-11 items-center rounded-full bg-neutral-600 transition data-checked:bg-teal-600"
-          >
-            <span className="size-4 translate-x-1 rounded-full bg-white transition group-data-checked:translate-x-6" />
-          </Switch>
+          <Toggle checked={isIgnoreLineBreak} onChange={setIsIgnoreLineBreak} />
         </Field>
       </FieldsetGroup>
       <FieldsetGroup legend="カウントしない文字">
