@@ -58,13 +58,13 @@ const App = () => {
       <HowToUse />
       <FieldsetGroup
         legend="特殊文字のカウント設定"
-        className="flex flex-col gap-x-3"
+        className="flex flex-col gap-y-1.5"
       >
-        <Field>
+        <Field className="flex items-center gap-x-3">
           <Label> 空白をカウントしない </Label>
           <Toggle checked={isIgnoreSpace} onChange={setIsIgnoreSpace} />
         </Field>
-        <Field>
+        <Field className="flex items-center gap-x-3">
           <Label> 改行をカウントしない </Label>
           <Toggle checked={isIgnoreLineBreak} onChange={setIsIgnoreLineBreak} />
         </Field>
