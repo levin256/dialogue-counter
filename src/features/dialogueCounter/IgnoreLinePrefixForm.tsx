@@ -25,8 +25,9 @@ export const IgnoreLinePrefixForm = () => {
   };
 
   return (
-    <div className="btn-container">
+    <>
       <InputWithButton
+        className="flex w-60"
         register={register('ignoreLinePrefix')}
         inputProps={{ placeholder: 'Enter ignore line prefix.' }}
         buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
@@ -35,6 +36,6 @@ export const IgnoreLinePrefixForm = () => {
       {errors.ignoreLinePrefix && (
         <p className="error-text">{errors.ignoreLinePrefix.message}</p>
       )}
-    </div>
+    </>
   );
 };

@@ -25,8 +25,9 @@ export const IgnoreStringForm = () => {
   };
 
   return (
-    <div className="btn-container">
+    <>
       <InputWithButton
+        className="flex w-60"
         register={register('ignoreString')}
         inputProps={{ placeholder: 'Enter ignore string' }}
         buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
@@ -35,6 +36,6 @@ export const IgnoreStringForm = () => {
       {errors.ignoreString && (
         <p className="error-text">{errors.ignoreString.message}</p>
       )}
-    </div>
+    </>
   );
 };

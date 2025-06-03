@@ -69,11 +69,15 @@ const App = () => {
           <Toggle checked={isIgnoreLineBreak} onChange={setIsIgnoreLineBreak} />
         </Field>
       </FieldsetGroup>
-      <FieldsetGroup legend="カウントしない文字">
+      <FieldsetGroup
+        legend="カウントしない文字"
+        className="flex flex-col gap-y-2"
+      >
         <ul className="flex flex-col gap-y-2">
           {ignoreStrings.map(({ id, ignoreString }) => (
-            <li key={id} className="flex w-60">
+            <li key={id}>
               <CodeLabelWithButton
+                className="flex w-60"
                 codeLabelProps={{ label: ignoreString }}
                 buttonProps={{
                   icon: faTrash,
@@ -86,11 +90,15 @@ const App = () => {
         </ul>
         <IgnoreStringForm />
       </FieldsetGroup>
-      <FieldsetGroup legend="カウントしない行">
+      <FieldsetGroup
+        legend="カウントしない行"
+        className="flex flex-col gap-y-2"
+      >
         <ul className="flex flex-col gap-y-2">
           {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
-            <li key={id} className="flex w-60">
+            <li key={id}>
               <CodeLabelWithButton
+                className="flex w-60"
                 codeLabelProps={{ label: ignoreLinePrefix }}
                 buttonProps={{
                   icon: faTrash,
