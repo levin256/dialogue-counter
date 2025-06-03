@@ -20,7 +20,7 @@ export const InputWithButton = ({
         {...inputProps}
         className="box-border flex-1 rounded-s-md border-none bg-neutral-600 px-2 py-1 outline-none"
       />
-      <IconButton {...buttonProps} />
+      <IconButton {...buttonProps} className="rounded-l-none" />
     </div>
   );
 };
