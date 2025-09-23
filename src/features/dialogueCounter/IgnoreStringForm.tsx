@@ -29,7 +29,7 @@ export const IgnoreStringForm = () => {
       <InputWithButton
         className="flex w-60"
         register={register('ignoreString')}
-        inputProps={{ placeholder: 'Enter ignore string' }}
+        inputProps={{ placeholder: '文字を入力' }}
         buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
       />
       {/* TODO: エラー表示いい感じにする */}

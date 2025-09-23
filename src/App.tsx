@@ -91,7 +91,7 @@ const App = () => {
         <IgnoreStringForm />
       </FieldsetGroup>
       <FieldsetGroup
-        legend="カウントしない行"
+        legend="カウントしない行の先頭文字"
         className="flex flex-col gap-y-2"
       >
         <ul className="flex flex-col gap-y-2">
@@ -117,7 +117,7 @@ const App = () => {
           className="h-[32rem] rounded-md border-none bg-neutral-600 p-3 outline-none"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Enter text."
+          placeholder="カウントしたい文字を入力してください"
         />
       </Field>
     </div>
