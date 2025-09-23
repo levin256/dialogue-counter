@@ -1,11 +1,19 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { Field, Fieldset, Label, Legend, Textarea } from '@headlessui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  Button,
+  Field,
+  Fieldset,
+  Label,
+  Legend,
+  Textarea,
+} from '@headlessui/react';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
 import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
-import { HowToUse } from './components/ui/HowToUse';
+import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
@@ -15,6 +23,7 @@ import { excludeIgnoreString } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
   const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
     useIgnoreLinePrefixStore();
@@ -55,10 +64,17 @@ const App = () => {
   return (
     <div className="flex flex-col justify-start gap-y-3 p-4 pb-36">
       <Heading level={1}>台詞カウンター</Heading>
-      <HowToUse />
 
       <Fieldset className="flex flex-col gap-4 space-y-2 rounded-xl bg-white/6 p-5">
-        <Legend className="font-semibold text-xl">設定</Legend>
+        <div className="group flex flex-row gap-3">
+          <Legend className="font-semibold text-xl">設定</Legend>
+          <Button onClick={() => setIsOpen(true)}>
+            <FontAwesomeIcon
+              icon={faQuestionCircle}
+              className="text-md text-teal-600"
+            />
+          </Button>
+        </div>
 
         <FieldsetGroup
           legend="特殊文字のカウント設定"
@@ -140,6 +156,7 @@ const App = () => {
           />
         </Field>
       </FieldsetGroup>
+      <HowToUseDialog isOpen={isOpen} setIsOpen={setIsOpen} />
     </div>
   );
 };
