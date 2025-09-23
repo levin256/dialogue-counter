@@ -32,9 +32,8 @@ export const IgnoreLinePrefixForm = () => {
         inputProps={{ placeholder: '文字を入力' }}
         buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
       />
-      {/* TODO: エラー表示いい感じにする */}
       {errors.ignoreLinePrefix && (
-        <p className="error-text">{errors.ignoreLinePrefix.message}</p>
+        <p className="text-red-500">{errors.ignoreLinePrefix.message}</p>
       )}
     </>
   );

@@ -32,9 +32,8 @@ export const IgnoreStringForm = () => {
         inputProps={{ placeholder: '文字を入力' }}
         buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
       />
-      {/* TODO: エラー表示いい感じにする */}
       {errors.ignoreString && (
-        <p className="error-text">{errors.ignoreString.message}</p>
+        <p className="text-red-500">{errors.ignoreString.message}</p>
       )}
     </>
   );
