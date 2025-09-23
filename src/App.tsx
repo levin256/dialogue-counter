@@ -1,7 +1,7 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import './App.css';
-import { Field, Label, Textarea } from '@headlessui/react';
+import { Field, Fieldset, Label, Legend, Textarea } from '@headlessui/react';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
 import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
@@ -19,8 +19,8 @@ const App = () => {
   const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
     useIgnoreLinePrefixStore();
 
-  const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(false);
-  const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(false);
+  const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(true);
+  const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(true);
   const [text, setText] = useState('');
   const [textCount, setTextCount] = useState(
     excludeIgnoreString(
@@ -53,73 +53,93 @@ const App = () => {
   useWarnIfUnsavedChanges(text.length > 0);
 
   return (
-    <div className="flex flex-col justify-start gap-y-3 p-4">
+    <div className="flex flex-col justify-start gap-y-3 p-4 pb-36">
       <Heading level={1}>台詞カウンター</Heading>
       <HowToUse />
+
+      <Fieldset className="flex flex-col gap-4 space-y-2 rounded-xl bg-white/6 p-5">
+        <Legend className="font-semibold text-xl">設定</Legend>
+
+        <FieldsetGroup
+          legend="特殊文字のカウント設定"
+          className="flex flex-col gap-y-1.5"
+          legendClassName="text-base font-semibold"
+        >
+          <Field className="flex items-center gap-x-3">
+            <Label> 空白をカウントしない </Label>
+            <Toggle checked={isIgnoreSpace} onChange={setIsIgnoreSpace} />
+          </Field>
+          <Field className="flex items-center gap-x-3">
+            <Label> 改行をカウントしない </Label>
+            <Toggle
+              checked={isIgnoreLineBreak}
+              onChange={setIsIgnoreLineBreak}
+            />
+          </Field>
+        </FieldsetGroup>
+
+        <FieldsetGroup
+          legend="カウントしない文字"
+          className="flex flex-col gap-y-2"
+          legendClassName="text-base font-semibold"
+        >
+          <ul className="flex flex-col gap-y-2">
+            {ignoreStrings.map(({ id, ignoreString }) => (
+              <li key={id}>
+                <CodeLabelWithButton
+                  className="flex w-60"
+                  codeLabelProps={{ label: ignoreString }}
+                  buttonProps={{
+                    icon: faTrash,
+                    onClick: () => removeIgnoreString(id),
+                    isDanger: true,
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+          <IgnoreStringForm />
+        </FieldsetGroup>
+
+        <FieldsetGroup
+          legend="カウントしない行の先頭文字"
+          className="flex flex-col gap-y-2"
+          legendClassName="text-base font-semibold"
+        >
+          <ul className="flex flex-col gap-y-2">
+            {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
+              <li key={id}>
+                <CodeLabelWithButton
+                  className="flex w-60"
+                  codeLabelProps={{ label: ignoreLinePrefix }}
+                  buttonProps={{
+                    icon: faTrash,
+                    onClick: () => removeIgnoreLinePrefix(id),
+                    isDanger: true,
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+          <IgnoreLinePrefixForm />
+        </FieldsetGroup>
+      </Fieldset>
+
       <FieldsetGroup
-        legend="特殊文字のカウント設定"
-        className="flex flex-col gap-y-1.5"
+        legend="テキスト"
+        className="flex flex-col gap-1.5 space-y-2 rounded-xl bg-white/6 p-5"
+        legendClassName="font-semibold text-xl"
       >
-        <Field className="flex items-center gap-x-3">
-          <Label> 空白をカウントしない </Label>
-          <Toggle checked={isIgnoreSpace} onChange={setIsIgnoreSpace} />
+        <Heading level={6}>文字数 : {textCount}</Heading>
+        <Field className="flex flex-col">
+          <Textarea
+            className="h-[64rem] rounded-md border-none bg-neutral-600 p-3 outline-none"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="カウントしたい文字を入力してください"
+          />
         </Field>
-        <Field className="flex items-center gap-x-3">
-          <Label> 改行をカウントしない </Label>
-          <Toggle checked={isIgnoreLineBreak} onChange={setIsIgnoreLineBreak} />
-        </Field>
       </FieldsetGroup>
-      <FieldsetGroup
-        legend="カウントしない文字"
-        className="flex flex-col gap-y-2"
-      >
-        <ul className="flex flex-col gap-y-2">
-          {ignoreStrings.map(({ id, ignoreString }) => (
-            <li key={id}>
-              <CodeLabelWithButton
-                className="flex w-60"
-                codeLabelProps={{ label: ignoreString }}
-                buttonProps={{
-                  icon: faTrash,
-                  onClick: () => removeIgnoreString(id),
-                  isDanger: true,
-                }}
-              />
-            </li>
-          ))}
-        </ul>
-        <IgnoreStringForm />
-      </FieldsetGroup>
-      <FieldsetGroup
-        legend="カウントしない行の先頭文字"
-        className="flex flex-col gap-y-2"
-      >
-        <ul className="flex flex-col gap-y-2">
-          {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
-            <li key={id}>
-              <CodeLabelWithButton
-                className="flex w-60"
-                codeLabelProps={{ label: ignoreLinePrefix }}
-                buttonProps={{
-                  icon: faTrash,
-                  onClick: () => removeIgnoreLinePrefix(id),
-                  isDanger: true,
-                }}
-              />
-            </li>
-          ))}
-        </ul>
-        <IgnoreLinePrefixForm />
-      </FieldsetGroup>
-      <Field className="flex flex-col">
-        <Heading level={3}>テキスト（文字数: {textCount}）</Heading>
-        <Textarea
-          className="h-[32rem] rounded-md border-none bg-neutral-600 p-3 outline-none"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="カウントしたい文字を入力してください"
-        />
-      </Field>
     </div>
   );
 };
