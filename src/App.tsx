@@ -11,6 +11,7 @@ import {
   Textarea,
 } from '@headlessui/react';
 import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
+import { Divider } from './components/ui/Divider';
 import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
 import HowToUseDialog from './components/ui/HowToUseDialog';
@@ -94,6 +95,8 @@ const App = () => {
           </Field>
         </FieldsetGroup>
 
+        <Divider />
+
         <FieldsetGroup
           legend="カウントしない文字"
           className="flex flex-col gap-y-2"
@@ -116,6 +119,8 @@ const App = () => {
           </ul>
           <IgnoreStringForm />
         </FieldsetGroup>
+
+        <Divider />
 
         <FieldsetGroup
           legend="カウントしない行の先頭文字"
