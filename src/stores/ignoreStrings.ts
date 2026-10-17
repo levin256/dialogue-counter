@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { IgnoreString } from '../schemas';
@@ -18,7 +17,7 @@ const DEFAULT_IGNORE_STRING: IgnoreString[] = [
   '…',
   '！',
   '？',
-].map((ignoreString) => ({ id: uuidv4(), ignoreString }));
+].map((ignoreString) => ({ id: crypto.randomUUID(), ignoreString }));
 
 export const useIgnoreStringStore = create<IgnoreStringStore>()(
   persist(
@@ -28,7 +27,7 @@ export const useIgnoreStringStore = create<IgnoreStringStore>()(
         set((state) => ({
           ignoreStrings: [
             ...state.ignoreStrings,
-            { id: uuidv4(), ignoreString },
+            { id: crypto.randomUUID(), ignoreString },
           ],
         })),
       removeIgnoreString: (id) =>

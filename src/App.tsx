@@ -72,6 +72,7 @@ const App = () => {
           <Button onClick={() => setIsOpen(true)}>
             <FontAwesomeIcon
               icon={faQuestionCircle}
+              widthAuto
               className="text-md text-teal-600"
             />
           </Button>
