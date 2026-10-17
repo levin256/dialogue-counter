@@ -23,7 +23,7 @@ export const IconButton = ({
       className={`rounded-md ${isDanger ? 'bg-red-800' : 'bg-teal-700'} ${className}`}
     >
       {label}
-      <FontAwesomeIcon icon={icon} />
+      <FontAwesomeIcon icon={icon} widthAuto />
     </Button>
   );
 };

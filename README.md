@@ -1,50 +1,31 @@
-# React + TypeScript + Vite
+# 台詞カウンター
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+台本などの台詞テキストの文字数を、除外ルールを設定したうえでリアルタイムに数える Web アプリです。
 
-Currently, two official plugins are available:
+## 機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 空白・改行をカウントするかを切り替えられる
+- カウントしない文字（`、` `。` `「` `」` など）を登録できる
+- 指定した文字で始まる行（`//` で始まるコメント行など）をカウントから除外できる
+- 設定はブラウザ（localStorage）に保存される
 
-## Expanding the ESLint configuration
+## 技術スタック
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 19 / TypeScript / Vite
+- Tailwind CSS v4 / Headless UI
+- zustand（状態管理）
+- react-hook-form / Zod（フォームとバリデーション）
+- Biome（lint / format）
 
-- Configure the top-level `parserOptions` property like this:
+## 開発
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+[pnpm](https://pnpm.io/) を使います。
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+pnpm install
+pnpm dev        # 開発サーバーを起動
+pnpm build      # 型チェックと本番ビルド
+pnpm lint       # lint と format のチェック
+pnpm format     # 自動修正
+pnpm typecheck  # 型チェックのみ
 ```

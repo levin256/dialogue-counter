@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { IgnoreLinePrefix } from '../schemas';
+import { createId } from '../utils/id';
 
 type IgnoreLinePrefixStore = {
   ignoreLinePrefixes: IgnoreLinePrefix[];
@@ -11,7 +11,7 @@ type IgnoreLinePrefixStore = {
 };
 
 const DEFAULT_IGNORE_LINE_PREFIX: IgnoreLinePrefix[] = ['//'].map(
-  (ignoreLinePrefix) => ({ id: uuidv4(), ignoreLinePrefix }),
+  (ignoreLinePrefix) => ({ id: createId(), ignoreLinePrefix }),
 );
 
 export const useIgnoreLinePrefixStore = create<IgnoreLinePrefixStore>()(
@@ -22,7 +22,7 @@ export const useIgnoreLinePrefixStore = create<IgnoreLinePrefixStore>()(
         set((state) => ({
           ignoreLinePrefixes: [
             ...state.ignoreLinePrefixes,
-            { id: uuidv4(), ignoreLinePrefix },
+            { id: createId(), ignoreLinePrefix },
           ],
         })),
       removeIgnoreLinePrefix: (id) =>
