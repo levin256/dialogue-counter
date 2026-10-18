@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { IgnoreLinePrefix, IgnoreString } from '../schemas';
-import { excludeIgnoreString, onlyWhiteSpaceRegex } from './string';
+import {
+  countCharacters,
+  excludeIgnoreString,
+  onlyWhiteSpaceRegex,
+} from './string';
 
 const ignoreStrings = (...values: string[]): IgnoreString[] =>
   values.map((ignoreString, i) => ({ id: `s${i}`, ignoreString }));
@@ -57,12 +61,12 @@ describe('excludeIgnoreString', () => {
   });
 
   describe('空白', () => {
-    it('ON のとき、半角スペースと全角スペースを取り除く', () => {
-      expect(exclude('a b　c', { ignoreSpace: true })).toBe('abc');
+    it('ON のとき、半角・全角スペースを取り除く', () => {
+      expect(exclude('a b\u3000c', { ignoreSpace: true })).toBe('abc');
     });
 
     it('OFF のとき、空白を残す', () => {
-      expect(exclude('a b　c')).toBe('a b　c');
+      expect(exclude('a b\u3000c')).toBe('a b\u3000c');
     });
   });
 
@@ -99,30 +103,39 @@ describe('excludeIgnoreString', () => {
     });
   });
 
-  // ここから下は、issue #2 の「論点」に対応する現状の挙動
-  describe('現状の挙動（論点）', () => {
-    it('カウントは UTF-16 単位なので、絵文字やサロゲートペアの漢字は 2 文字になる', () => {
-      expect(exclude('😀').length).toBe(2);
-      expect(exclude('𠮷').length).toBe(2);
-      // 国旗や肌の色付きの絵文字は、さらに多くなる
-      expect(exclude('👍🏽').length).toBe(4);
+  describe('空白（改行以外）', () => {
+    it.each([
+      ['タブ', 'a\tb'],
+      ['ノーブレークスペース', 'a\u00a0b'],
+    ])('ON のとき、%s も取り除く', (_, text) => {
+      expect(exclude(text, { ignoreSpace: true })).toBe('ab');
     });
 
-    it('インデントされた行は、除外する行にならない', () => {
-      expect(exclude('a\n  // メモ', { prefixes: ['//'] })).toBe(
-        'a\n  // メモ',
-      );
+    it('ON でも、改行は残す（改行は別の設定で扱う）', () => {
+      expect(exclude('a \nb', { ignoreSpace: true })).toBe('a\nb');
+    });
+  });
+
+  describe('インデントされた行', () => {
+    it('行頭の空白（半角・全角スペース、タブ）を読み飛ばして判定する', () => {
+      expect(
+        exclude('a\n  // b\n\u3000// c\n\t// d\ne', { prefixes: ['//'] }),
+      ).toBe('a\ne');
     });
 
-    it('「空白をカウントしない」でも、タブは残る', () => {
-      expect(exclude('a\tb', { ignoreSpace: true })).toBe('a\tb');
+    it('先頭文字の側に空白があっても、同じように判定する', () => {
+      expect(exclude('a\n// b', { prefixes: [' //'] })).toBe('a');
     });
+  });
 
-    it('同じ除外文字を 2 回登録しても、結果は変わらない', () => {
+  describe('同じ除外文字が複数あるとき', () => {
+    it('結果は 1 つのときと変わらない（重複の登録はフォームで弾く）', () => {
       expect(exclude('a。b', { strings: ['。', '。'] })).toBe('ab');
     });
+  });
 
-    it('除外を順番に適用するので、除外の結果として新しくできた並びも取り除かれる', () => {
+  describe('複数文字の除外文字', () => {
+    it('登録順に適用するので、除外の結果として新しくできた並びも取り除かれる', () => {
       // 'b' を消すと 'ac' ができ、それも消える
       expect(exclude('abc', { strings: ['b', 'ac'] })).toBe('');
       // 登録順が逆だと、'ac' はまだないので残る
@@ -131,8 +144,28 @@ describe('excludeIgnoreString', () => {
   });
 });
 
+describe('countCharacters', () => {
+  it.each([
+    ['ひらがな・漢字', 'あい漢字', 4],
+    ['空文字', '', 0],
+    ['絵文字', '😀', 1],
+    ['サロゲートペアの漢字', '𠮷', 1],
+    ['肌の色付きの絵文字', '👍🏽', 1],
+    ['国旗', '🇯🇵', 1],
+    ['ZWJ でつないだ絵文字', '👨‍👩‍👧', 1],
+    ['結合文字の濁点', 'か\u3099', 1],
+    ['異体字セレクタ付きの漢字', '葛\u{E0100}', 1],
+  ])('見た目の 1 文字を 1 と数える: %s', (_, text, expected) => {
+    expect(countCharacters(text)).toBe(expected);
+  });
+
+  it('改行も 1 文字と数える', () => {
+    expect(countCharacters('a\nb')).toBe(3);
+  });
+});
+
 describe('onlyWhiteSpaceRegex', () => {
-  it.each([' ', '　', '\t', ' 　\n'])(
+  it.each([' ', '\u3000', '\t', ' \u3000\n'])(
     '空白だけの文字列 %j にマッチする',
     (value) => {
       expect(onlyWhiteSpaceRegex.test(value)).toBe(true);
@@ -143,7 +176,7 @@ describe('onlyWhiteSpaceRegex', () => {
     expect(onlyWhiteSpaceRegex.test(value)).toBe(false);
   });
 
-  it('現状のバグ: 文字列 "u3000" にマッチしてしまう', () => {
-    expect(onlyWhiteSpaceRegex.test('u3000')).toBe(true);
+  it('文字列 "u3000" にはマッチしない', () => {
+    expect(onlyWhiteSpaceRegex.test('u3000')).toBe(false);
   });
 });

@@ -20,7 +20,7 @@ import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefi
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
-import { excludeIgnoreString } from './utils/string';
+import { countCharacters, excludeIgnoreString } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
@@ -33,24 +33,28 @@ const App = () => {
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(true);
   const [text, setText] = useState('');
   const [textCount, setTextCount] = useState(
-    excludeIgnoreString(
-      text,
-      ignoreStrings,
-      ignoreLinePrefixes,
-      isIgnoreSpace,
-      isIgnoreLineBreak,
-    ).length,
-  );
-
-  useEffect(() => {
-    setTextCount(
+    countCharacters(
       excludeIgnoreString(
         text,
         ignoreStrings,
         ignoreLinePrefixes,
         isIgnoreSpace,
         isIgnoreLineBreak,
-      ).length,
+      ),
+    ),
+  );
+
+  useEffect(() => {
+    setTextCount(
+      countCharacters(
+        excludeIgnoreString(
+          text,
+          ignoreStrings,
+          ignoreLinePrefixes,
+          isIgnoreSpace,
+          isIgnoreLineBreak,
+        ),
+      ),
     );
   }, [
     text,
