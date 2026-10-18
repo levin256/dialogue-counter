@@ -45,6 +45,8 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, setIsOpen }) => {
             </Heading>
             <p className="text-base text-white/65">
               空白・改行をカウントするかを設定できます。
+              <br />
+              空白には、半角・全角スペースのほか、タブなども含みます。
             </p>
             <Heading level={5} className="mt-3">
               カウントしない文字
@@ -57,6 +59,8 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, setIsOpen }) => {
             </Heading>
             <p className="text-base text-white/65">
               指定した文字で始まる行はカウントされません。
+              <br />
+              行頭のスペースやタブは無視して判定するので、インデントされた行も対象になります。
             </p>
             <div className="mt-3 flex justify-end">
               <LabelButton
