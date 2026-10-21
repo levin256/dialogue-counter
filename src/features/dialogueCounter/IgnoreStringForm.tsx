@@ -14,12 +14,21 @@ export const IgnoreStringForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setError,
   } = useForm<IgnoreStringFormType>({
     resolver: zodResolver(ignoreStringFormSchema),
   });
-  const { addIgnoreString } = useIgnoreStringStore();
+  const { ignoreStrings, addIgnoreString } = useIgnoreStringStore();
 
   const onSubmit = (form: IgnoreStringFormType) => {
+    if (
+      ignoreStrings.some(
+        ({ ignoreString }) => ignoreString === form.ignoreString,
+      )
+    ) {
+      setError('ignoreString', { message: 'すでに登録されています。' });
+      return;
+    }
     addIgnoreString(form.ignoreString);
     reset();
   };

@@ -14,12 +14,22 @@ export const IgnoreLinePrefixForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setError,
   } = useForm<IgnoreLinePrefixFormType>({
     resolver: zodResolver(ignoreLinePrefixFormSchema),
   });
-  const { addIgnoreLinePrefix } = useIgnoreLinePrefixStore();
+  const { ignoreLinePrefixes, addIgnoreLinePrefix } =
+    useIgnoreLinePrefixStore();
 
   const onSubmit = (form: IgnoreLinePrefixFormType) => {
+    if (
+      ignoreLinePrefixes.some(
+        ({ ignoreLinePrefix }) => ignoreLinePrefix === form.ignoreLinePrefix,
+      )
+    ) {
+      setError('ignoreLinePrefix', { message: 'すでに登録されています。' });
+      return;
+    }
     addIgnoreLinePrefix(form.ignoreLinePrefix);
     reset();
   };

@@ -20,7 +20,7 @@ import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefi
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
-import { excludeIgnoreString } from './utils/string';
+import { countCharacters, excludeIgnoreString } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
@@ -33,24 +33,28 @@ const App = () => {
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(true);
   const [text, setText] = useState('');
   const [textCount, setTextCount] = useState(
-    excludeIgnoreString(
-      text,
-      ignoreStrings,
-      ignoreLinePrefixes,
-      isIgnoreSpace,
-      isIgnoreLineBreak,
-    ).length,
-  );
-
-  useEffect(() => {
-    setTextCount(
+    countCharacters(
       excludeIgnoreString(
         text,
         ignoreStrings,
         ignoreLinePrefixes,
         isIgnoreSpace,
         isIgnoreLineBreak,
-      ).length,
+      ),
+    ),
+  );
+
+  useEffect(() => {
+    setTextCount(
+      countCharacters(
+        excludeIgnoreString(
+          text,
+          ignoreStrings,
+          ignoreLinePrefixes,
+          isIgnoreSpace,
+          isIgnoreLineBreak,
+        ),
+      ),
     );
   }, [
     text,
@@ -128,6 +132,11 @@ const App = () => {
           className="flex flex-col gap-y-2"
           legendClassName="text-base font-semibold"
         >
+          <p className="text-sm text-white/65">
+            行頭のスペースやタブは無視して判定します（例:
+            <code className="whitespace-pre">{'「  // メモ」'}</code>
+            も対象）
+          </p>
           <ul className="flex flex-col gap-y-2">
             {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
               <li key={id}>

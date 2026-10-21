@@ -3,7 +3,22 @@ import type { IgnoreLinePrefix, IgnoreString } from '../schemas';
 export const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-export const onlyWhiteSpaceRegex = /^(\s|u3000)+$/;
+export const onlyWhiteSpaceRegex = /^\s+$/;
+
+// 改行以外の空白（半角・全角スペース、タブなど）
+const spaceRegex = /[^\S\n]/g;
+const leadingSpaceRegex = /^[^\S\n]+/;
+
+const graphemeSegmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
+
+// 見た目の 1 文字（書記素）を 1 と数える。絵文字や結合文字も 1 文字になる
+export const countCharacters = (text: string) => {
+  let count = 0;
+  for (const _ of graphemeSegmenter.segment(text)) {
+    count++;
+  }
+  return count;
+};
 
 export const excludeIgnoreString = (
   text: string,
@@ -12,27 +27,29 @@ export const excludeIgnoreString = (
   isIgnoreSpace: boolean,
   isIgnoreLineBreak: boolean,
 ) => {
-  const currentIgnoreStrings = [
-    ...ignoreStrings.map(({ ignoreString }) => ignoreString),
-    ...(isIgnoreSpace ? [' ', '\u3000'] : []),
-    ...(isIgnoreLineBreak ? ['\n'] : []),
+  const ignorePatterns = [
+    ...ignoreStrings.map(
+      ({ ignoreString }) => new RegExp(escapeRegExp(ignoreString), 'g'),
+    ),
+    ...(isIgnoreSpace ? [spaceRegex] : []),
+    ...(isIgnoreLineBreak ? [/\n/g] : []),
   ];
 
+  // 行頭の空白は読み飛ばして判定する（インデントされた行も除外する）
   const textWithoutIgnoreLine = ignoreLinePrefixes.reduce(
     (currentText, { ignoreLinePrefix }) => {
+      const prefix = ignoreLinePrefix.replace(leadingSpaceRegex, '');
       const lines = currentText.split(/\n/);
       return lines
-        .filter((line) => !line.startsWith(ignoreLinePrefix))
+        .filter(
+          (line) => !line.replace(leadingSpaceRegex, '').startsWith(prefix),
+        )
         .join('\n');
     },
     text,
   );
-  const textWithoutIgnoreString = currentIgnoreStrings.reduce(
-    (currentText, string) => {
-      const escapeString = escapeRegExp(string);
-      const regex = new RegExp(escapeString, 'g');
-      return currentText.replaceAll(regex, '');
-    },
+  const textWithoutIgnoreString = ignorePatterns.reduce(
+    (currentText, regex) => currentText.replaceAll(regex, ''),
     textWithoutIgnoreLine,
   );
   return textWithoutIgnoreString;
