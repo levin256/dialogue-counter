@@ -1,5 +1,5 @@
 import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -20,7 +20,7 @@ import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefi
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
 import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
 import { useIgnoreStringStore } from './stores/ignoreStrings';
-import { countCharacters, excludeIgnoreString } from './utils/string';
+import { type CountRule, countText } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
@@ -32,37 +32,17 @@ const App = () => {
   const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(true);
   const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(true);
   const [text, setText] = useState('');
-  const [textCount, setTextCount] = useState(
-    countCharacters(
-      excludeIgnoreString(
-        text,
-        ignoreStrings,
-        ignoreLinePrefixes,
-        isIgnoreSpace,
-        isIgnoreLineBreak,
-      ),
+  // UI の型（id 付き）から、カウントに必要な値だけを取り出す
+  const countRule: CountRule = {
+    ignoreStrings: ignoreStrings.map(({ ignoreString }) => ignoreString),
+    ignoreLinePrefixes: ignoreLinePrefixes.map(
+      ({ ignoreLinePrefix }) => ignoreLinePrefix,
     ),
-  );
-
-  useEffect(() => {
-    setTextCount(
-      countCharacters(
-        excludeIgnoreString(
-          text,
-          ignoreStrings,
-          ignoreLinePrefixes,
-          isIgnoreSpace,
-          isIgnoreLineBreak,
-        ),
-      ),
-    );
-  }, [
-    text,
-    isIgnoreSpace,
-    isIgnoreLineBreak,
-    ignoreStrings,
-    ignoreLinePrefixes,
-  ]);
+    ignoreSpace: isIgnoreSpace,
+    ignoreLineBreak: isIgnoreLineBreak,
+  };
+  // 他の値から計算できるので state にせず、レンダーのたびに計算する
+  const textCount = countText(text, countRule);
 
   useWarnIfUnsavedChanges(text.length > 0);
 

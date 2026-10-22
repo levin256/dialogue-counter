@@ -1,43 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import type { IgnoreLinePrefix, IgnoreString } from '../schemas';
 import {
+  applyCountRule,
+  type CountRule,
   countCharacters,
-  excludeIgnoreString,
+  countText,
   onlyWhiteSpaceRegex,
 } from './string';
 
-const ignoreStrings = (...values: string[]): IgnoreString[] =>
-  values.map((ignoreString, i) => ({ id: `s${i}`, ignoreString }));
+// 指定しなかった項目は「除外しない」にして、ルールを適用する
+const exclude = (text: string, overrides: Partial<CountRule> = {}) =>
+  applyCountRule(text, {
+    ignoreStrings: [],
+    ignoreLinePrefixes: [],
+    ignoreSpace: false,
+    ignoreLineBreak: false,
+    ...overrides,
+  });
 
-const ignoreLinePrefixes = (...values: string[]): IgnoreLinePrefix[] =>
-  values.map((ignoreLinePrefix, i) => ({ id: `p${i}`, ignoreLinePrefix }));
-
-type Options = {
-  strings?: string[];
-  prefixes?: string[];
-  ignoreSpace?: boolean;
-  ignoreLineBreak?: boolean;
-};
-
-// 除外ルールを名前付きで渡せるようにするテスト用のラッパー
-const exclude = (
-  text: string,
-  {
-    strings = [],
-    prefixes = [],
-    ignoreSpace = false,
-    ignoreLineBreak = false,
-  }: Options = {},
-) =>
-  excludeIgnoreString(
-    text,
-    ignoreStrings(...strings),
-    ignoreLinePrefixes(...prefixes),
-    ignoreSpace,
-    ignoreLineBreak,
-  );
-
-describe('excludeIgnoreString', () => {
+describe('applyCountRule', () => {
   it('除外ルールがなければ、テキストをそのまま返す', () => {
     expect(exclude('こんにちは。\n元気？')).toBe('こんにちは。\n元気？');
   });
@@ -45,18 +25,20 @@ describe('excludeIgnoreString', () => {
   describe('除外文字', () => {
     it('登録した文字をすべて取り除く', () => {
       expect(
-        exclude('「はい。」「いいえ。」', { strings: ['「', '」', '。'] }),
+        exclude('「はい。」「いいえ。」', {
+          ignoreStrings: ['「', '」', '。'],
+        }),
       ).toBe('はいいいえ');
     });
 
     it('正規表現の特殊文字もそのままの文字として扱う', () => {
-      expect(exclude('a.b*c(d)', { strings: ['.', '*', '(', ')'] })).toBe(
+      expect(exclude('a.b*c(d)', { ignoreStrings: ['.', '*', '(', ')'] })).toBe(
         'abcd',
       );
     });
 
     it('複数文字の除外文字は、その並びだけを取り除く', () => {
-      expect(exclude('……と…', { strings: ['……'] })).toBe('と…');
+      expect(exclude('……と…', { ignoreStrings: ['……'] })).toBe('と…');
     });
   });
 
@@ -82,24 +64,28 @@ describe('excludeIgnoreString', () => {
 
   describe('除外する行', () => {
     it('指定した文字で始まる行を、改行ごと取り除く', () => {
-      expect(exclude('台詞1\n// メモ\n台詞2', { prefixes: ['//'] })).toBe(
-        '台詞1\n台詞2',
-      );
+      expect(
+        exclude('台詞1\n// メモ\n台詞2', { ignoreLinePrefixes: ['//'] }),
+      ).toBe('台詞1\n台詞2');
     });
 
     it('複数の指定があれば、どれかで始まる行を取り除く', () => {
-      expect(exclude('a\n#b\n//c\nd', { prefixes: ['#', '//'] })).toBe('a\nd');
+      expect(
+        exclude('a\n#b\n//c\nd', { ignoreLinePrefixes: ['#', '//'] }),
+      ).toBe('a\nd');
     });
 
     it('行の途中に指定した文字があっても、行は取り除かない', () => {
-      expect(exclude('台詞 // メモ', { prefixes: ['//'] })).toBe(
+      expect(exclude('台詞 // メモ', { ignoreLinePrefixes: ['//'] })).toBe(
         '台詞 // メモ',
       );
     });
 
     it('除外文字より先に適用される', () => {
       // 除外文字 '/' を先に消していたら、'//' で始まる行は見つからなくなる
-      expect(exclude('a\n//b', { strings: ['/'], prefixes: ['//'] })).toBe('a');
+      expect(
+        exclude('a\n//b', { ignoreStrings: ['/'], ignoreLinePrefixes: ['//'] }),
+      ).toBe('a');
     });
   });
 
@@ -119,28 +105,43 @@ describe('excludeIgnoreString', () => {
   describe('インデントされた行', () => {
     it('行頭の空白（半角・全角スペース、タブ）を読み飛ばして判定する', () => {
       expect(
-        exclude('a\n  // b\n\u3000// c\n\t// d\ne', { prefixes: ['//'] }),
+        exclude('a\n  // b\n\u3000// c\n\t// d\ne', {
+          ignoreLinePrefixes: ['//'],
+        }),
       ).toBe('a\ne');
     });
 
     it('先頭文字の側に空白があっても、同じように判定する', () => {
-      expect(exclude('a\n// b', { prefixes: [' //'] })).toBe('a');
+      expect(exclude('a\n// b', { ignoreLinePrefixes: [' //'] })).toBe('a');
     });
   });
 
   describe('同じ除外文字が複数あるとき', () => {
     it('結果は 1 つのときと変わらない（重複の登録はフォームで弾く）', () => {
-      expect(exclude('a。b', { strings: ['。', '。'] })).toBe('ab');
+      expect(exclude('a。b', { ignoreStrings: ['。', '。'] })).toBe('ab');
     });
   });
 
   describe('複数文字の除外文字', () => {
     it('登録順に適用するので、除外の結果として新しくできた並びも取り除かれる', () => {
       // 'b' を消すと 'ac' ができ、それも消える
-      expect(exclude('abc', { strings: ['b', 'ac'] })).toBe('');
+      expect(exclude('abc', { ignoreStrings: ['b', 'ac'] })).toBe('');
       // 登録順が逆だと、'ac' はまだないので残る
-      expect(exclude('abc', { strings: ['ac', 'b'] })).toBe('ac');
+      expect(exclude('abc', { ignoreStrings: ['ac', 'b'] })).toBe('ac');
     });
+  });
+});
+
+describe('countText', () => {
+  it('ルールを適用したあとの文字数を返す', () => {
+    expect(
+      countText('「はい。」\n// メモ\n😀', {
+        ignoreStrings: ['「', '」', '。'],
+        ignoreLinePrefixes: ['//'],
+        ignoreSpace: true,
+        ignoreLineBreak: true,
+      }),
+    ).toBe(3);
   });
 });
 

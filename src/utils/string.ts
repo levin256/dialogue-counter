@@ -1,5 +1,3 @@
-import type { IgnoreLinePrefix, IgnoreString } from '../schemas';
-
 export const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -20,24 +18,35 @@ export const countCharacters = (text: string) => {
   return count;
 };
 
-export const excludeIgnoreString = (
+// カウントのルール。UI の都合（id など）を持たない、ただの値
+export type CountRule = {
+  ignoreStrings: readonly string[];
+  ignoreLinePrefixes: readonly string[];
+  ignoreSpace: boolean;
+  ignoreLineBreak: boolean;
+};
+
+// ルールに従って、カウントしない部分を取り除いたテキストを返す
+export const applyCountRule = (
   text: string,
-  ignoreStrings: IgnoreString[],
-  ignoreLinePrefixes: IgnoreLinePrefix[],
-  isIgnoreSpace: boolean,
-  isIgnoreLineBreak: boolean,
+  {
+    ignoreStrings,
+    ignoreLinePrefixes,
+    ignoreSpace,
+    ignoreLineBreak,
+  }: CountRule,
 ) => {
   const ignorePatterns = [
     ...ignoreStrings.map(
-      ({ ignoreString }) => new RegExp(escapeRegExp(ignoreString), 'g'),
+      (ignoreString) => new RegExp(escapeRegExp(ignoreString), 'g'),
     ),
-    ...(isIgnoreSpace ? [spaceRegex] : []),
-    ...(isIgnoreLineBreak ? [/\n/g] : []),
+    ...(ignoreSpace ? [spaceRegex] : []),
+    ...(ignoreLineBreak ? [/\n/g] : []),
   ];
 
   // 行頭の空白は読み飛ばして判定する（インデントされた行も除外する）
   const textWithoutIgnoreLine = ignoreLinePrefixes.reduce(
-    (currentText, { ignoreLinePrefix }) => {
+    (currentText, ignoreLinePrefix) => {
       const prefix = ignoreLinePrefix.replace(leadingSpaceRegex, '');
       const lines = currentText.split(/\n/);
       return lines
@@ -54,3 +63,7 @@ export const excludeIgnoreString = (
   );
   return textWithoutIgnoreString;
 };
+
+// テキスト + ルール → 文字数
+export const countText = (text: string, rule: CountRule) =>
+  countCharacters(applyCountRule(text, rule));
