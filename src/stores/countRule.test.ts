@@ -1,45 +1,40 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { stubLocalStorage } from '../test/stubLocalStorage';
+import { describe, expect, it } from 'vitest';
+import { createMemoryStorage } from '../test/createMemoryStorage';
 import { DEFAULT_COUNT_RULE, RuleValue } from '../utils/string';
-
-const loadStore = async () => (await import('./countRule')).useCountRuleStore;
+import { createCountRuleStore } from './countRule';
 
 const saved = (state: unknown) => JSON.stringify({ state, version: 0 });
 
 // ストアの中身のうち、ルールの値だけを取り出す
-const ruleOf = (store: Awaited<ReturnType<typeof loadStore>>) => {
+const ruleOf = (store: ReturnType<typeof createCountRuleStore>) => {
   const { ignoreStrings, ignoreLinePrefixes, ignoreSpace, ignoreLineBreak } =
     store.getState();
   return { ignoreStrings, ignoreLinePrefixes, ignoreSpace, ignoreLineBreak };
 };
 
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
-
-describe('useCountRuleStore', () => {
-  it('保存データがなければ、初期値で始まる', async () => {
-    stubLocalStorage();
-    const store = await loadStore();
+describe('createCountRuleStore', () => {
+  it('保存データがなければ、初期値で始まる', () => {
+    const storage = createMemoryStorage();
+    const store = createCountRuleStore(() => storage);
 
     expect(ruleOf(store)).toEqual(DEFAULT_COUNT_RULE);
   });
 
-  it('正しい保存データを読み込む', async () => {
+  it('正しい保存データを読み込む', () => {
     const rule = {
       ignoreStrings: ['★'],
       ignoreLinePrefixes: ['#'],
       ignoreSpace: false,
       ignoreLineBreak: true,
     };
-    stubLocalStorage({ 'count-rule': saved(rule) });
-    const store = await loadStore();
+    const storage = createMemoryStorage({ 'count-rule': saved(rule) });
+    const store = createCountRuleStore(() => storage);
 
     expect(ruleOf(store)).toEqual(rule);
   });
 
-  it('壊れた保存データなら、ルール全体を初期値にする', async () => {
-    stubLocalStorage({
+  it('壊れた保存データなら、ルール全体を初期値にする', () => {
+    const storage = createMemoryStorage({
       'count-rule': saved({
         ignoreStrings: 'abc',
         ignoreLinePrefixes: ['#'],
@@ -47,14 +42,14 @@ describe('useCountRuleStore', () => {
         ignoreLineBreak: true,
       }),
     });
-    const store = await loadStore();
+    const store = createCountRuleStore(() => storage);
 
     expect(ruleOf(store)).toEqual(DEFAULT_COUNT_RULE);
   });
 
-  it('追加・削除・トグルの変更を保存する', async () => {
-    const storage = stubLocalStorage();
-    const store = await loadStore();
+  it('追加・削除・トグルの変更を保存する', () => {
+    const storage = createMemoryStorage();
+    const store = createCountRuleStore(() => storage);
     const { addIgnoreString, removeIgnoreLinePrefix, setIgnoreSpace } =
       store.getState();
 
@@ -70,9 +65,9 @@ describe('useCountRuleStore', () => {
     });
   });
 
-  it('同じ値は重ねて追加しない', async () => {
-    stubLocalStorage();
-    const store = await loadStore();
+  it('同じ値は重ねて追加しない', () => {
+    const storage = createMemoryStorage();
+    const store = createCountRuleStore(() => storage);
 
     store.getState().addIgnoreString(RuleValue.parse('。'));
 
