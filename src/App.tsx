@@ -18,11 +18,18 @@ import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
 import { RuleValueForm } from './features/dialogueCounter/RuleValueForm';
 import { useCountRuleStore } from './stores/countRule';
+import { useHowToUseStore } from './stores/howToUse';
 import { countText } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const { hasSeen, markAsSeen } = useHowToUseStore();
+  // 自動で開くのは、まだ一度も閉じていないときだけ
+  const [isOpen, setIsOpen] = useState(!hasSeen);
+  const closeHowToUse = () => {
+    setIsOpen(false);
+    markAsSeen();
+  };
   const countRule = useCountRuleStore();
   const {
     ignoreStrings,
@@ -148,7 +155,7 @@ const App = () => {
           />
         </Field>
       </FieldsetGroup>
-      <HowToUseDialog isOpen={isOpen} setIsOpen={setIsOpen} />
+      <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
     </div>
   );
 };
