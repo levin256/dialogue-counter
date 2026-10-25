@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { CountRule, DEFAULT_COUNT_RULE, type RuleValue } from '../utils/string';
 import { migrateLegacyStorage } from './migrateLegacyStorage';
 
@@ -54,6 +54,8 @@ export const useCountRuleStore = create<CountRuleStore>()(
     }),
     {
       ...STORAGE,
+      // 既定は window.localStorage。テストで差し替えられるように、グローバルの localStorage を使う
+      storage: createJSONStorage(() => localStorage),
       // 保存データは検証してから使う。壊れていれば、ルール全体を初期値のままにする
       merge: (saved, current) => {
         const result = CountRule.safeParse(saved);
