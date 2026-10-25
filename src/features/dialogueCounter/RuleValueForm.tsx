@@ -27,6 +27,8 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
     setError,
   } = useForm<RuleValueFormType>({
     resolver: zodResolver(ruleValueFormSchema),
+    // reset() で入力欄を空に戻すために必要（<form> 要素がないので、初期値がないと何も消えない）
+    defaultValues: { value: '' },
   });
 
   const onSubmit = ({ value }: RuleValueFormType) => {
