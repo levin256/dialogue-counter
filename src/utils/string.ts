@@ -1,6 +1,10 @@
 import { z } from 'zod/mini';
 
-/** 正規表現の特殊文字をエスケープして、文字どおりに一致させる。 */
+/**
+ * 正規表現の特殊文字をエスケープして、文字どおりに一致させる。
+ *
+ * @param string 正規表現に埋め込みたい文字列
+ */
 export const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -15,6 +19,8 @@ const graphemeSegmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
 
 /**
  * 文字数を数える。見た目の1文字（書記素）を1と数えるので、絵文字や結合文字も1文字になる。
+ *
+ * @param text 数えるテキスト
  *
  * @example
  * countCharacters('👍🏽が') // => 2
@@ -82,6 +88,7 @@ export const DEFAULT_COUNT_RULE: CountRule = {
  * ルールに従って、カウントしない部分を取り除いたテキストを返す。
  * 行の除外 → 除外文字 → 空白 → 改行 の順に適用する。
  *
+ * @param text 元のテキスト
  * @param rule 何をカウントしないか
  */
 export const applyCountRule = (
@@ -124,6 +131,7 @@ export const applyCountRule = (
 /**
  * テキストの文字数を、ルールに従って数える。
  *
+ * @param text 数えるテキスト
  * @param rule 何をカウントしないか
  *
  * @example

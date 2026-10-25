@@ -2,6 +2,8 @@
  * テスト用の、メモリ上で動く localStorage の代わり。
  * 中身は `map` で直接確かめられる。
  *
+ * @param entries 最初から入れておく値（キー → 保存する文字列）
+ *
  * @example
  * const storage = createMemoryStorage({ key: 'value' });
  * storage.setItem('other', '1');
