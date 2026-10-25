@@ -1,4 +1,4 @@
-import type { CountRule } from '../utils/string';
+import { type CountRule, RuleValue } from '../utils/string';
 
 type KeyValueStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
@@ -23,9 +23,11 @@ const readLegacyList = (
   try {
     const items: unknown = JSON.parse(raw)?.state?.[list];
     if (!Array.isArray(items)) return undefined;
-    const values = items
-      .map((item) => item?.[field])
-      .filter((value): value is string => typeof value === 'string');
+    // 登録できない値（空・空白だけ、文字列以外）は捨てる
+    const values = items.flatMap((item) => {
+      const result = RuleValue.safeParse(item?.[field]);
+      return result.success ? [result.data] : [];
+    });
     // 重複を弾く前に登録されたデータもあるので、重複を除く
     return [...new Set(values)];
   } catch {

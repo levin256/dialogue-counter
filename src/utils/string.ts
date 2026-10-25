@@ -1,3 +1,5 @@
+import { z } from 'zod/mini';
+
 /** 正規表現の特殊文字をエスケープして、文字どおりに一致させる。 */
 export const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -25,12 +27,37 @@ export const countCharacters = (text: string) => {
   return count;
 };
 
+/** 値を登録できない理由のコード。文言は画面で決める。 */
+export const RuleValueError = z.enum(['empty', 'whitespace', 'duplicate']);
+export type RuleValueError = z.infer<typeof RuleValueError>;
+
+/**
+ * カウントしない文字・行の先頭文字として登録できる値（値オブジェクト）。
+ * 空・空白だけの文字列は、この型にならない。
+ * 失敗したときのメッセージは {@link RuleValueError} のコード。
+ *
+ * @example
+ * RuleValue.parse('。') // => '。'（RuleValue 型）
+ * RuleValue.safeParse(' ').error?.issues[0].message // => 'whitespace'
+ */
+export const RuleValue = z
+  .string()
+  .check(
+    z.minLength(1, 'empty' satisfies RuleValueError),
+    z.refine(
+      (value) => !onlyWhiteSpaceRegex.test(value),
+      'whitespace' satisfies RuleValueError,
+    ),
+  )
+  .brand<'RuleValue'>();
+export type RuleValue = z.infer<typeof RuleValue>;
+
 /** 文字数を数えるときのルール。UI の都合（id など）を持たない、ただの値。 */
 export type CountRule = {
   /** カウントしない文字（列）。登録順に取り除く */
-  ignoreStrings: readonly string[];
+  ignoreStrings: readonly RuleValue[];
   /** この文字で始まる行はカウントしない。行頭の空白は読み飛ばして判定する */
-  ignoreLinePrefixes: readonly string[];
+  ignoreLinePrefixes: readonly RuleValue[];
   /** 改行以外の空白（半角・全角スペース、タブなど）をカウントしない */
   ignoreSpace: boolean;
   /** 改行をカウントしない */
@@ -39,8 +66,10 @@ export type CountRule = {
 
 /** 初めて使うときのルール。 */
 export const DEFAULT_COUNT_RULE: CountRule = {
-  ignoreStrings: ['、', '。', '「', '」', '…', '！', '？'],
-  ignoreLinePrefixes: ['//'],
+  ignoreStrings: ['、', '。', '「', '」', '…', '！', '？'].map((value) =>
+    RuleValue.parse(value),
+  ),
+  ignoreLinePrefixes: [RuleValue.parse('//')],
   ignoreSpace: true,
   ignoreLineBreak: true,
 };

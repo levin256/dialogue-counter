@@ -1,13 +1,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { type CountRule, DEFAULT_COUNT_RULE } from '../utils/string';
+import {
+  type CountRule,
+  DEFAULT_COUNT_RULE,
+  type RuleValue,
+} from '../utils/string';
 import { migrateLegacyStorage } from './migrateLegacyStorage';
 
 type CountRuleStore = CountRule & {
-  addIgnoreString: (value: string) => void;
-  removeIgnoreString: (value: string) => void;
-  addIgnoreLinePrefix: (value: string) => void;
-  removeIgnoreLinePrefix: (value: string) => void;
+  addIgnoreString: (value: RuleValue) => void;
+  removeIgnoreString: (value: RuleValue) => void;
+  addIgnoreLinePrefix: (value: RuleValue) => void;
+  removeIgnoreLinePrefix: (value: RuleValue) => void;
   setIgnoreSpace: (value: boolean) => void;
   setIgnoreLineBreak: (value: boolean) => void;
 };
@@ -17,10 +21,10 @@ const STORAGE = { name: 'count-rule', version: 0 };
 
 migrateLegacyStorage(localStorage, STORAGE, DEFAULT_COUNT_RULE);
 
-const addUnique = (list: readonly string[], value: string) =>
+const addUnique = (list: readonly RuleValue[], value: RuleValue) =>
   list.includes(value) ? list : [...list, value];
 
-const remove = (list: readonly string[], value: string) =>
+const remove = (list: readonly RuleValue[], value: RuleValue) =>
   list.filter((item) => item !== value);
 
 /**

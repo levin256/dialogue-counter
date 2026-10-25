@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { createMemoryStorage } from '../test/createMemoryStorage';
-import type { CountRule } from '../utils/string';
+import { type CountRule, RuleValue } from '../utils/string';
 import { migrateLegacyStorage } from './migrateLegacyStorage';
 
 const defaults: CountRule = {
-  ignoreStrings: ['。'],
-  ignoreLinePrefixes: ['//'],
+  ignoreStrings: [RuleValue.parse('。')],
+  ignoreLinePrefixes: [RuleValue.parse('//')],
   ignoreSpace: true,
   ignoreLineBreak: true,
 };
@@ -85,6 +85,26 @@ describe('migrateLegacyStorage', () => {
     migrateLegacyStorage(storage, target, defaults);
 
     expect(savedState(storage).state.ignoreStrings).toEqual(['。', '、']);
+  });
+
+  it('登録できない値（空・空白だけ・文字列以外）は捨てる', () => {
+    const storage = createStorage({
+      'ignore-strings': {
+        state: {
+          ignoreStrings: [
+            { id: 's0', ignoreString: '' },
+            { id: 's1', ignoreString: '\u3000' },
+            { id: 's2', ignoreString: 1 },
+            { id: 's3', ignoreString: '。' },
+          ],
+        },
+        version: 0,
+      },
+    });
+
+    migrateLegacyStorage(storage, target, defaults);
+
+    expect(savedState(storage).state.ignoreStrings).toEqual(['。']);
   });
 
   it('空の一覧も、そのまま空として引き継ぐ', () => {

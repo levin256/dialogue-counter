@@ -1,20 +1,34 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyCountRule,
-  type CountRule,
   countCharacters,
   countText,
   onlyWhiteSpaceRegex,
+  RuleValue,
+  RuleValueError,
 } from './string';
 
+type Overrides = {
+  ignoreStrings?: string[];
+  ignoreLinePrefixes?: string[];
+  ignoreSpace?: boolean;
+  ignoreLineBreak?: boolean;
+};
+
+const toRuleValues = (values: string[] = []) =>
+  values.map((value) => RuleValue.parse(value));
+
 // 指定しなかった項目は「除外しない」にして、ルールを適用する
-const exclude = (text: string, overrides: Partial<CountRule> = {}) =>
+const exclude = (
+  text: string,
+  { ignoreStrings, ignoreLinePrefixes, ...flags }: Overrides = {},
+) =>
   applyCountRule(text, {
-    ignoreStrings: [],
-    ignoreLinePrefixes: [],
+    ignoreStrings: toRuleValues(ignoreStrings),
+    ignoreLinePrefixes: toRuleValues(ignoreLinePrefixes),
     ignoreSpace: false,
     ignoreLineBreak: false,
-    ...overrides,
+    ...flags,
   });
 
 describe('applyCountRule', () => {
@@ -136,8 +150,8 @@ describe('countText', () => {
   it('ルールを適用したあとの文字数を返す', () => {
     expect(
       countText('「はい。」\n// メモ\n😀', {
-        ignoreStrings: ['「', '」', '。'],
-        ignoreLinePrefixes: ['//'],
+        ignoreStrings: toRuleValues(['「', '」', '。']),
+        ignoreLinePrefixes: toRuleValues(['//']),
         ignoreSpace: true,
         ignoreLineBreak: true,
       }),
@@ -179,5 +193,27 @@ describe('onlyWhiteSpaceRegex', () => {
 
   it('文字列 "u3000" にはマッチしない', () => {
     expect(onlyWhiteSpaceRegex.test('u3000')).toBe(false);
+  });
+});
+
+describe('RuleValue', () => {
+  it.each(['。', '//', ' //', '……'])('%j は登録できる', (value) => {
+    expect(RuleValue.safeParse(value).success).toBe(true);
+  });
+
+  it.each([
+    ['空文字', '', 'empty'],
+    ['空白だけ', ' \u3000\t', 'whitespace'],
+  ])('%s は登録できず、理由のコードを返す', (_, value, code) => {
+    expect(RuleValue.safeParse(value).error?.issues[0].message).toBe(code);
+  });
+});
+
+describe('RuleValueError', () => {
+  it('理由のコードだけを受け付ける', () => {
+    expect(RuleValueError.safeParse('empty').success).toBe(true);
+    expect(RuleValueError.safeParse('文字を入力してください。').success).toBe(
+      false,
+    );
   });
 });
