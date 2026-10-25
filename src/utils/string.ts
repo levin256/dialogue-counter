@@ -1,6 +1,8 @@
+/** 正規表現の特殊文字をエスケープして、文字どおりに一致させる。 */
 export const escapeRegExp = (string: string) =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/** 空白（改行を含む）だけでできた文字列に一致する。 */
 export const onlyWhiteSpaceRegex = /^\s+$/;
 
 // 改行以外の空白（半角・全角スペース、タブなど）
@@ -9,7 +11,12 @@ const leadingSpaceRegex = /^[^\S\n]+/;
 
 const graphemeSegmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
 
-// 見た目の 1 文字（書記素）を 1 と数える。絵文字や結合文字も 1 文字になる
+/**
+ * 文字数を数える。見た目の1文字（書記素）を1と数えるので、絵文字や結合文字も1文字になる。
+ *
+ * @example
+ * countCharacters('👍🏽が') // => 2
+ */
 export const countCharacters = (text: string) => {
   let count = 0;
   for (const _ of graphemeSegmenter.segment(text)) {
@@ -18,15 +25,30 @@ export const countCharacters = (text: string) => {
   return count;
 };
 
-// カウントのルール。UI の都合（id など）を持たない、ただの値
+/** 文字数を数えるときのルール。UI の都合（id など）を持たない、ただの値。 */
 export type CountRule = {
+  /** カウントしない文字（列）。登録順に取り除く */
   ignoreStrings: readonly string[];
+  /** この文字で始まる行はカウントしない。行頭の空白は読み飛ばして判定する */
   ignoreLinePrefixes: readonly string[];
+  /** 改行以外の空白（半角・全角スペース、タブなど）をカウントしない */
   ignoreSpace: boolean;
+  /** 改行をカウントしない */
   ignoreLineBreak: boolean;
 };
 
-// ルールに従って、カウントしない部分を取り除いたテキストを返す
+/** 初めて使うときのルール。 */
+export const DEFAULT_COUNT_RULE: CountRule = {
+  ignoreStrings: ['、', '。', '「', '」', '…', '！', '？'],
+  ignoreLinePrefixes: ['//'],
+  ignoreSpace: true,
+  ignoreLineBreak: true,
+};
+
+/**
+ * ルールに従って、カウントしない部分を取り除いたテキストを返す。
+ * 行の除外 → 除外文字 → 空白 → 改行 の順に適用する。
+ */
 export const applyCountRule = (
   text: string,
   {
@@ -64,6 +86,11 @@ export const applyCountRule = (
   return textWithoutIgnoreString;
 };
 
-// テキスト + ルール → 文字数
+/**
+ * テキストの文字数を、ルールに従って数える。
+ *
+ * @example
+ * countText('「はい。」', DEFAULT_COUNT_RULE) // => 2
+ */
 export const countText = (text: string, rule: CountRule) =>
   countCharacters(applyCountRule(text, rule));
