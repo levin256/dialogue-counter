@@ -16,8 +16,7 @@ import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
 import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
-import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
-import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
+import { RuleValueForm } from './features/dialogueCounter/RuleValueForm';
 import { useCountRuleStore } from './stores/countRule';
 import { countText } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
@@ -30,7 +29,9 @@ const App = () => {
     ignoreLinePrefixes,
     ignoreSpace,
     ignoreLineBreak,
+    addIgnoreString,
     removeIgnoreString,
+    addIgnoreLinePrefix,
     removeIgnoreLinePrefix,
     setIgnoreSpace,
     setIgnoreLineBreak,
@@ -95,7 +96,7 @@ const App = () => {
               </li>
             ))}
           </ul>
-          <IgnoreStringForm />
+          <RuleValueForm registered={ignoreStrings} onAdd={addIgnoreString} />
         </FieldsetGroup>
 
         <Divider />
@@ -125,7 +126,10 @@ const App = () => {
               </li>
             ))}
           </ul>
-          <IgnoreLinePrefixForm />
+          <RuleValueForm
+            registered={ignoreLinePrefixes}
+            onAdd={addIgnoreLinePrefix}
+          />
         </FieldsetGroup>
       </Fieldset>
 
