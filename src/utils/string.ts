@@ -48,6 +48,8 @@ export const DEFAULT_COUNT_RULE: CountRule = {
 /**
  * ルールに従って、カウントしない部分を取り除いたテキストを返す。
  * 行の除外 → 除外文字 → 空白 → 改行 の順に適用する。
+ *
+ * @param rule 何をカウントしないか
  */
 export const applyCountRule = (
   text: string,
@@ -88,6 +90,8 @@ export const applyCountRule = (
 
 /**
  * テキストの文字数を、ルールに従って数える。
+ *
+ * @param rule 何をカウントしないか
  *
  * @example
  * countText('「はい。」', DEFAULT_COUNT_RULE) // => 2

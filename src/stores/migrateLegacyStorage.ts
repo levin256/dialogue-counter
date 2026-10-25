@@ -39,6 +39,10 @@ const readLegacyList = (
  * 新しいキーにまだ何もなければ、旧キーから文字列だけを取り出して（重複は除く）
  * 新しい形式で書き込み、旧キーを消す。旧キーがない・読めないときは、その項目に `defaults` を使う。
  * persist の `migrate` は同じキーの中でしか使えないため、ストアを作る前に呼ぶ。
+ *
+ * @param storage 読み書きするストレージ（本番は localStorage、テストではメモリ上のもの）
+ * @param target 移行先のキーと、保存形式のバージョン
+ * @param defaults 旧データがない・読めない項目に使う値
  */
 export const migrateLegacyStorage = (
   storage: KeyValueStorage,
