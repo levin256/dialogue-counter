@@ -6,7 +6,7 @@ import {
   type IgnoreStringForm as IgnoreStringFormType,
   ignoreStringFormSchema,
 } from '../../schemas';
-import { useIgnoreStringStore } from '../../stores/ignoreStrings';
+import { useCountRuleStore } from '../../stores/countRule';
 
 export const IgnoreStringForm = () => {
   const {
@@ -18,14 +18,10 @@ export const IgnoreStringForm = () => {
   } = useForm<IgnoreStringFormType>({
     resolver: zodResolver(ignoreStringFormSchema),
   });
-  const { ignoreStrings, addIgnoreString } = useIgnoreStringStore();
+  const { ignoreStrings, addIgnoreString } = useCountRuleStore();
 
   const onSubmit = (form: IgnoreStringFormType) => {
-    if (
-      ignoreStrings.some(
-        ({ ignoreString }) => ignoreString === form.ignoreString,
-      )
-    ) {
+    if (ignoreStrings.includes(form.ignoreString)) {
       setError('ignoreString', { message: 'すでに登録されています。' });
       return;
     }

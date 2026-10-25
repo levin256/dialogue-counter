@@ -18,29 +18,25 @@ import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
 import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
 import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
-import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
-import { useIgnoreStringStore } from './stores/ignoreStrings';
-import { type CountRule, countText } from './utils/string';
+import { useCountRuleStore } from './stores/countRule';
+import { countText } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
-  const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
-    useIgnoreLinePrefixStore();
+  const countRule = useCountRuleStore();
+  const {
+    ignoreStrings,
+    ignoreLinePrefixes,
+    ignoreSpace,
+    ignoreLineBreak,
+    removeIgnoreString,
+    removeIgnoreLinePrefix,
+    setIgnoreSpace,
+    setIgnoreLineBreak,
+  } = countRule;
 
-  const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(true);
-  const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(true);
   const [text, setText] = useState('');
-  // UI の型（id 付き）から、カウントに必要な値だけを取り出す
-  const countRule: CountRule = {
-    ignoreStrings: ignoreStrings.map(({ ignoreString }) => ignoreString),
-    ignoreLinePrefixes: ignoreLinePrefixes.map(
-      ({ ignoreLinePrefix }) => ignoreLinePrefix,
-    ),
-    ignoreSpace: isIgnoreSpace,
-    ignoreLineBreak: isIgnoreLineBreak,
-  };
   // 他の値から計算できるので state にせず、レンダーのたびに計算する
   const textCount = countText(text, countRule);
 
@@ -69,14 +65,11 @@ const App = () => {
         >
           <Field className="flex items-center gap-x-3">
             <Label> 空白をカウントしない </Label>
-            <Toggle checked={isIgnoreSpace} onChange={setIsIgnoreSpace} />
+            <Toggle checked={ignoreSpace} onChange={setIgnoreSpace} />
           </Field>
           <Field className="flex items-center gap-x-3">
             <Label> 改行をカウントしない </Label>
-            <Toggle
-              checked={isIgnoreLineBreak}
-              onChange={setIsIgnoreLineBreak}
-            />
+            <Toggle checked={ignoreLineBreak} onChange={setIgnoreLineBreak} />
           </Field>
         </FieldsetGroup>
 
@@ -88,14 +81,14 @@ const App = () => {
           legendClassName="text-base font-semibold"
         >
           <ul className="flex flex-col gap-y-2">
-            {ignoreStrings.map(({ id, ignoreString }) => (
-              <li key={id}>
+            {ignoreStrings.map((ignoreString) => (
+              <li key={ignoreString}>
                 <CodeLabelWithButton
                   className="flex w-60"
                   codeLabelProps={{ label: ignoreString }}
                   buttonProps={{
                     icon: faTrash,
-                    onClick: () => removeIgnoreString(id),
+                    onClick: () => removeIgnoreString(ignoreString),
                     isDanger: true,
                   }}
                 />
@@ -118,14 +111,14 @@ const App = () => {
             も対象）
           </p>
           <ul className="flex flex-col gap-y-2">
-            {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
-              <li key={id}>
+            {ignoreLinePrefixes.map((ignoreLinePrefix) => (
+              <li key={ignoreLinePrefix}>
                 <CodeLabelWithButton
                   className="flex w-60"
                   codeLabelProps={{ label: ignoreLinePrefix }}
                   buttonProps={{
                     icon: faTrash,
-                    onClick: () => removeIgnoreLinePrefix(id),
+                    onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
                     isDanger: true,
                   }}
                 />

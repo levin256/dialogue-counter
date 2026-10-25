@@ -6,7 +6,7 @@ import {
   type IgnoreLinePrefixForm as IgnoreLinePrefixFormType,
   ignoreLinePrefixFormSchema,
 } from '../../schemas';
-import { useIgnoreLinePrefixStore } from '../../stores/ignoreLinePrefixes';
+import { useCountRuleStore } from '../../stores/countRule';
 
 export const IgnoreLinePrefixForm = () => {
   const {
@@ -18,15 +18,10 @@ export const IgnoreLinePrefixForm = () => {
   } = useForm<IgnoreLinePrefixFormType>({
     resolver: zodResolver(ignoreLinePrefixFormSchema),
   });
-  const { ignoreLinePrefixes, addIgnoreLinePrefix } =
-    useIgnoreLinePrefixStore();
+  const { ignoreLinePrefixes, addIgnoreLinePrefix } = useCountRuleStore();
 
   const onSubmit = (form: IgnoreLinePrefixFormType) => {
-    if (
-      ignoreLinePrefixes.some(
-        ({ ignoreLinePrefix }) => ignoreLinePrefix === form.ignoreLinePrefix,
-      )
-    ) {
+    if (ignoreLinePrefixes.includes(form.ignoreLinePrefix)) {
       setError('ignoreLinePrefix', { message: 'すでに登録されています。' });
       return;
     }
