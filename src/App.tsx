@@ -1,5 +1,5 @@
 import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -16,53 +16,37 @@ import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
 import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
-import { IgnoreLinePrefixForm } from './features/dialogueCounter/IgnoreLinePrefixForm';
-import { IgnoreStringForm } from './features/dialogueCounter/IgnoreStringForm';
-import { useIgnoreLinePrefixStore } from './stores/ignoreLinePrefixes';
-import { useIgnoreStringStore } from './stores/ignoreStrings';
-import { countCharacters, excludeIgnoreString } from './utils/string';
+import { RuleValueForm } from './features/dialogueCounter/RuleValueForm';
+import { useCountRuleStore } from './stores/countRule';
+import { useHowToUseStore } from './stores/howToUse';
+import { countText } from './utils/string';
 import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
 
 const App = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
-  const { ignoreStrings, removeIgnoreString } = useIgnoreStringStore();
-  const { ignoreLinePrefixes, removeIgnoreLinePrefix } =
-    useIgnoreLinePrefixStore();
-
-  const [isIgnoreSpace, setIsIgnoreSpace] = useState<boolean>(true);
-  const [isIgnoreLineBreak, setIsIgnoreLineBreak] = useState<boolean>(true);
-  const [text, setText] = useState('');
-  const [textCount, setTextCount] = useState(
-    countCharacters(
-      excludeIgnoreString(
-        text,
-        ignoreStrings,
-        ignoreLinePrefixes,
-        isIgnoreSpace,
-        isIgnoreLineBreak,
-      ),
-    ),
-  );
-
-  useEffect(() => {
-    setTextCount(
-      countCharacters(
-        excludeIgnoreString(
-          text,
-          ignoreStrings,
-          ignoreLinePrefixes,
-          isIgnoreSpace,
-          isIgnoreLineBreak,
-        ),
-      ),
-    );
-  }, [
-    text,
-    isIgnoreSpace,
-    isIgnoreLineBreak,
+  const { hasSeen, markAsSeen } = useHowToUseStore();
+  // 自動で開くのは、まだ一度も閉じていないときだけ
+  const [isOpen, setIsOpen] = useState(!hasSeen);
+  const closeHowToUse = () => {
+    setIsOpen(false);
+    markAsSeen();
+  };
+  const countRule = useCountRuleStore();
+  const {
     ignoreStrings,
     ignoreLinePrefixes,
-  ]);
+    ignoreSpace,
+    ignoreLineBreak,
+    addIgnoreString,
+    removeIgnoreString,
+    addIgnoreLinePrefix,
+    removeIgnoreLinePrefix,
+    setIgnoreSpace,
+    setIgnoreLineBreak,
+  } = countRule;
+
+  const [text, setText] = useState('');
+  // 他の値から計算できるので state にせず、レンダーのたびに計算する
+  const textCount = countText(text, countRule);
 
   useWarnIfUnsavedChanges(text.length > 0);
 
@@ -89,14 +73,11 @@ const App = () => {
         >
           <Field className="flex items-center gap-x-3">
             <Label> 空白をカウントしない </Label>
-            <Toggle checked={isIgnoreSpace} onChange={setIsIgnoreSpace} />
+            <Toggle checked={ignoreSpace} onChange={setIgnoreSpace} />
           </Field>
           <Field className="flex items-center gap-x-3">
             <Label> 改行をカウントしない </Label>
-            <Toggle
-              checked={isIgnoreLineBreak}
-              onChange={setIsIgnoreLineBreak}
-            />
+            <Toggle checked={ignoreLineBreak} onChange={setIgnoreLineBreak} />
           </Field>
         </FieldsetGroup>
 
@@ -108,21 +89,21 @@ const App = () => {
           legendClassName="text-base font-semibold"
         >
           <ul className="flex flex-col gap-y-2">
-            {ignoreStrings.map(({ id, ignoreString }) => (
-              <li key={id}>
+            {ignoreStrings.map((ignoreString) => (
+              <li key={ignoreString}>
                 <CodeLabelWithButton
                   className="flex w-60"
                   codeLabelProps={{ label: ignoreString }}
                   buttonProps={{
                     icon: faTrash,
-                    onClick: () => removeIgnoreString(id),
+                    onClick: () => removeIgnoreString(ignoreString),
                     isDanger: true,
                   }}
                 />
               </li>
             ))}
           </ul>
-          <IgnoreStringForm />
+          <RuleValueForm registered={ignoreStrings} onAdd={addIgnoreString} />
         </FieldsetGroup>
 
         <Divider />
@@ -138,21 +119,24 @@ const App = () => {
             も対象）
           </p>
           <ul className="flex flex-col gap-y-2">
-            {ignoreLinePrefixes.map(({ id, ignoreLinePrefix }) => (
-              <li key={id}>
+            {ignoreLinePrefixes.map((ignoreLinePrefix) => (
+              <li key={ignoreLinePrefix}>
                 <CodeLabelWithButton
                   className="flex w-60"
                   codeLabelProps={{ label: ignoreLinePrefix }}
                   buttonProps={{
                     icon: faTrash,
-                    onClick: () => removeIgnoreLinePrefix(id),
+                    onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
                     isDanger: true,
                   }}
                 />
               </li>
             ))}
           </ul>
-          <IgnoreLinePrefixForm />
+          <RuleValueForm
+            registered={ignoreLinePrefixes}
+            onAdd={addIgnoreLinePrefix}
+          />
         </FieldsetGroup>
       </Fieldset>
 
@@ -171,7 +155,7 @@ const App = () => {
           />
         </Field>
       </FieldsetGroup>
-      <HowToUseDialog isOpen={isOpen} setIsOpen={setIsOpen} />
+      <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
     </div>
   );
 };

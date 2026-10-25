@@ -9,20 +9,16 @@ import { LabelButton } from './LabelButton';
 
 type DialogProps = {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  onClose: () => void;
 };
 
-const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, setIsOpen }) => {
-  const close = async () => {
-    setIsOpen(false);
-  };
-
+const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
   return (
     <Dialog
       open={isOpen}
       as="div"
       className="relative z-10 focus:outline-none"
-      onClose={close}
+      onClose={onClose}
     >
       <DialogBackdrop className="fixed inset-0 bg-black/60" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -62,11 +58,14 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, setIsOpen }) => {
               <br />
               行頭のスペースやタブは無視して判定するので、インデントされた行も対象になります。
             </p>
+            <p className="mt-4 text-sm text-white/65">
+              この説明は、設定の横にある「?」ボタンからいつでも開けます。
+            </p>
             <div className="mt-3 flex justify-end">
               <LabelButton
                 label="はじめる"
                 className="inline-flex items-center px-3 py-1.5 font-semibold text-sm/6"
-                onClick={close}
+                onClick={onClose}
               />
             </div>
           </DialogPanel>
