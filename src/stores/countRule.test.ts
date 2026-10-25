@@ -80,16 +80,4 @@ describe('useCountRuleStore', () => {
       DEFAULT_COUNT_RULE.ignoreStrings,
     );
   });
-
-  it('統合前のキーのデータがあれば、移行して読み込む', async () => {
-    const storage = stubLocalStorage({
-      'ignore-strings': saved({
-        ignoreStrings: [{ id: 's0', ignoreString: '★' }],
-      }),
-    });
-    const store = await loadStore();
-
-    expect(store.getState().ignoreStrings).toEqual(['★']);
-    expect(storage.map.has('ignore-strings')).toBe(false);
-  });
 });

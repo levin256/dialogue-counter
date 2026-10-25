@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { CountRule, DEFAULT_COUNT_RULE, type RuleValue } from '../utils/string';
-import { migrateLegacyStorage } from './migrateLegacyStorage';
 
 type CountRuleStore = CountRule & {
   addIgnoreString: (value: RuleValue) => void;
@@ -15,8 +14,6 @@ type CountRuleStore = CountRule & {
 // 保存形式を変えるときは version を上げ、persist の migrate で古い形式を変換する
 const STORAGE = { name: 'count-rule', version: 0 };
 
-migrateLegacyStorage(localStorage, STORAGE, DEFAULT_COUNT_RULE);
-
 const addUnique = (list: readonly RuleValue[], value: RuleValue) =>
   list.includes(value) ? list : [...list, value];
 
@@ -27,7 +24,6 @@ const remove = (list: readonly RuleValue[], value: RuleValue) =>
  * カウントルール（除外文字・行の先頭文字・空白・改行）と、その操作を持つストア。
  *
  * localStorage の `count-rule` に、ルールの値だけを保存する。
- * 統合前のキー（`ignore-strings` / `ignore-line-prefixes`）のデータは、初回に移行する。
  * 除外文字と行の先頭文字は、同じ値を重ねて登録しない。
  * 保存データが壊れていたら、ルール全体を初期値に戻す。
  */
