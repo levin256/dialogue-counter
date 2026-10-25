@@ -52,17 +52,21 @@ export const RuleValue = z
   .brand<'RuleValue'>();
 export type RuleValue = z.infer<typeof RuleValue>;
 
-/** 文字数を数えるときのルール。UI の都合（id など）を持たない、ただの値。 */
-export type CountRule = {
+/**
+ * 文字数を数えるときのルール。UI の都合（id など）を持たない、ただの値。
+ * 保存データのように、外から来た値は {@link CountRule}.safeParse で検証してから使う。
+ */
+export const CountRule = z.object({
   /** カウントしない文字（列）。登録順に取り除く */
-  ignoreStrings: readonly RuleValue[];
+  ignoreStrings: z.readonly(z.array(RuleValue)),
   /** この文字で始まる行はカウントしない。行頭の空白は読み飛ばして判定する */
-  ignoreLinePrefixes: readonly RuleValue[];
+  ignoreLinePrefixes: z.readonly(z.array(RuleValue)),
   /** 改行以外の空白（半角・全角スペース、タブなど）をカウントしない */
-  ignoreSpace: boolean;
+  ignoreSpace: z.boolean(),
   /** 改行をカウントしない */
-  ignoreLineBreak: boolean;
-};
+  ignoreLineBreak: z.boolean(),
+});
+export type CountRule = z.infer<typeof CountRule>;
 
 /** 初めて使うときのルール。 */
 export const DEFAULT_COUNT_RULE: CountRule = {

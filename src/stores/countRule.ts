@@ -1,10 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {
-  type CountRule,
-  DEFAULT_COUNT_RULE,
-  type RuleValue,
-} from '../utils/string';
+import { CountRule, DEFAULT_COUNT_RULE, type RuleValue } from '../utils/string';
 import { migrateLegacyStorage } from './migrateLegacyStorage';
 
 type CountRuleStore = CountRule & {
@@ -33,6 +29,7 @@ const remove = (list: readonly RuleValue[], value: RuleValue) =>
  * localStorage の `count-rule` に、ルールの値だけを保存する。
  * 統合前のキー（`ignore-strings` / `ignore-line-prefixes`）のデータは、初回に移行する。
  * 除外文字と行の先頭文字は、同じ値を重ねて登録しない。
+ * 保存データが壊れていたら、ルール全体を初期値に戻す。
  */
 export const useCountRuleStore = create<CountRuleStore>()(
   persist(
@@ -57,6 +54,11 @@ export const useCountRuleStore = create<CountRuleStore>()(
     }),
     {
       ...STORAGE,
+      // 保存データは検証してから使う。壊れていれば、ルール全体を初期値のままにする
+      merge: (saved, current) => {
+        const result = CountRule.safeParse(saved);
+        return result.success ? { ...current, ...result.data } : current;
+      },
       // ストアに値が増えても、ルール以外は保存しない
       partialize: ({
         ignoreStrings,

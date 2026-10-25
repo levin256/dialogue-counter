@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyCountRule,
+  CountRule,
   countCharacters,
   countText,
   onlyWhiteSpaceRegex,
@@ -215,5 +216,27 @@ describe('RuleValueError', () => {
     expect(RuleValueError.safeParse('文字を入力してください。').success).toBe(
       false,
     );
+  });
+});
+
+describe('CountRule', () => {
+  const valid = {
+    ignoreStrings: ['。'],
+    ignoreLinePrefixes: ['//'],
+    ignoreSpace: true,
+    ignoreLineBreak: false,
+  };
+
+  it('正しい形の値を受け付ける', () => {
+    expect(CountRule.safeParse(valid).success).toBe(true);
+  });
+
+  it.each([
+    ['一覧が配列でない', { ...valid, ignoreStrings: 'abc' }],
+    ['一覧に空文字がある', { ...valid, ignoreLinePrefixes: [''] }],
+    ['トグルが boolean でない', { ...valid, ignoreSpace: 'yes' }],
+    ['項目が足りない', { ignoreStrings: ['。'] }],
+  ])('%s値は受け付けない', (_, value) => {
+    expect(CountRule.safeParse(value).success).toBe(false);
   });
 });
