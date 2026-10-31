@@ -1,6 +1,4 @@
 import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import '../App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
@@ -10,6 +8,7 @@ import {
   Legend,
   Textarea,
 } from '@headlessui/react';
+import { useState } from 'react';
 import { CodeLabelWithButton } from '../components/ui/CodeLabelWithButton';
 import { Divider } from '../components/ui/Divider';
 import { FieldsetGroup } from '../components/ui/FieldsetGroup';
