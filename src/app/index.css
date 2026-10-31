@@ -25,6 +25,10 @@
   --color-input: var(--color-neutral-600);
   /* 区切り線 */
   --color-border: var(--color-neutral-600);
+
+  /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
+  --color-primary: var(--color-teal-700);
+  --color-primary-foreground: rgb(255 255 255 / 0.87);
 }
 
 :root {

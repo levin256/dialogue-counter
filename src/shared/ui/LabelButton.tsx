@@ -14,7 +14,7 @@ export const LabelButton = ({
   return (
     <Button
       onClick={onClick}
-      className={`rounded-md bg-teal-700 hover:brightness-80 ${className}`}
+      className={`rounded-md bg-primary text-primary-foreground hover:brightness-80 ${className}`}
     >
       {label}
     </Button>

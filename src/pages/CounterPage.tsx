@@ -63,7 +63,7 @@ const CounterPage = () => {
             <FontAwesomeIcon
               icon={faQuestionCircle}
               widthAuto
-              className="text-md text-teal-600"
+              className="text-md text-primary"
             />
           </Button>
         </div>
