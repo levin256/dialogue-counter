@@ -4,12 +4,17 @@
   --font-app-default:
     "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --default-font-family: var(--font-app-default);
+
+  /* 色の名前は shadcn/ui に合わせる */
+  /* ページの背景と標準の文字 */
+  --color-background: #242424;
+  --color-foreground: rgb(255 255 255 / 0.87);
 }
 
 :root {
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--color-foreground);
+  background-color: var(--color-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
