@@ -9,6 +9,16 @@
   /* ページの背景と標準の文字 */
   --color-background: #242424;
   --color-foreground: rgb(255 255 255 / 0.87);
+
+  /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベル（muted） */
+  --color-card: rgb(255 255 255 / 0.06);
+  --color-popover: var(--color-neutral-700);
+  --color-muted: var(--color-neutral-700);
+
+  /* 入力欄の背景。shadcn/ui では入力欄の枠線の色だが、ここでは背景に使う */
+  --color-input: var(--color-neutral-600);
+  /* 区切り線 */
+  --color-border: var(--color-neutral-600);
 }
 
 :root {

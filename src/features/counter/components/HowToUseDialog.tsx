@@ -25,7 +25,7 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             transition
-            className="data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-neutral-700 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:opacity-0"
+            className="data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-popover p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:opacity-0"
           >
             <DialogTitle className="mb-3 font-bold text-white text-xl">
               これはなに？
