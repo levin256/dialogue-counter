@@ -1,7 +1,7 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { InputWithButton } from '../../../components/ui/InputWithButton';
+import { InputWithButton } from '@/components/ui/InputWithButton';
 import { type RuleValue, RuleValueError } from '../domain/countRule';
 import {
   type RuleValueFormInput,

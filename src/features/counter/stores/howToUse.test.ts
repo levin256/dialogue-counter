@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createMemoryStorage } from '../../../test/createMemoryStorage';
+import { createMemoryStorage } from '@/test/createMemoryStorage';
 import { createHowToUseStore } from './howToUse';
 
 describe('createHowToUseStore', () => {
