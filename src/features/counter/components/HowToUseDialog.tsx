@@ -4,8 +4,8 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/react';
-import { Heading } from '@/components/ui/Heading';
-import { LabelButton } from '@/components/ui/LabelButton';
+import { Heading } from '@/shared/ui/Heading';
+import { LabelButton } from '@/shared/ui/LabelButton';
 
 type DialogProps = {
   isOpen: boolean;

@@ -104,7 +104,7 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/app/**", "@/pages/**", "@/components/**"],
+                    "group": ["@/app/**", "@/pages/**", "@/shared/ui/**"],
                     "message": "stores は app・pages・画面の部品を読めない。"
                   },
                   {
@@ -143,7 +143,7 @@
       }
     },
     {
-      "includes": ["src/components/**", "src/hooks/**", "src/test/**"],
+      "includes": ["src/shared/**"],
       "linter": {
         "rules": {
           "style": {

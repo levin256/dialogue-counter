@@ -9,17 +9,17 @@ import {
   Textarea,
 } from '@headlessui/react';
 import { useState } from 'react';
-import { CodeLabelWithButton } from '@/components/ui/CodeLabelWithButton';
-import { Divider } from '@/components/ui/Divider';
-import { FieldsetGroup } from '@/components/ui/FieldsetGroup';
-import { Heading } from '@/components/ui/Heading';
-import { Toggle } from '@/components/ui/Toggle';
 import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
 import { RuleValueForm } from '@/features/counter/components/RuleValueForm';
 import { countText } from '@/features/counter/domain/countRule';
 import { useCountRuleStore } from '@/features/counter/stores/countRule';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
-import { useWarnIfUnsavedChanges } from '@/hooks/useWarnIfUnsavedChanges';
+import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
+import { CodeLabelWithButton } from '@/shared/ui/CodeLabelWithButton';
+import { Divider } from '@/shared/ui/Divider';
+import { FieldsetGroup } from '@/shared/ui/FieldsetGroup';
+import { Heading } from '@/shared/ui/Heading';
+import { Toggle } from '@/shared/ui/Toggle';
 
 const CounterPage = () => {
   const { hasSeen, markAsSeen } = useHowToUseStore();
