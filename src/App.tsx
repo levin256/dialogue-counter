@@ -17,10 +17,10 @@ import { Heading } from './components/ui/Heading';
 import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
 import { countText } from './features/counter/domain/countRule';
+import { useCountRuleStore } from './features/counter/stores/countRule';
+import { useHowToUseStore } from './features/counter/stores/howToUse';
 import { RuleValueForm } from './features/dialogueCounter/RuleValueForm';
 import { useWarnIfUnsavedChanges } from './hooks/useWarnIfUnsavedChanges';
-import { useCountRuleStore } from './stores/countRule';
-import { useHowToUseStore } from './stores/howToUse';
 
 const App = () => {
   const { hasSeen, markAsSeen } = useHowToUseStore();
