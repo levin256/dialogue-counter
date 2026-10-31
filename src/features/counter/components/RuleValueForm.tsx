@@ -1,13 +1,13 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { InputWithButton } from '../../components/ui/InputWithButton';
+import { InputWithButton } from '../../../components/ui/InputWithButton';
+import { type RuleValue, RuleValueError } from '../domain/countRule';
 import {
   type RuleValueFormInput,
   type RuleValueFormOutput,
   ruleValueFormSchema,
-} from '../../schemas';
-import { type RuleValue, RuleValueError } from '../counter/domain/countRule';
+} from './ruleValueFormSchema';
 
 const ERROR_MESSAGES: Record<RuleValueError, string> = {
   empty: '文字を入力してください。',
