@@ -15,7 +15,7 @@ export const Heading = ({
   const baseStyles = 'font-bold tracking-tight';
 
   const sizeMap = {
-    1: 'text-4xl',
+    1: 'text-2xl',
     2: 'text-3xl',
     3: 'text-2xl',
     4: 'text-xl',
