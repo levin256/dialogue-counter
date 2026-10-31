@@ -5,10 +5,16 @@
     "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --default-font-family: var(--font-app-default);
 
-  /* 色の名前は shadcn/ui に合わせる */
+  /*
+   * 色の名前は shadcn/ui に合わせる。
+   * 名前だけのもの（card など）は背景の色（border だけは線の色）、-foreground が付くもの（muted-foreground など）は文字の色。
+   * 例: card は囲みの背景、muted は登録した文字のラベルの背景、muted-foreground は控えめな文字。
+   */
   /* ページの背景と標準の文字 */
   --color-background: #242424;
   --color-foreground: rgb(255 255 255 / 0.87);
+  /* 控えめな文字（補足の説明、登録した文字の下線）。どの面の上でも使う */
+  --color-muted-foreground: rgb(255 255 255 / 0.65);
 
   /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベル（muted） */
   --color-card: rgb(255 255 255 / 0.06);

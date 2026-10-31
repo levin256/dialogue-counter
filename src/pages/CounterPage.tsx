@@ -115,7 +115,7 @@ const CounterPage = () => {
           className="flex flex-col gap-y-2"
           legendClassName="text-base font-semibold"
         >
-          <p className="text-sm text-white/65">
+          <p className="text-muted-foreground text-sm">
             行頭のスペースやタブは無視して判定します（例:
             <code className="whitespace-pre">{'「  // メモ」'}</code>
             も対象）
