@@ -35,6 +35,10 @@
   --color-destructive-foreground: rgb(255 255 255 / 0.87);
   /* エラーの文字。暗い背景では、ボタンの背景の赤だと読みにくいので分ける */
   --color-error: var(--color-red-500);
+
+  /* テーマで変えない色: ダイアログの後ろの幕、トグルの丸 */
+  --color-overlay: rgb(0 0 0 / 0.6);
+  --color-switch-thumb: var(--color-white);
 }
 
 :root {
