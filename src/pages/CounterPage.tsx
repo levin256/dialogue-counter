@@ -56,7 +56,10 @@ const CounterPage = () => {
       <Fieldset className="flex flex-col gap-4 space-y-2 rounded-xl bg-white/6 p-5">
         <div className="group flex flex-row gap-3">
           <Legend className="font-semibold text-xl">設定</Legend>
-          <Button onClick={() => setIsOpen(true)}>
+          <Button
+            className="hover:brightness-80"
+            onClick={() => setIsOpen(true)}
+          >
             <FontAwesomeIcon
               icon={faQuestionCircle}
               widthAuto

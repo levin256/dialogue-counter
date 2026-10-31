@@ -12,7 +12,10 @@ export const LabelButton = ({
   className = '',
 }: LabelButtonProps) => {
   return (
-    <Button onClick={onClick} className={`rounded-md bg-teal-700 ${className}`}>
+    <Button
+      onClick={onClick}
+      className={`rounded-md bg-teal-700 hover:brightness-80 ${className}`}
+    >
       {label}
     </Button>
   );

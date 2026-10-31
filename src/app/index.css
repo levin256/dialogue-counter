@@ -23,7 +23,3 @@
     cursor: pointer;
   }
 }
-
-button:hover {
-  filter: brightness(80%);
-}
