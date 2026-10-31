@@ -48,5 +48,123 @@
         }
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/pages/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "../app/**"],
+                    "message": "pages は app を読めない。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/features/*/components/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/pages/**"],
+                    "message": "features は app・pages を読めない。"
+                  },
+                  {
+                    "group": ["@/features/**", "../../**"],
+                    "message": "同じ機能の中は相対パスで読む。ほかの機能は読めない。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/features/*/stores/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/pages/**", "@/shared/ui/**"],
+                    "message": "stores は app・pages・画面の部品を読めない。"
+                  },
+                  {
+                    "group": ["../components/**"],
+                    "message": "stores は同じ機能の components を読めない（内側は外側を知らない）。"
+                  },
+                  {
+                    "group": ["@/features/**", "../../**"],
+                    "message": "同じ機能の中は相対パスで読む。ほかの機能は読めない。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/features/*/domain/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**", "!zod/mini", "!vitest", "!./*"],
+                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイルだけを読める。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/shared/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/pages/**", "@/features/**"],
+                    "message": "汎用のものは app・pages・features を読めない。"
+                  },
+                  {
+                    "group": ["../**"],
+                    "message": "フォルダの外は @/ で読む。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

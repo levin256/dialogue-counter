@@ -1,6 +1,4 @@
 import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import './App.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
@@ -10,19 +8,20 @@ import {
   Legend,
   Textarea,
 } from '@headlessui/react';
-import { CodeLabelWithButton } from './components/ui/CodeLabelWithButton';
-import { Divider } from './components/ui/Divider';
-import { FieldsetGroup } from './components/ui/FieldsetGroup';
-import { Heading } from './components/ui/Heading';
-import HowToUseDialog from './components/ui/HowToUseDialog';
-import { Toggle } from './components/ui/Toggle';
-import { RuleValueForm } from './features/dialogueCounter/RuleValueForm';
-import { useCountRuleStore } from './stores/countRule';
-import { useHowToUseStore } from './stores/howToUse';
-import { countText } from './utils/string';
-import { useWarnIfUnsavedChanges } from './utils/useWarnIfUnsavedChanges';
+import { useState } from 'react';
+import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
+import { RuleValueForm } from '@/features/counter/components/RuleValueForm';
+import { countText } from '@/features/counter/domain/countRule';
+import { useCountRuleStore } from '@/features/counter/stores/countRule';
+import { useHowToUseStore } from '@/features/counter/stores/howToUse';
+import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
+import { CodeLabelWithButton } from '@/shared/ui/CodeLabelWithButton';
+import { Divider } from '@/shared/ui/Divider';
+import { FieldsetGroup } from '@/shared/ui/FieldsetGroup';
+import { Heading } from '@/shared/ui/Heading';
+import { Toggle } from '@/shared/ui/Toggle';
 
-const App = () => {
+const CounterPage = () => {
   const { hasSeen, markAsSeen } = useHowToUseStore();
   // 自動で開くのは、まだ一度も閉じていないときだけ
   const [isOpen, setIsOpen] = useState(!hasSeen);
@@ -160,4 +159,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default CounterPage;
