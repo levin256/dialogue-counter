@@ -4,7 +4,11 @@ import {
   persist,
   type StateStorage,
 } from 'zustand/middleware';
-import { CountRule, DEFAULT_COUNT_RULE, type RuleValue } from '../utils/string';
+import {
+  CountRule,
+  DEFAULT_COUNT_RULE,
+  type RuleValue,
+} from '../features/counter/domain/countRule';
 
 type CountRuleStore = CountRule & {
   addIgnoreString: (value: RuleValue) => void;

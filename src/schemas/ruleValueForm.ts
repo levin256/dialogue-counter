@@ -1,5 +1,5 @@
 import { z } from 'zod/mini';
-import { RuleValue } from '../utils/string';
+import { RuleValue } from '../features/counter/domain/countRule';
 
 export const ruleValueFormSchema = z.object({ value: RuleValue });
 export type RuleValueFormInput = z.input<typeof ruleValueFormSchema>;

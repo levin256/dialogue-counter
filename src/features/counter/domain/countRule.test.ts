@@ -7,7 +7,7 @@ import {
   onlyWhiteSpaceRegex,
   RuleValue,
   RuleValueError,
-} from './string';
+} from './countRule';
 
 type Overrides = {
   ignoreStrings?: string[];

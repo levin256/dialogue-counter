@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import {
+  DEFAULT_COUNT_RULE,
+  RuleValue,
+} from '../features/counter/domain/countRule';
 import { createMemoryStorage } from '../test/createMemoryStorage';
-import { DEFAULT_COUNT_RULE, RuleValue } from '../utils/string';
 import { createCountRuleStore } from './countRule';
 
 const saved = (state: unknown) => JSON.stringify({ state, version: 0 });

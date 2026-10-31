@@ -16,11 +16,11 @@ import { FieldsetGroup } from './components/ui/FieldsetGroup';
 import { Heading } from './components/ui/Heading';
 import HowToUseDialog from './components/ui/HowToUseDialog';
 import { Toggle } from './components/ui/Toggle';
+import { countText } from './features/counter/domain/countRule';
 import { RuleValueForm } from './features/dialogueCounter/RuleValueForm';
 import { useWarnIfUnsavedChanges } from './hooks/useWarnIfUnsavedChanges';
 import { useCountRuleStore } from './stores/countRule';
 import { useHowToUseStore } from './stores/howToUse';
-import { countText } from './utils/string';
 
 const App = () => {
   const { hasSeen, markAsSeen } = useHowToUseStore();

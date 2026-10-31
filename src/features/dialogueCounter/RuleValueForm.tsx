@@ -7,7 +7,7 @@ import {
   type RuleValueFormOutput,
   ruleValueFormSchema,
 } from '../../schemas';
-import { type RuleValue, RuleValueError } from '../../utils/string';
+import { type RuleValue, RuleValueError } from '../counter/domain/countRule';
 
 const ERROR_MESSAGES: Record<RuleValueError, string> = {
   empty: '文字を入力してください。',
