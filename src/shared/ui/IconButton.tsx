@@ -20,7 +20,7 @@ export const IconButton = ({
   return (
     <Button
       onClick={onClick}
-      className={`rounded-md hover:brightness-80 ${isDanger ? 'bg-red-800' : 'bg-primary text-primary-foreground'} ${className}`}
+      className={`rounded-md hover:brightness-80 ${isDanger ? 'bg-destructive text-destructive-foreground' : 'bg-primary text-primary-foreground'} ${className}`}
     >
       {label}
       <FontAwesomeIcon icon={icon} widthAuto />

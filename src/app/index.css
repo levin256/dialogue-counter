@@ -7,7 +7,7 @@
 
   /*
    * 色の名前は shadcn/ui に合わせる。
-   * 名前だけのもの（card など）は背景の色（border だけは線の色）、-foreground が付くもの（muted-foreground など）は文字の色。
+   * 名前だけのもの（card など）は背景の色（border は線の色、error は文字の色）、-foreground が付くもの（muted-foreground など）は文字の色。
    * 例: card は囲みの背景、muted は登録した文字のラベルの背景、muted-foreground は控えめな文字。
    */
   /* ページの背景と標準の文字 */
@@ -29,6 +29,12 @@
   /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
   --color-primary: var(--color-teal-700);
   --color-primary-foreground: rgb(255 255 255 / 0.87);
+
+  /* 危険な操作（削除ボタン）の背景と、その上の文字 */
+  --color-destructive: var(--color-red-800);
+  --color-destructive-foreground: rgb(255 255 255 / 0.87);
+  /* エラーの文字。暗い背景では、ボタンの背景の赤だと読みにくいので分ける */
+  --color-error: var(--color-red-500);
 }
 
 :root {
