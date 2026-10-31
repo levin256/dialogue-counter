@@ -50,7 +50,7 @@ const CounterPage = () => {
   useWarnIfUnsavedChanges(text.length > 0);
 
   return (
-    <div className="flex flex-col justify-start gap-y-3 p-4 pb-36">
+    <div className="mx-auto flex max-w-7xl flex-col justify-start gap-y-3 p-4 pb-36">
       <Heading level={1}>台詞カウンター</Heading>
 
       <Fieldset className="flex flex-col gap-4 space-y-2 rounded-xl bg-white/6 p-5">

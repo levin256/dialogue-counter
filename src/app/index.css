@@ -17,19 +17,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: auto;
-  display: flex;
-  place-items: center;
-  width: 100%;
-}
-
-#root {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
 button {
   cursor: pointer;
 }
