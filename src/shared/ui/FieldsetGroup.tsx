@@ -1,6 +1,5 @@
 import { Fieldset, Legend } from '@headlessui/react';
 import type React from 'react';
-import { cn } from '@/shared/lib/cn';
 
 type FieldsetGroupProps = {
   legend: React.ReactNode;
@@ -16,7 +15,7 @@ export const FieldsetGroup = ({
   legendClassName,
 }: FieldsetGroupProps) => {
   return (
-    <Fieldset className={cn('rounded-md border-g', className)}>
+    <Fieldset className={className}>
       <Legend className={legendClassName}>{legend}</Legend>
       {children}
     </Fieldset>
