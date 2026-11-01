@@ -1,4 +1,5 @@
 import type { JSX } from 'react';
+import { cn } from '@/shared/lib/cn';
 
 type HeadingProps = {
   children: React.ReactNode;
@@ -6,11 +7,7 @@ type HeadingProps = {
   className?: string;
 };
 
-export const Heading = ({
-  level = 1,
-  children,
-  className = '',
-}: HeadingProps) => {
+export const Heading = ({ level = 1, children, className }: HeadingProps) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
   const baseStyles = 'font-bold tracking-tight';
 
@@ -24,8 +21,6 @@ export const Heading = ({
   };
 
   return (
-    <Tag className={`${baseStyles} ${sizeMap[level]} ${className}`}>
-      {children}
-    </Tag>
+    <Tag className={cn(baseStyles, sizeMap[level], className)}>{children}</Tag>
   );
 };

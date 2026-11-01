@@ -13,10 +13,10 @@ export const InputWithButton = ({
   inputProps,
   register,
   buttonProps,
-  className = '',
+  className,
 }: InputWithButtonProps) => {
   return (
-    <div className={`${className}`}>
+    <div className={className}>
       <Input
         {...register}
         {...inputProps}

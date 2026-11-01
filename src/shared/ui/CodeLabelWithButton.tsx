@@ -10,10 +10,10 @@ export type CodeLabelButtonProps = {
 export const CodeLabelWithButton = ({
   codeLabelProps,
   buttonProps,
-  className = '',
+  className,
 }: CodeLabelButtonProps) => {
   return (
-    <div className={`${className}`}>
+    <div className={className}>
       <CodeLabel {...codeLabelProps} />
       <IconButton {...buttonProps} className="rounded-l-none px-3 py-1.5" />
     </div>
