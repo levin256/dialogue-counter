@@ -14,33 +14,51 @@
    * どちらになるかは :root の color-scheme で決まる。
    */
   /* ページの背景と標準の文字 */
-  --color-background: light-dark(var(--color-white), #242424);
+  --color-background: light-dark(var(--color-neutral-100), #242424);
   --color-foreground: light-dark(
     var(--color-neutral-900),
     rgb(255 255 255 / 0.87)
   );
   /* 控えめな文字（補足の説明、登録した文字の下線）。どの面の上でも使う */
-  --color-muted-foreground: rgb(255 255 255 / 0.65);
+  --color-muted-foreground: light-dark(
+    var(--color-neutral-500),
+    rgb(255 255 255 / 0.65)
+  );
 
   /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベル（muted） */
-  --color-card: rgb(255 255 255 / 0.06);
-  --color-popover: var(--color-neutral-700);
-  --color-muted: var(--color-neutral-700);
+  --color-card: light-dark(var(--color-white), rgb(255 255 255 / 0.06));
+  --color-popover: light-dark(var(--color-white), var(--color-neutral-700));
+  --color-muted: light-dark(var(--color-neutral-100), var(--color-neutral-700));
 
   /* 入力欄の背景。shadcn/ui では入力欄の枠線の色だが、ここでは背景に使う */
-  --color-input: var(--color-neutral-600);
+  --color-input: light-dark(var(--color-neutral-100), var(--color-neutral-600));
   /* 区切り線 */
-  --color-border: var(--color-neutral-600);
+  --color-border: light-dark(
+    var(--color-neutral-200),
+    var(--color-neutral-600)
+  );
 
   /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
-  --color-primary: var(--color-teal-700);
-  --color-primary-foreground: rgb(255 255 255 / 0.87);
+  --color-primary: light-dark(var(--color-teal-600), var(--color-teal-700));
+  --color-primary-foreground: light-dark(
+    var(--color-white),
+    rgb(255 255 255 / 0.87)
+  );
 
   /* 危険な操作（削除ボタン）の背景と、その上の文字 */
-  --color-destructive: var(--color-red-800);
-  --color-destructive-foreground: rgb(255 255 255 / 0.87);
+  --color-destructive: light-dark(var(--color-red-600), var(--color-red-800));
+  --color-destructive-foreground: light-dark(
+    var(--color-white),
+    rgb(255 255 255 / 0.87)
+  );
   /* エラーの文字。暗い背景では、ボタンの背景の赤だと読みにくいので分ける */
-  --color-error: var(--color-red-500);
+  --color-error: light-dark(var(--color-red-600), var(--color-red-500));
+
+  /* トグルのレール（OFF のとき）。白い丸が見えるように、入力欄より濃くする */
+  --color-switch-track: light-dark(
+    var(--color-neutral-300),
+    var(--color-neutral-600)
+  );
 
   /* テーマで変えない色: ダイアログの後ろの幕、トグルの丸 */
   --color-overlay: rgb(0 0 0 / 0.6);
