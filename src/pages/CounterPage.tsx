@@ -53,7 +53,7 @@ const CounterPage = () => {
     <div className="mx-auto flex max-w-7xl flex-col justify-start gap-y-3 p-4 pb-36">
       <Heading level={1}>台詞カウンター</Heading>
 
-      <Fieldset className="flex flex-col gap-4 space-y-2 rounded-xl bg-card p-5">
+      <Fieldset className="flex flex-col gap-6 rounded-xl bg-card p-5">
         <div className="group flex flex-row gap-3">
           <Legend className="font-semibold text-xl">設定</Legend>
           <Button
@@ -144,7 +144,7 @@ const CounterPage = () => {
 
       <FieldsetGroup
         legend="テキスト"
-        className="flex flex-col gap-1.5 space-y-2 rounded-xl bg-card p-5"
+        className="flex flex-col gap-3.5 rounded-xl bg-card p-5"
         legendClassName="font-semibold text-xl"
       >
         <Heading level={6}>文字数 : {textCount}</Heading>
