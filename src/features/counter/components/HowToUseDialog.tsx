@@ -20,14 +20,14 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
       className="relative z-10 focus:outline-none"
       onClose={onClose}
     >
-      <DialogBackdrop className="fixed inset-0 bg-black/60" />
+      <DialogBackdrop className="fixed inset-0 bg-overlay" />
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
           <DialogPanel
             transition
-            className="data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-neutral-700 p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:opacity-0"
+            className="data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-popover p-6 duration-300 ease-out data-[closed]:opacity-0"
           >
-            <DialogTitle className="mb-3 font-bold text-white text-xl">
+            <DialogTitle className="mb-3 font-bold text-xl">
               これはなに？
             </DialogTitle>
             <p>
@@ -39,7 +39,7 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
             <Heading level={5} className="mt-3">
               特殊文字のカウント設定
             </Heading>
-            <p className="text-base text-white/65">
+            <p className="text-base text-muted-foreground">
               空白・改行をカウントするかを設定できます。
               <br />
               空白には、半角・全角スペースのほか、タブなども含みます。
@@ -47,18 +47,18 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
             <Heading level={5} className="mt-3">
               カウントしない文字
             </Heading>
-            <p className="text-base text-white/65">
+            <p className="text-base text-muted-foreground">
               指定した文字はカウントされません。
             </p>
             <Heading level={5} className="mt-3">
               カウントしない行の先頭文字
             </Heading>
-            <p className="text-base text-white/65">
+            <p className="text-base text-muted-foreground">
               指定した文字で始まる行はカウントされません。
               <br />
               行頭のスペースやタブは無視して判定するので、インデントされた行も対象になります。
             </p>
-            <p className="mt-4 text-sm text-white/65">
+            <p className="mt-4 text-muted-foreground text-sm">
               この説明は、設定の横にある「?」ボタンからいつでも開けます。
             </p>
             <div className="mt-3 flex justify-end">

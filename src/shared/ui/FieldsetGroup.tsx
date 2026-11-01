@@ -11,12 +11,12 @@ type FieldsetGroupProps = {
 export const FieldsetGroup = ({
   legend,
   children,
-  className = '',
-  legendClassName = '',
+  className,
+  legendClassName,
 }: FieldsetGroupProps) => {
   return (
-    <Fieldset className={`rounded-md border-g ${className}`}>
-      <Legend className={`${legendClassName}`}>{legend}</Legend>
+    <Fieldset className={className}>
+      <Legend className={legendClassName}>{legend}</Legend>
       {children}
     </Fieldset>
   );

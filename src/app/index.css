@@ -1,65 +1,92 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --font-app-default:
+    "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  --default-font-family: var(--font-app-default);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /*
+   * 色の名前は shadcn/ui に合わせる。
+   * 名前だけのもの（card など）は背景の色（border は線の色、error は文字の色）、-foreground が付くもの（muted-foreground など）は文字の色。
+   * 例: card は囲みの背景、muted は登録した文字のラベルの背景、muted-foreground は控えめな文字。
+   *
+   * テーマで変わる色は light-dark(ライトの値, ダークの値) で書く。
+   * どちらになるかは :root の color-scheme で決まる。
+   */
+  /* ページの背景と標準の文字 */
+  --color-background: light-dark(var(--color-neutral-100), #242424);
+  --color-foreground: light-dark(
+    var(--color-neutral-900),
+    rgb(255 255 255 / 0.87)
+  );
+  /* 控えめな文字（補足の説明、登録した文字の下線）。どの面の上でも使う */
+  --color-muted-foreground: light-dark(
+    var(--color-neutral-500),
+    rgb(255 255 255 / 0.65)
+  );
+
+  /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベル（muted） */
+  --color-card: light-dark(var(--color-white), rgb(255 255 255 / 0.06));
+  --color-popover: light-dark(var(--color-white), var(--color-neutral-700));
+  --color-muted: light-dark(var(--color-neutral-100), var(--color-neutral-700));
+
+  /* 入力欄の背景。shadcn/ui では入力欄の枠線の色だが、ここでは背景に使う */
+  --color-input: light-dark(var(--color-neutral-100), var(--color-neutral-600));
+  /* 区切り線 */
+  --color-border: light-dark(
+    var(--color-neutral-200),
+    var(--color-neutral-600)
+  );
+
+  /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
+  --color-primary: light-dark(var(--color-teal-600), var(--color-teal-700));
+  --color-primary-foreground: light-dark(
+    var(--color-white),
+    rgb(255 255 255 / 0.87)
+  );
+
+  /* 危険な操作（削除ボタン）の背景と、その上の文字 */
+  --color-destructive: light-dark(var(--color-red-600), var(--color-red-800));
+  --color-destructive-foreground: light-dark(
+    var(--color-white),
+    rgb(255 255 255 / 0.87)
+  );
+  /* エラーの文字。暗い背景では、ボタンの背景の赤だと読みにくいので分ける */
+  --color-error: light-dark(var(--color-red-600), var(--color-red-500));
+
+  /* トグルのレール（OFF のとき）。白い丸が見えるように、入力欄より濃くする */
+  --color-switch-track: light-dark(
+    var(--color-neutral-300),
+    var(--color-neutral-600)
+  );
+
+  /* テーマで変えない色: ダイアログの後ろの幕、トグルの丸 */
+  --color-overlay: rgb(0 0 0 / 0.6);
+  --color-switch-thumb: var(--color-white);
 }
 
-* {
-  font-family:
-    "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", monospace;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: auto;
-  display: flex;
-  place-items: center;
-  width: 100%;
-}
-
-h1 {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
-h2,
-legend {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-h3 {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-/* 
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color-scheme: light dark;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  a:hover {
-    color: #747bff;
+
+  /* 普段は OS の設定に合わせる。data-theme を付けると、そちらを優先する */
+  :root[data-theme="light"] {
+    color-scheme: light;
   }
-  button {
-    background-color: #f9f9f9;
+  :root[data-theme="dark"] {
+    color-scheme: dark;
   }
-} */
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

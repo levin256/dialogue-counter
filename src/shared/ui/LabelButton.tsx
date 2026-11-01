@@ -1,4 +1,5 @@
 import { Button } from '@headlessui/react';
+import { cn } from '@/shared/lib/cn';
 
 export type LabelButtonProps = {
   label: string;
@@ -9,10 +10,16 @@ export type LabelButtonProps = {
 export const LabelButton = ({
   label,
   onClick,
-  className = '',
+  className,
 }: LabelButtonProps) => {
   return (
-    <Button onClick={onClick} className={`rounded-md bg-teal-700 ${className}`}>
+    <Button
+      onClick={onClick}
+      className={cn(
+        'rounded-md bg-primary text-primary-foreground hover:brightness-80',
+        className,
+      )}
+    >
       {label}
     </Button>
   );

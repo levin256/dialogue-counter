@@ -50,17 +50,20 @@ const CounterPage = () => {
   useWarnIfUnsavedChanges(text.length > 0);
 
   return (
-    <div className="flex flex-col justify-start gap-y-3 p-4 pb-36">
+    <div className="mx-auto flex max-w-7xl flex-col justify-start gap-y-3 p-4 pb-36">
       <Heading level={1}>台詞カウンター</Heading>
 
-      <Fieldset className="flex flex-col gap-4 space-y-2 rounded-xl bg-white/6 p-5">
+      <Fieldset className="flex flex-col gap-6 rounded-xl bg-card p-5">
         <div className="group flex flex-row gap-3">
           <Legend className="font-semibold text-xl">設定</Legend>
-          <Button onClick={() => setIsOpen(true)}>
+          <Button
+            className="hover:brightness-80"
+            onClick={() => setIsOpen(true)}
+          >
             <FontAwesomeIcon
               icon={faQuestionCircle}
               widthAuto
-              className="text-md text-teal-600"
+              className="text-primary"
             />
           </Button>
         </div>
@@ -112,7 +115,7 @@ const CounterPage = () => {
           className="flex flex-col gap-y-2"
           legendClassName="text-base font-semibold"
         >
-          <p className="text-sm text-white/65">
+          <p className="text-muted-foreground text-sm">
             行頭のスペースやタブは無視して判定します（例:
             <code className="whitespace-pre">{'「  // メモ」'}</code>
             も対象）
@@ -141,13 +144,13 @@ const CounterPage = () => {
 
       <FieldsetGroup
         legend="テキスト"
-        className="flex flex-col gap-1.5 space-y-2 rounded-xl bg-white/6 p-5"
+        className="flex flex-col gap-3.5 rounded-xl bg-card p-5"
         legendClassName="font-semibold text-xl"
       >
         <Heading level={6}>文字数 : {textCount}</Heading>
         <Field className="flex flex-col">
           <Textarea
-            className="h-[64rem] rounded-md border-none bg-neutral-600 p-3 outline-none"
+            className="h-[64rem] rounded-md border-none bg-input p-3 outline-none"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="カウントしたい文字を入力してください"

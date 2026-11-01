@@ -63,7 +63,7 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
         buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
       />
       {errors.value && (
-        <p className="text-red-500">{toErrorMessage(errors.value.message)}</p>
+        <p className="text-error">{toErrorMessage(errors.value.message)}</p>
       )}
     </>
   );
