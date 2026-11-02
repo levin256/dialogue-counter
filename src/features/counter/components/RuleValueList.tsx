@@ -57,7 +57,12 @@ export const RuleValueList = ({
           </li>
         ))}
       </ul>
-      <RuleValueForm registered={values} onAdd={onAdd} inputRef={inputRef} />
+      <RuleValueForm
+        listName={legend}
+        registered={values}
+        onAdd={onAdd}
+        inputRef={inputRef}
+      />
     </FieldsetGroup>
   );
 };

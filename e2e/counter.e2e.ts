@@ -9,8 +9,6 @@ const skipHowToUse = (page: Page) =>
     );
   });
 
-const textInput = (page: Page) =>
-  page.getByRole('textbox', { name: 'テキスト' });
 const ignoreStrings = (page: Page) =>
   page.getByRole('group', { name: 'カウントしない文字' });
 const ignoreLinePrefixes = (page: Page) =>
@@ -25,7 +23,7 @@ test.describe('ルールの設定', () => {
   test('テキストを入力すると、ルールに従った文字数が表示される', async ({
     page,
   }) => {
-    await textInput(page).fill(
+    await page.getByRole('textbox', { name: 'テキスト' }).fill(
       // 初期値では、記号・空白・改行と、// で始まる行を数えない
       '「はい。」 そうです\n// メモ',
     );
@@ -33,7 +31,7 @@ test.describe('ルールの設定', () => {
   });
 
   test('空白・改行のトグルを切り替えると、文字数が変わる', async ({ page }) => {
-    await textInput(page).fill('あ い\nう');
+    await page.getByRole('textbox', { name: 'テキスト' }).fill('あ い\nう');
     await expect(page.getByText('文字数 : 3')).toBeVisible();
 
     await page.getByRole('switch', { name: '空白をカウントしない' }).click();
@@ -45,16 +43,21 @@ test.describe('ルールの設定', () => {
 
   test('カウントしない文字を追加・削除できる', async ({ page }) => {
     const group = ignoreStrings(page);
-    await group.getByRole('textbox').fill('ー');
-    await group.getByRole('button', { name: '追加' }).click();
+    const input = page.getByRole('textbox', {
+      name: 'カウントしない文字を入力',
+    });
+    await input.fill('ー');
+    await page
+      .getByRole('button', { name: 'カウントしない文字を追加' })
+      .click();
     await expect(
       group.getByRole('listitem').filter({ hasText: 'ー' }),
     ).toBeVisible();
-    await expect(group.getByRole('textbox')).toHaveValue('');
+    await expect(input).toHaveValue('');
 
     await group.getByRole('button', { name: '「ー」を削除' }).click();
     // 押したボタンは消えるので、フォーカスは追加の入力欄に移る
-    await expect(group.getByRole('textbox')).toBeFocused();
+    await expect(input).toBeFocused();
     await expect(
       group.getByRole('listitem').filter({ hasText: 'ー' }),
     ).toHaveCount(0);
@@ -63,7 +66,9 @@ test.describe('ルールの設定', () => {
   test('カウントしない行の先頭文字を追加・削除できる', async ({ page }) => {
     const group = ignoreLinePrefixes(page);
     // Enter でも追加できる
-    await group.getByRole('textbox', { name: '追加する文字' }).fill('#');
+    await page
+      .getByRole('textbox', { name: 'カウントしない行の先頭文字を入力' })
+      .fill('#');
     await page.keyboard.press('Enter');
     await expect(
       group.getByRole('listitem').filter({ hasText: '#' }),
@@ -78,24 +83,30 @@ test.describe('ルールの設定', () => {
   test('登録済みの値を追加しようとすると、エラーが表示される', async ({
     page,
   }) => {
-    const group = ignoreStrings(page);
-    await group.getByRole('textbox').fill('。');
-    await group.getByRole('button', { name: '追加' }).click();
-    await expect(group.getByRole('alert')).toHaveText(
+    await page
+      .getByRole('textbox', { name: 'カウントしない文字を入力' })
+      .fill('。');
+    await page
+      .getByRole('button', { name: 'カウントしない文字を追加' })
+      .click();
+    await expect(ignoreStrings(page).getByRole('alert')).toHaveText(
       'すでに登録されています。',
     );
   });
 
   test('リロードしても、ルールの設定が残っている', async ({ page }) => {
-    const group = ignoreStrings(page);
-    await group.getByRole('textbox').fill('ー');
-    await group.getByRole('button', { name: '追加' }).click();
+    await page
+      .getByRole('textbox', { name: 'カウントしない文字を入力' })
+      .fill('ー');
+    await page
+      .getByRole('button', { name: 'カウントしない文字を追加' })
+      .click();
     await page.getByRole('switch', { name: '空白をカウントしない' }).click();
 
     await page.reload();
 
     await expect(
-      group.getByRole('listitem').filter({ hasText: 'ー' }),
+      ignoreStrings(page).getByRole('listitem').filter({ hasText: 'ー' }),
     ).toBeVisible();
     await expect(
       page.getByRole('switch', { name: '空白をカウントしない' }),

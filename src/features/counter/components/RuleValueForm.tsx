@@ -14,6 +14,8 @@ import {
 } from './ruleValueFormSchema';
 
 type RuleValueFormProps = {
+  /** 追加する先の一覧の名前。入力欄とボタンの名前に入れる */
+  listName: string;
   /** 登録済みの値。重複のチェックに使う */
   registered: readonly RuleValue[];
   /** 登録できる値が入力されたときに呼ばれる */
@@ -28,6 +30,7 @@ type RuleValueFormProps = {
  * Enter でも追加できる。エラーは入力欄に結び付け、表示したときに読み上げる。
  */
 export const RuleValueForm = ({
+  listName,
   registered,
   onAdd,
   inputRef,
@@ -59,8 +62,11 @@ export const RuleValueForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Field className="flex flex-col gap-y-2">
-        {/* 見た目は囲みの見出しでわかるので、読み上げ用の名前だけを付ける */}
-        <Label className="sr-only">追加する文字</Label>
+        {/*
+          見た目は囲みの見出しでわかるので、読み上げ用の名前だけを付ける。
+          一覧は2つあるので、どちらの入力欄・ボタンか名前だけでわかるように、一覧の名前を入れる
+        */}
+        <Label className="sr-only">{`${listName}を入力`}</Label>
         <InputGroup className="w-60">
           <Input
             className="flex-1"
@@ -69,7 +75,12 @@ export const RuleValueForm = ({
             {...valueField}
             ref={setInputRef}
           />
-          <Button type="submit" size="icon" icon={Plus} aria-label="追加" />
+          <Button
+            type="submit"
+            size="icon"
+            icon={Plus}
+            aria-label={`${listName}を追加`}
+          />
         </InputGroup>
         {errors.value && (
           <Description role="alert" className="text-error">
