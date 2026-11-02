@@ -38,9 +38,8 @@
     var(--color-neutral-600)
   );
 
-  /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字。
-     白い文字とのコントラストが 4.5:1 以上になるように、ライトでも teal-700 にする */
-  --color-primary: var(--color-teal-700);
+  /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
+  --color-primary: light-dark(var(--color-teal-600), var(--color-teal-700));
   --color-primary-foreground: light-dark(
     var(--color-white),
     rgb(255 255 255 / 0.87)
