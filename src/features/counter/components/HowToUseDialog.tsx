@@ -36,7 +36,7 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
               <br />
               カウントには、以下のルールを設定できます。
             </p>
-            <Heading level={5} className="mt-3">
+            <Heading level={3} size="md" className="mt-3">
               特殊文字のカウント設定
             </Heading>
             <p className="text-base text-muted-foreground">
@@ -44,13 +44,13 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
               <br />
               空白には、半角・全角スペースのほか、タブなども含みます。
             </p>
-            <Heading level={5} className="mt-3">
+            <Heading level={3} size="md" className="mt-3">
               カウントしない文字
             </Heading>
             <p className="text-base text-muted-foreground">
               指定した文字はカウントされません。
             </p>
-            <Heading level={5} className="mt-3">
+            <Heading level={3} size="md" className="mt-3">
               カウントしない行の先頭文字
             </Heading>
             <p className="text-base text-muted-foreground">

@@ -46,7 +46,9 @@ const CounterPage = () => {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-start gap-y-3 p-4 pb-36">
-      <Heading level={1}>台詞カウンター</Heading>
+      <Heading level={1} size="xl">
+        台詞カウンター
+      </Heading>
 
       <Fieldset className="flex flex-col gap-6 rounded-xl bg-card p-5">
         <div className="group flex flex-row gap-3">
@@ -141,7 +143,8 @@ const CounterPage = () => {
         className="flex flex-col gap-3.5 rounded-xl bg-card p-5"
         legendClassName="font-semibold text-xl"
       >
-        <Heading level={6}>文字数 : {textCount}</Heading>
+        {/* 見出しではなく値なので、p にする。入力のたびに読み上げるとうるさいので、aria-live は付けない */}
+        <p className="font-bold tracking-tight">文字数 : {textCount}</p>
         <Field className="flex flex-col">
           <Textarea
             className="h-[64rem]"
