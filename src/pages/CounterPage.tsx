@@ -1,5 +1,3 @@
-import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Field,
@@ -8,6 +6,7 @@ import {
   Legend,
   Textarea,
 } from '@headlessui/react';
+import { CircleHelp, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
 import { RuleValueForm } from '@/features/counter/components/RuleValueForm';
@@ -61,11 +60,7 @@ const CounterPage = () => {
             aria-label="使い方を開く"
             onClick={() => setIsOpen(true)}
           >
-            <FontAwesomeIcon
-              icon={faQuestionCircle}
-              widthAuto
-              className="text-primary"
-            />
+            <CircleHelp className="size-4 text-primary" />
           </Button>
         </div>
 
@@ -98,7 +93,7 @@ const CounterPage = () => {
                   className="flex w-60"
                   codeLabelProps={{ label: ignoreString }}
                   buttonProps={{
-                    icon: faTrash,
+                    icon: Trash2,
                     'aria-label': `「${ignoreString}」を削除`,
                     onClick: () => removeIgnoreString(ignoreString),
                     isDanger: true,
@@ -129,7 +124,7 @@ const CounterPage = () => {
                   className="flex w-60"
                   codeLabelProps={{ label: ignoreLinePrefix }}
                   buttonProps={{
-                    icon: faTrash,
+                    icon: Trash2,
                     'aria-label': `「${ignoreLinePrefix}」を削除`,
                     onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
                     isDanger: true,

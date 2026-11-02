@@ -15,7 +15,7 @@ export const CodeLabelWithButton = ({
   return (
     <div className={className}>
       <CodeLabel {...codeLabelProps} />
-      <IconButton {...buttonProps} className="rounded-l-none px-3 py-1.5" />
+      <IconButton {...buttonProps} className="rounded-l-none px-3 py-2.5" />
     </div>
   );
 };

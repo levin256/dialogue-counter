@@ -1,7 +1,6 @@
-import type { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from '@headlessui/react';
 import { cva } from 'class-variance-authority';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/shared/lib/cn';
 
 const iconButtonVariants = cva('rounded-md hover:brightness-80', {
@@ -16,7 +15,7 @@ const iconButtonVariants = cva('rounded-md hover:brightness-80', {
 
 export type IconButtonProps = {
   label?: string;
-  icon: IconProp;
+  icon: LucideIcon;
   /** アイコンだけのときの、ボタンの名前 */
   'aria-label'?: string;
   onClick: () => void;
@@ -26,7 +25,7 @@ export type IconButtonProps = {
 
 export const IconButton = ({
   label,
-  icon,
+  icon: Icon,
   onClick,
   isDanger = false,
   className,
@@ -42,7 +41,7 @@ export const IconButton = ({
       )}
     >
       {label}
-      <FontAwesomeIcon icon={icon} widthAuto />
+      <Icon className="size-4" />
     </Button>
   );
 };

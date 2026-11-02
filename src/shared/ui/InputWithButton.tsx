@@ -22,7 +22,7 @@ export const InputWithButton = ({
         {...inputProps}
         className="box-border flex-1 rounded-s-md border-none bg-input px-2 py-1 outline-none"
       />
-      <IconButton {...buttonProps} className="rounded-l-none px-3 py-1.5" />
+      <IconButton {...buttonProps} className="rounded-l-none px-3 py-2.5" />
     </div>
   );
 };

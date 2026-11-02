@@ -1,5 +1,5 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { InputWithButton } from '@/shared/ui/InputWithButton';
 import { type RuleValue, RuleValueError } from '../domain/countRule';
@@ -62,7 +62,7 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
         inputProps={{ placeholder: '文字を入力' }}
         buttonProps={{
           onClick: handleSubmit(onSubmit),
-          icon: faPlus,
+          icon: Plus,
           'aria-label': '追加',
         }}
       />
