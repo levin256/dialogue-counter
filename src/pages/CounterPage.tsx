@@ -1,27 +1,11 @@
-import { faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button,
-  Field,
-  Fieldset,
-  Label,
-  Legend,
-  Textarea,
-} from '@headlessui/react';
 import { useState } from 'react';
-import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
-import { RuleValueForm } from '@/features/counter/components/RuleValueForm';
-import { countText } from '@/features/counter/domain/countRule';
-import { useCountRuleStore } from '@/features/counter/stores/countRule';
+import { CountRuleSettings } from '@/features/counter/components/CountRuleSettings';
+import { HowToUseDialog } from '@/features/counter/components/HowToUseDialog';
+import { TextCounter } from '@/features/counter/components/TextCounter';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
-import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
-import { CodeLabelWithButton } from '@/shared/ui/CodeLabelWithButton';
-import { Divider } from '@/shared/ui/Divider';
-import { FieldsetGroup } from '@/shared/ui/FieldsetGroup';
 import { Heading } from '@/shared/ui/Heading';
-import { Toggle } from '@/shared/ui/Toggle';
 
-const CounterPage = () => {
+export const CounterPage = () => {
   const { hasSeen, markAsSeen } = useHowToUseStore();
   // 自動で開くのは、まだ一度も閉じていないときだけ
   const [isOpen, setIsOpen] = useState(!hasSeen);
@@ -29,137 +13,15 @@ const CounterPage = () => {
     setIsOpen(false);
     markAsSeen();
   };
-  const countRule = useCountRuleStore();
-  const {
-    ignoreStrings,
-    ignoreLinePrefixes,
-    ignoreSpace,
-    ignoreLineBreak,
-    addIgnoreString,
-    removeIgnoreString,
-    addIgnoreLinePrefix,
-    removeIgnoreLinePrefix,
-    setIgnoreSpace,
-    setIgnoreLineBreak,
-  } = countRule;
-
-  const [text, setText] = useState('');
-  // 他の値から計算できるので state にせず、レンダーのたびに計算する
-  const textCount = countText(text, countRule);
-
-  useWarnIfUnsavedChanges(text.length > 0);
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col justify-start gap-y-3 p-4 pb-36">
-      <Heading level={1}>台詞カウンター</Heading>
-
-      <Fieldset className="flex flex-col gap-6 rounded-xl bg-card p-5">
-        <div className="group flex flex-row gap-3">
-          <Legend className="font-semibold text-xl">設定</Legend>
-          <Button
-            className="hover:brightness-80"
-            onClick={() => setIsOpen(true)}
-          >
-            <FontAwesomeIcon
-              icon={faQuestionCircle}
-              widthAuto
-              className="text-primary"
-            />
-          </Button>
-        </div>
-
-        <FieldsetGroup
-          legend="特殊文字のカウント設定"
-          className="flex flex-col gap-y-1.5"
-          legendClassName="text-base font-semibold"
-        >
-          <Field className="flex items-center gap-x-3">
-            <Label> 空白をカウントしない </Label>
-            <Toggle checked={ignoreSpace} onChange={setIgnoreSpace} />
-          </Field>
-          <Field className="flex items-center gap-x-3">
-            <Label> 改行をカウントしない </Label>
-            <Toggle checked={ignoreLineBreak} onChange={setIgnoreLineBreak} />
-          </Field>
-        </FieldsetGroup>
-
-        <Divider />
-
-        <FieldsetGroup
-          legend="カウントしない文字"
-          className="flex flex-col gap-y-2"
-          legendClassName="text-base font-semibold"
-        >
-          <ul className="flex flex-col gap-y-2">
-            {ignoreStrings.map((ignoreString) => (
-              <li key={ignoreString}>
-                <CodeLabelWithButton
-                  className="flex w-60"
-                  codeLabelProps={{ label: ignoreString }}
-                  buttonProps={{
-                    icon: faTrash,
-                    onClick: () => removeIgnoreString(ignoreString),
-                    isDanger: true,
-                  }}
-                />
-              </li>
-            ))}
-          </ul>
-          <RuleValueForm registered={ignoreStrings} onAdd={addIgnoreString} />
-        </FieldsetGroup>
-
-        <Divider />
-
-        <FieldsetGroup
-          legend="カウントしない行の先頭文字"
-          className="flex flex-col gap-y-2"
-          legendClassName="text-base font-semibold"
-        >
-          <p className="text-muted-foreground text-sm">
-            行頭のスペースやタブは無視して判定します（例:
-            <code className="whitespace-pre">{'「  // メモ」'}</code>
-            も対象）
-          </p>
-          <ul className="flex flex-col gap-y-2">
-            {ignoreLinePrefixes.map((ignoreLinePrefix) => (
-              <li key={ignoreLinePrefix}>
-                <CodeLabelWithButton
-                  className="flex w-60"
-                  codeLabelProps={{ label: ignoreLinePrefix }}
-                  buttonProps={{
-                    icon: faTrash,
-                    onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
-                    isDanger: true,
-                  }}
-                />
-              </li>
-            ))}
-          </ul>
-          <RuleValueForm
-            registered={ignoreLinePrefixes}
-            onAdd={addIgnoreLinePrefix}
-          />
-        </FieldsetGroup>
-      </Fieldset>
-
-      <FieldsetGroup
-        legend="テキスト"
-        className="flex flex-col gap-3.5 rounded-xl bg-card p-5"
-        legendClassName="font-semibold text-xl"
-      >
-        <Heading level={6}>文字数 : {textCount}</Heading>
-        <Field className="flex flex-col">
-          <Textarea
-            className="h-[64rem] rounded-md border-none bg-input p-3 outline-none"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="カウントしたい文字を入力してください"
-          />
-        </Field>
-      </FieldsetGroup>
+      <Heading level={1} size="xl">
+        台詞カウンター
+      </Heading>
+      <CountRuleSettings onOpenHowToUse={() => setIsOpen(true)} />
+      <TextCounter />
       <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
     </div>
   );
 };
-
-export default CounterPage;

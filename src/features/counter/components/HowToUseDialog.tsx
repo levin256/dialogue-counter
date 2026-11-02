@@ -1,78 +1,58 @@
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from '@headlessui/react';
+import { Button } from '@/shared/ui/Button';
+import { Dialog, DialogTitle } from '@/shared/ui/Dialog';
 import { Heading } from '@/shared/ui/Heading';
-import { LabelButton } from '@/shared/ui/LabelButton';
 
-type DialogProps = {
+type HowToUseDialogProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
+/** 使い方の説明。カウントルールの設定ごとに、何ができるかを書く。 */
+export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
   return (
-    <Dialog
-      open={isOpen}
-      as="div"
-      className="relative z-10 focus:outline-none"
-      onClose={onClose}
-    >
-      <DialogBackdrop className="fixed inset-0 bg-overlay" />
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4">
-          <DialogPanel
-            transition
-            className="data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-popover p-6 duration-300 ease-out data-[closed]:opacity-0"
-          >
-            <DialogTitle className="mb-3 font-bold text-xl">
-              これはなに？
-            </DialogTitle>
-            <p>
-              <b>テキスト</b>
-              に入力された文字数をリアルタイムにカウントするツールです。
-              <br />
-              カウントには、以下のルールを設定できます。
-            </p>
-            <Heading level={5} className="mt-3">
-              特殊文字のカウント設定
-            </Heading>
-            <p className="text-base text-muted-foreground">
-              空白・改行をカウントするかを設定できます。
-              <br />
-              空白には、半角・全角スペースのほか、タブなども含みます。
-            </p>
-            <Heading level={5} className="mt-3">
-              カウントしない文字
-            </Heading>
-            <p className="text-base text-muted-foreground">
-              指定した文字はカウントされません。
-            </p>
-            <Heading level={5} className="mt-3">
-              カウントしない行の先頭文字
-            </Heading>
-            <p className="text-base text-muted-foreground">
-              指定した文字で始まる行はカウントされません。
-              <br />
-              行頭のスペースやタブは無視して判定するので、インデントされた行も対象になります。
-            </p>
-            <p className="mt-4 text-muted-foreground text-sm">
-              この説明は、設定の横にある「?」ボタンからいつでも開けます。
-            </p>
-            <div className="mt-3 flex justify-end">
-              <LabelButton
-                label="はじめる"
-                className="inline-flex items-center px-3 py-1.5 font-semibold text-sm/6"
-                onClick={onClose}
-              />
-            </div>
-          </DialogPanel>
-        </div>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>これはなに？</DialogTitle>
+      <p>
+        <b>テキスト</b>
+        に入力された文字数をリアルタイムにカウントするツールです。
+        <br />
+        カウントには、以下のルールを設定できます。
+      </p>
+      <section>
+        <Heading level={3} size="md" className="mt-3">
+          特殊文字のカウント設定
+        </Heading>
+        <p className="text-base text-muted-foreground">
+          空白・改行をカウントするかを設定できます。
+          <br />
+          空白には、半角・全角スペースのほか、タブなども含みます。
+        </p>
+      </section>
+      <section>
+        <Heading level={3} size="md" className="mt-3">
+          カウントしない文字
+        </Heading>
+        <p className="text-base text-muted-foreground">
+          指定した文字はカウントされません。
+        </p>
+      </section>
+      <section>
+        <Heading level={3} size="md" className="mt-3">
+          カウントしない行の先頭文字
+        </Heading>
+        <p className="text-base text-muted-foreground">
+          指定した文字で始まる行はカウントされません。
+          <br />
+          行頭のスペースやタブは無視して判定するので、インデントされた行も対象になります。
+        </p>
+      </section>
+      <p className="mt-4 text-muted-foreground text-sm">
+        この説明は、設定の横にある「?」ボタンからいつでも開けます。
+      </p>
+      <div className="mt-3 flex justify-end">
+        {/* 初回に自動で開いたときも、「?」から開いたときも合う文言にする */}
+        <Button onClick={onClose}>閉じる</Button>
       </div>
     </Dialog>
   );
 };
-
-export default HowToUseDialog;
