@@ -55,12 +55,14 @@ test.describe('ルールの設定', () => {
     ).toBeVisible();
     await expect(input).toHaveValue('');
 
-    await group.getByRole('button', { name: '「ー」を削除' }).click();
-    // 押したボタンは消えるので、フォーカスは追加の入力欄に移る
-    await expect(input).toBeFocused();
+    await group.getByRole('button', { name: '「、」を削除' }).click();
     await expect(
-      group.getByRole('listitem').filter({ hasText: 'ー' }),
+      group.getByRole('listitem').filter({ hasText: '、' }),
     ).toHaveCount(0);
+    // 押したボタンは消えるので、フォーカスは次の項目の削除ボタンに移る
+    await expect(
+      group.getByRole('button', { name: '「。」を削除' }),
+    ).toBeFocused();
   });
 
   test('カウントしない行の先頭文字を追加・削除できる', async ({ page }) => {
