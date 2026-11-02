@@ -11,9 +11,11 @@ import {
 } from '../domain/countRule';
 
 type CountRuleStore = CountRule & {
-  addIgnoreString: (value: RuleValue) => void;
+  /** 末尾に追加する。index を渡すと、その位置に入れる（削除の取り消しで、元の位置に戻すため） */
+  addIgnoreString: (value: RuleValue, index?: number) => void;
   removeIgnoreString: (value: RuleValue) => void;
-  addIgnoreLinePrefix: (value: RuleValue) => void;
+  /** 末尾に追加する。index を渡すと、その位置に入れる（削除の取り消しで、元の位置に戻すため） */
+  addIgnoreLinePrefix: (value: RuleValue, index?: number) => void;
   removeIgnoreLinePrefix: (value: RuleValue) => void;
   setIgnoreSpace: (value: boolean) => void;
   setIgnoreLineBreak: (value: boolean) => void;
@@ -22,8 +24,14 @@ type CountRuleStore = CountRule & {
 // 保存形式を変えるときは version を上げ、persist の migrate で古い形式を変換する
 const STORAGE = { name: 'count-rule', version: 0 };
 
-const addUnique = (list: readonly RuleValue[], value: RuleValue) =>
-  list.includes(value) ? list : [...list, value];
+const addUnique = (
+  list: readonly RuleValue[],
+  value: RuleValue,
+  index = list.length,
+) =>
+  list.includes(value)
+    ? list
+    : [...list.slice(0, index), value, ...list.slice(index)];
 
 const remove = (list: readonly RuleValue[], value: RuleValue) =>
   list.filter((item) => item !== value);
@@ -42,17 +50,21 @@ export const createCountRuleStore = (getStorage: () => StateStorage) =>
     persist(
       (set) => ({
         ...DEFAULT_COUNT_RULE,
-        addIgnoreString: (value) =>
+        addIgnoreString: (value, index) =>
           set((state) => ({
-            ignoreStrings: addUnique(state.ignoreStrings, value),
+            ignoreStrings: addUnique(state.ignoreStrings, value, index),
           })),
         removeIgnoreString: (value) =>
           set((state) => ({
             ignoreStrings: remove(state.ignoreStrings, value),
           })),
-        addIgnoreLinePrefix: (value) =>
+        addIgnoreLinePrefix: (value, index) =>
           set((state) => ({
-            ignoreLinePrefixes: addUnique(state.ignoreLinePrefixes, value),
+            ignoreLinePrefixes: addUnique(
+              state.ignoreLinePrefixes,
+              value,
+              index,
+            ),
           })),
         removeIgnoreLinePrefix: (value) =>
           set((state) => ({

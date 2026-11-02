@@ -114,4 +114,39 @@
   :root:active-view-transition-type(theme)::view-transition-new(root) {
     animation-duration: 400ms;
   }
+
+  /* 登録した値の削除: 消える項目をフェードで消してから、残りを詰める */
+  :root:active-view-transition-type(remove-rule-value) [data-rule-value] {
+    view-transition-name: match-element;
+    view-transition-class: rule-value;
+  }
+  /* ページのほかの部分は、すぐに新しい画面にする */
+  :root:active-view-transition-type(remove-rule-value)::view-transition-old(
+    root
+  ),
+  :root:active-view-transition-type(remove-rule-value)::view-transition-new(
+    root
+  ) {
+    animation: none;
+  }
+  /* 消える項目（新しい画面にないもの）だけをフェードで消す */
+  :root:active-view-transition-type(remove-rule-value)::view-transition-old(
+    .rule-value
+  ):only-child {
+    animation: 150ms ease-out both fade-out;
+  }
+  /* 残りは、フェードが終わってから詰める。待つあいだは元の位置に置く（backwards） */
+  :root:active-view-transition-type(remove-rule-value)::view-transition-group(
+    .rule-value
+  ) {
+    animation-duration: 200ms;
+    animation-delay: 150ms;
+    animation-fill-mode: backwards;
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
 }
