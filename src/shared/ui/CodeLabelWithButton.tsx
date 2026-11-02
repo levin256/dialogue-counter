@@ -1,9 +1,9 @@
+import { Button, type ButtonProps } from './Button';
 import { CodeLabel, type CodeLabelProps } from './CodeLabel';
-import { IconButton, type IconButtonProps } from './IconButton';
 
 export type CodeLabelButtonProps = {
   codeLabelProps: CodeLabelProps;
-  buttonProps: IconButtonProps;
+  buttonProps: ButtonProps;
   className?: string;
 };
 
@@ -15,7 +15,7 @@ export const CodeLabelWithButton = ({
   return (
     <div className={className}>
       <CodeLabel {...codeLabelProps} />
-      <IconButton {...buttonProps} className="rounded-l-none px-3 py-2.5" />
+      <Button {...buttonProps} size="icon" className="rounded-l-none" />
     </div>
   );
 };

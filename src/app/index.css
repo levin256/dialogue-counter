@@ -60,6 +60,9 @@
     var(--color-neutral-600)
   );
 
+  /* キーボードで操作しているときの、フォーカスの枠。どの面の上でも見えるように、ダークでは明るくする */
+  --color-ring: light-dark(var(--color-teal-700), var(--color-teal-400));
+
   /* テーマで変えない色: ダイアログの後ろの幕、トグルの丸 */
   --color-overlay: rgb(0 0 0 / 0.6);
   --color-switch-thumb: var(--color-white);
@@ -83,6 +86,12 @@
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
+  }
+
+  /* フォーカスの枠を、どの部品でも同じ見た目にする */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
   }
 
   button:not(:disabled),

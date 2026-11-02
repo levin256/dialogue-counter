@@ -1,11 +1,4 @@
-import {
-  Button,
-  Field,
-  Fieldset,
-  Label,
-  Legend,
-  Textarea,
-} from '@headlessui/react';
+import { Field, Fieldset, Label, Legend, Textarea } from '@headlessui/react';
 import { CircleHelp, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
@@ -14,6 +7,7 @@ import { countText } from '@/features/counter/domain/countRule';
 import { useCountRuleStore } from '@/features/counter/stores/countRule';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
+import { Button } from '@/shared/ui/Button';
 import { CodeLabelWithButton } from '@/shared/ui/CodeLabelWithButton';
 import { Divider } from '@/shared/ui/Divider';
 import { FieldsetGroup } from '@/shared/ui/FieldsetGroup';
@@ -56,12 +50,12 @@ const CounterPage = () => {
         <div className="group flex flex-row gap-3">
           <Legend className="font-semibold text-xl">設定</Legend>
           <Button
-            className="hover:brightness-80"
+            variant="ghost"
+            size="inline"
+            icon={CircleHelp}
             aria-label="使い方を開く"
             onClick={() => setIsOpen(true)}
-          >
-            <CircleHelp className="size-4 text-primary" />
-          </Button>
+          />
         </div>
 
         <FieldsetGroup
@@ -96,7 +90,7 @@ const CounterPage = () => {
                     icon: Trash2,
                     'aria-label': `「${ignoreString}」を削除`,
                     onClick: () => removeIgnoreString(ignoreString),
-                    isDanger: true,
+                    variant: 'destructive',
                   }}
                 />
               </li>
@@ -127,7 +121,7 @@ const CounterPage = () => {
                     icon: Trash2,
                     'aria-label': `「${ignoreLinePrefix}」を削除`,
                     onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
-                    isDanger: true,
+                    variant: 'destructive',
                   }}
                 />
               </li>

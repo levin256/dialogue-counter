@@ -4,8 +4,8 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/react';
+import { Button } from '@/shared/ui/Button';
 import { Heading } from '@/shared/ui/Heading';
-import { LabelButton } from '@/shared/ui/LabelButton';
 
 type DialogProps = {
   isOpen: boolean;
@@ -62,11 +62,7 @@ const HowToUseDialog: React.FC<DialogProps> = ({ isOpen, onClose }) => {
               この説明は、設定の横にある「?」ボタンからいつでも開けます。
             </p>
             <div className="mt-3 flex justify-end">
-              <LabelButton
-                label="はじめる"
-                className="inline-flex items-center px-3 py-1.5 font-semibold text-sm/6"
-                onClick={onClose}
-              />
+              <Button onClick={onClose}>はじめる</Button>
             </div>
           </DialogPanel>
         </div>
