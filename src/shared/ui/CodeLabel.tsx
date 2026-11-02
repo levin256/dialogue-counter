@@ -1,18 +1,15 @@
 import { cn } from '@/shared/lib/cn';
-export type CodeLabelProps = {
-  label: string;
-  className?: string;
-};
 
-export const CodeLabel = ({ label, className }: CodeLabelProps) => {
-  return (
-    <code
-      className={cn(
-        'flex flex-1 items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-s-md bg-muted px-2 py-1 text-left text-sm underline decoration-muted-foreground underline-offset-4',
-        className,
-      )}
-    >
-      {label}
-    </code>
-  );
-};
+/** 登録した文字などを、等幅の文字で1行に表示する。長いときは末尾を「…」にする。 */
+export const CodeLabel = ({
+  className,
+  ...props
+}: React.ComponentProps<'code'>) => (
+  <code
+    className={cn(
+      'flex flex-1 items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-muted px-2 py-1 text-left text-sm underline decoration-muted-foreground underline-offset-4',
+      className,
+    )}
+    {...props}
+  />
+);

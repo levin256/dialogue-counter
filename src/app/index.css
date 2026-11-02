@@ -25,13 +25,13 @@
     rgb(255 255 255 / 0.65)
   );
 
-  /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベル（muted） */
+  /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベルと入力欄（muted） */
   --color-card: light-dark(var(--color-white), rgb(255 255 255 / 0.06));
   --color-popover: light-dark(var(--color-white), var(--color-neutral-700));
   --color-muted: light-dark(var(--color-neutral-100), var(--color-neutral-700));
 
-  /* 入力欄の背景。shadcn/ui では入力欄の枠線の色だが、ここでは背景に使う */
-  --color-input: light-dark(var(--color-neutral-100), var(--color-neutral-600));
+  /* 入力欄の枠線。囲みの白の上でも、入力欄の境目がわかるように、区切り線より濃くする */
+  --color-input: light-dark(var(--color-neutral-300), var(--color-neutral-600));
   /* 区切り線 */
   --color-border: light-dark(
     var(--color-neutral-200),

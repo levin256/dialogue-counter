@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { InputWithButton } from '@/shared/ui/InputWithButton';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { InputGroup } from '@/shared/ui/InputGroup';
 import { type RuleValue, RuleValueError } from '../domain/countRule';
 import {
   type RuleValueFormInput,
@@ -56,16 +58,19 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
 
   return (
     <>
-      <InputWithButton
-        className="flex w-60"
-        register={register('value')}
-        inputProps={{ placeholder: '文字を入力' }}
-        buttonProps={{
-          onClick: handleSubmit(onSubmit),
-          icon: Plus,
-          'aria-label': '追加',
-        }}
-      />
+      <InputGroup className="w-60">
+        <Input
+          className="flex-1"
+          placeholder="文字を入力"
+          {...register('value')}
+        />
+        <Button
+          size="icon"
+          icon={Plus}
+          aria-label="追加"
+          onClick={handleSubmit(onSubmit)}
+        />
+      </InputGroup>
       {errors.value && (
         <p className="text-error">{toErrorMessage(errors.value.message)}</p>
       )}

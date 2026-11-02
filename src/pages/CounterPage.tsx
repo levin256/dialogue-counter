@@ -1,4 +1,4 @@
-import { Field, Fieldset, Label, Legend, Textarea } from '@headlessui/react';
+import { Field, Fieldset, Label, Legend } from '@headlessui/react';
 import { CircleHelp, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
@@ -8,10 +8,12 @@ import { useCountRuleStore } from '@/features/counter/stores/countRule';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
 import { Button } from '@/shared/ui/Button';
-import { CodeLabelWithButton } from '@/shared/ui/CodeLabelWithButton';
+import { CodeLabel } from '@/shared/ui/CodeLabel';
 import { Divider } from '@/shared/ui/Divider';
 import { FieldsetGroup } from '@/shared/ui/FieldsetGroup';
 import { Heading } from '@/shared/ui/Heading';
+import { Textarea } from '@/shared/ui/Input';
+import { InputGroup } from '@/shared/ui/InputGroup';
 import { Toggle } from '@/shared/ui/Toggle';
 
 const CounterPage = () => {
@@ -83,16 +85,16 @@ const CounterPage = () => {
           <ul className="flex flex-col gap-y-2">
             {ignoreStrings.map((ignoreString) => (
               <li key={ignoreString}>
-                <CodeLabelWithButton
-                  className="flex w-60"
-                  codeLabelProps={{ label: ignoreString }}
-                  buttonProps={{
-                    icon: Trash2,
-                    'aria-label': `「${ignoreString}」を削除`,
-                    onClick: () => removeIgnoreString(ignoreString),
-                    variant: 'destructive',
-                  }}
-                />
+                <InputGroup className="w-60">
+                  <CodeLabel>{ignoreString}</CodeLabel>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    icon={Trash2}
+                    aria-label={`「${ignoreString}」を削除`}
+                    onClick={() => removeIgnoreString(ignoreString)}
+                  />
+                </InputGroup>
               </li>
             ))}
           </ul>
@@ -114,16 +116,16 @@ const CounterPage = () => {
           <ul className="flex flex-col gap-y-2">
             {ignoreLinePrefixes.map((ignoreLinePrefix) => (
               <li key={ignoreLinePrefix}>
-                <CodeLabelWithButton
-                  className="flex w-60"
-                  codeLabelProps={{ label: ignoreLinePrefix }}
-                  buttonProps={{
-                    icon: Trash2,
-                    'aria-label': `「${ignoreLinePrefix}」を削除`,
-                    onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
-                    variant: 'destructive',
-                  }}
-                />
+                <InputGroup className="w-60">
+                  <CodeLabel>{ignoreLinePrefix}</CodeLabel>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    icon={Trash2}
+                    aria-label={`「${ignoreLinePrefix}」を削除`}
+                    onClick={() => removeIgnoreLinePrefix(ignoreLinePrefix)}
+                  />
+                </InputGroup>
               </li>
             ))}
           </ul>
@@ -142,7 +144,7 @@ const CounterPage = () => {
         <Heading level={6}>文字数 : {textCount}</Heading>
         <Field className="flex flex-col">
           <Textarea
-            className="h-[64rem] rounded-md border-none bg-input p-3 outline-none"
+            className="h-[64rem]"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="カウントしたい文字を入力してください"
