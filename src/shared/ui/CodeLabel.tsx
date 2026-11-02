@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn';
 
-/** 登録した文字などを、等幅の文字で1行に表示する。長いときは末尾を「…」にする。 */
+/** 短い文字列を、等幅の文字で1行に表示する。長いときは末尾を「…」にする。 */
 export const CodeLabel = ({
   className,
   ...props

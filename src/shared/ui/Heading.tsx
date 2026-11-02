@@ -23,7 +23,7 @@ type HeadingProps = React.ComponentProps<'h1'> &
  * 見出し。意味上の階層（level）と見た目の大きさ（size）を別々に指定する。
  *
  * @example
- * <Heading level={3} size="md">カウントしない文字</Heading>
+ * <Heading level={3} size="md">小見出し</Heading>
  */
 export const Heading = ({ level, size, className, ...props }: HeadingProps) => {
   const Tag = `h${level}` as const;
