@@ -68,6 +68,10 @@
   --color-switch-thumb: var(--color-white);
 }
 
+/*
+ * 要素の既定の見た目（ページの色、テーマ、フォーカスの枠、カーソルなど）。
+ * View Transitions のアニメーションは量が多いので、下の別のブロックにまとめる。
+ */
 @layer base {
   :root {
     color-scheme: light dark;
@@ -97,5 +101,17 @@
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+/*
+ * View Transitions API のアニメーション（src/shared/lib/viewTransition.ts の withViewTransition で始める）。
+ * 種類ごとに :active-view-transition-type() で分ける。OS で動きを減らす設定のときは、始めないので動かない。
+ */
+@layer base {
+  /* テーマの切り替え: 画面全体を、前の色からゆっくりフェードさせる */
+  :root:active-view-transition-type(theme)::view-transition-old(root),
+  :root:active-view-transition-type(theme)::view-transition-new(root) {
+    animation-duration: 400ms;
   }
 }
