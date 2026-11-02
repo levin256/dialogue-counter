@@ -36,7 +36,7 @@ export const Dialog = ({ open, onClose, children, className }: DialogProps) => (
         <DialogPanel
           transition
           className={cn(
-            'data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-popover p-6 duration-300 ease-out data-[closed]:opacity-0',
+            'data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-popover p-6 duration-300 ease-out data-[closed]:opacity-0 motion-reduce:transition-none',
             className,
           )}
         >

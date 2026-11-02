@@ -20,11 +20,11 @@ export const Toggle = ({
       onChange={onChange}
       name={name}
       className={cn(
-        'group inline-flex h-6 w-11 items-center rounded-full bg-switch-track transition hover:brightness-80 data-checked:bg-primary',
+        'group inline-flex h-6 w-11 items-center rounded-full bg-switch-track transition hover:brightness-80 data-checked:bg-primary motion-reduce:transition-none',
         className,
       )}
     >
-      <span className="size-4 translate-x-1 rounded-full bg-switch-thumb transition group-data-checked:translate-x-6" />
+      <span className="size-4 translate-x-1 rounded-full bg-switch-thumb transition group-data-checked:translate-x-6 motion-reduce:transition-none" />
     </Switch>
   );
 };
