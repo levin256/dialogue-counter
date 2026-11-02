@@ -2,12 +2,25 @@ import { Switch } from '@headlessui/react';
 import { cn } from '@/shared/lib/cn';
 
 type ToggleProps = {
+  /** 切り替えたときに、切り替えたあとの値で呼ばれる */
   onChange: (checked: boolean) => void;
+  /** ON か */
   checked?: boolean;
+  /** フォームで送るときの名前 */
   name?: string;
   className?: string;
 };
 
+/**
+ * ON / OFF を切り替えるスイッチ（`role="switch"`）。
+ * Headless UI の Field の中に Label と並べて置くと、Label がスイッチの名前になる。
+ *
+ * @example
+ * <Field>
+ *   <Label>空白をカウントしない</Label>
+ *   <Toggle checked={ignoreSpace} onChange={setIgnoreSpace} />
+ * </Field>
+ */
 export const Toggle = ({
   onChange,
   checked = false,

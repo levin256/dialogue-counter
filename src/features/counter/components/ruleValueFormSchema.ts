@@ -16,9 +16,11 @@ export const createRuleValueFormSchema = (registered: readonly RuleValue[]) =>
       ),
     ),
   });
+/** フォームに入力された値（検証の前）。 */
 export type RuleValueFormInput = z.input<
   ReturnType<typeof createRuleValueFormSchema>
 >;
+/** 検証を通った値。value は登録できる RuleValue になっている。 */
 export type RuleValueFormOutput = z.output<
   ReturnType<typeof createRuleValueFormSchema>
 >;

@@ -7,9 +7,11 @@ import {
 import { cn } from '@/shared/lib/cn';
 
 type DialogProps = {
+  /** 開いているか */
   open: boolean;
   /** Esc・幕のクリックで閉じるときにも呼ばれる */
   onClose: () => void;
+  /** ダイアログの中身 */
   children: React.ReactNode;
   className?: string;
 };
