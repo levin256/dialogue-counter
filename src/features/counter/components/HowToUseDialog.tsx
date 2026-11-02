@@ -3,7 +3,9 @@ import { Dialog, DialogTitle } from '@/shared/ui/Dialog';
 import { Heading } from '@/shared/ui/Heading';
 
 type HowToUseDialogProps = {
+  /** 開いているか */
   isOpen: boolean;
+  /** 閉じるボタン・Esc・幕のクリックで呼ばれる */
   onClose: () => void;
 };
 
@@ -47,10 +49,10 @@ export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
         </p>
       </section>
       <p className="mt-4 text-muted-foreground text-sm">
-        この説明は、設定の横にある「?」ボタンからいつでも開けます。
+        この説明は、右上の「使い方」からいつでも開けます。
       </p>
       <div className="mt-3 flex justify-end">
-        {/* 初回に自動で開いたときも、「?」から開いたときも合う文言にする */}
+        {/* 初回に自動で開いたときも、「使い方」から開いたときも合う文言にする */}
         <Button onClick={onClose}>閉じる</Button>
       </div>
     </Dialog>

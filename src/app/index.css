@@ -26,7 +26,8 @@
   );
 
   /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベルと入力欄（muted） */
-  --color-card: light-dark(var(--color-white), rgb(255 255 255 / 0.06));
+  /* card は、上に貼り付けた文字数の後ろが透けないように、不透明にする（ダークは白 6% を重ねた色） */
+  --color-card: light-dark(var(--color-white), #313131);
   --color-popover: light-dark(var(--color-white), var(--color-neutral-700));
   --color-muted: light-dark(var(--color-neutral-100), var(--color-neutral-700));
 
@@ -38,12 +39,15 @@
     var(--color-neutral-600)
   );
 
-  /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
+  /* メインの色（追加などのボタン、トグルの ON）と、その上の文字 */
   --color-primary: light-dark(var(--color-teal-600), var(--color-teal-700));
   --color-primary-foreground: light-dark(
     var(--color-white),
     rgb(255 255 255 / 0.87)
   );
+
+  /* 背景のない、文字だけのボタンとリンク（「使い方」「元に戻す」など）。primary だと暗い面の上で読みにくいので、ダークでは明るくする */
+  --color-link: light-dark(var(--color-teal-700), var(--color-teal-400));
 
   /* 危険な操作（削除ボタン）の背景と、その上の文字 */
   --color-destructive: light-dark(var(--color-red-600), var(--color-red-800));
@@ -96,6 +100,13 @@
   :focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
+  }
+
+  /* ページの中のリンク（狭い画面の「設定」）で飛ぶときに、どこへ動いたかわかるようにする */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-behavior: smooth;
+    }
   }
 
   button:not(:disabled),
