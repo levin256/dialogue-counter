@@ -1,5 +1,3 @@
-import CounterPage from '@/pages/CounterPage';
+import { CounterPage } from '@/pages/CounterPage';
 
-const App = () => <CounterPage />;
-
-export default App;
+export const App = () => <CounterPage />;

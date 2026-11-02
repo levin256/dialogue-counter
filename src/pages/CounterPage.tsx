@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { CountRuleSettings } from '@/features/counter/components/CountRuleSettings';
-import HowToUseDialog from '@/features/counter/components/HowToUseDialog';
+import { HowToUseDialog } from '@/features/counter/components/HowToUseDialog';
 import { TextCounter } from '@/features/counter/components/TextCounter';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { Heading } from '@/shared/ui/Heading';
 
-const CounterPage = () => {
+export const CounterPage = () => {
   const { hasSeen, markAsSeen } = useHowToUseStore();
   // 自動で開くのは、まだ一度も閉じていないときだけ
   const [isOpen, setIsOpen] = useState(!hasSeen);
@@ -25,5 +25,3 @@ const CounterPage = () => {
     </div>
   );
 };
-
-export default CounterPage;

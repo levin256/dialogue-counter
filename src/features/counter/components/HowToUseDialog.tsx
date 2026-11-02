@@ -8,7 +8,7 @@ type HowToUseDialogProps = {
 };
 
 /** 使い方の説明。カウントルールの設定ごとに、何ができるかを書く。 */
-const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
+export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>これはなに？</DialogTitle>
@@ -56,5 +56,3 @@ const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
     </Dialog>
   );
 };
-
-export default HowToUseDialog;
