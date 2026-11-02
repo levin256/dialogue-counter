@@ -60,7 +60,11 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
         className="flex w-60"
         register={register('value')}
         inputProps={{ placeholder: '文字を入力' }}
-        buttonProps={{ onClick: handleSubmit(onSubmit), icon: faPlus }}
+        buttonProps={{
+          onClick: handleSubmit(onSubmit),
+          icon: faPlus,
+          'aria-label': '追加',
+        }}
       />
       {errors.value && (
         <p className="text-error">{toErrorMessage(errors.value.message)}</p>

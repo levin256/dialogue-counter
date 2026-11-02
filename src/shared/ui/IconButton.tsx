@@ -17,6 +17,8 @@ const iconButtonVariants = cva('rounded-md hover:brightness-80', {
 export type IconButtonProps = {
   label?: string;
   icon: IconProp;
+  /** アイコンだけのときの、ボタンの名前 */
+  'aria-label'?: string;
   onClick: () => void;
   isDanger?: boolean;
   className?: string;
@@ -28,10 +30,12 @@ export const IconButton = ({
   onClick,
   isDanger = false,
   className,
+  'aria-label': ariaLabel,
 }: IconButtonProps) => {
   return (
     <Button
       onClick={onClick}
+      aria-label={ariaLabel}
       className={cn(
         iconButtonVariants({ variant: isDanger ? 'destructive' : 'primary' }),
         className,

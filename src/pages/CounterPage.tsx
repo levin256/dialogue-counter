@@ -58,6 +58,7 @@ const CounterPage = () => {
           <Legend className="font-semibold text-xl">設定</Legend>
           <Button
             className="hover:brightness-80"
+            aria-label="使い方を開く"
             onClick={() => setIsOpen(true)}
           >
             <FontAwesomeIcon
@@ -98,6 +99,7 @@ const CounterPage = () => {
                   codeLabelProps={{ label: ignoreString }}
                   buttonProps={{
                     icon: faTrash,
+                    'aria-label': `「${ignoreString}」を削除`,
                     onClick: () => removeIgnoreString(ignoreString),
                     isDanger: true,
                   }}
@@ -128,6 +130,7 @@ const CounterPage = () => {
                   codeLabelProps={{ label: ignoreLinePrefix }}
                   buttonProps={{
                     icon: faTrash,
+                    'aria-label': `「${ignoreLinePrefix}」を削除`,
                     onClick: () => removeIgnoreLinePrefix(ignoreLinePrefix),
                     isDanger: true,
                   }}
