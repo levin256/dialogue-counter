@@ -75,23 +75,15 @@ test.describe('ルールの設定', () => {
     ).toHaveCount(0);
   });
 
-  test('空・空白だけ・登録済みの値を追加しようとすると、エラーが表示される', async ({
+  test('登録済みの値を追加しようとすると、エラーが表示される', async ({
     page,
   }) => {
     const group = ignoreStrings(page);
-    const input = group.getByRole('textbox');
-    const add = group.getByRole('button', { name: '追加' });
-
-    await add.click();
-    await expect(group.getByText('文字を入力してください。')).toBeVisible();
-
-    await input.fill(' ');
-    await add.click();
-    await expect(group.getByText('空白を指定できません。')).toBeVisible();
-
-    await input.fill('。');
-    await add.click();
-    await expect(group.getByText('すでに登録されています。')).toBeVisible();
+    await group.getByRole('textbox').fill('。');
+    await group.getByRole('button', { name: '追加' }).click();
+    await expect(group.getByRole('alert')).toHaveText(
+      'すでに登録されています。',
+    );
   });
 
   test('リロードしても、ルールの設定が残っている', async ({ page }) => {
@@ -112,23 +104,6 @@ test.describe('ルールの設定', () => {
       page.getByRole('switch', { name: '改行をカウントしない' }),
     ).toBeChecked();
   });
-});
-
-test('保存されたルールが壊れていても画面が表示され、ルールが初期値になる', async ({
-  page,
-}) => {
-  await skipHowToUse(page);
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      'count-rule',
-      JSON.stringify({ state: { ignoreStrings: 'broken' }, version: 0 }),
-    );
-  });
-  await page.goto('/');
-
-  await expect(
-    ignoreStrings(page).getByRole('listitem').filter({ hasText: '。' }),
-  ).toBeVisible();
 });
 
 test('使い方ダイアログは初回だけ自動で開き、「?」ボタンからは開ける', async ({

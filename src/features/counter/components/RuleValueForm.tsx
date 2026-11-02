@@ -5,24 +5,13 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { InputGroup } from '@/shared/ui/InputGroup';
-import { type RuleValue, RuleValueError } from '../domain/countRule';
+import type { RuleValue } from '../domain/countRule';
 import {
+  createRuleValueFormSchema,
   type RuleValueFormInput,
   type RuleValueFormOutput,
-  ruleValueFormSchema,
+  toErrorMessage,
 } from './ruleValueFormSchema';
-
-const ERROR_MESSAGES: Record<RuleValueError, string> = {
-  empty: '文字を入力してください。',
-  whitespace: '空白を指定できません。',
-  duplicate: 'すでに登録されています。',
-};
-
-// エラーには理由のコードが入っているので、表示する文言に変える
-const toErrorMessage = (code: string | undefined) => {
-  const result = RuleValueError.safeParse(code);
-  return result.success ? ERROR_MESSAGES[result.data] : code;
-};
 
 type RuleValueFormProps = {
   /** 登録済みの値。重複のチェックに使う */
@@ -48,18 +37,14 @@ export const RuleValueForm = ({
     handleSubmit,
     formState: { errors },
     reset,
-    setError,
   } = useForm<RuleValueFormInput, unknown, RuleValueFormOutput>({
-    resolver: zodResolver(ruleValueFormSchema),
+    // 登録済みの一覧が変わるたびに、それと比べる schema で検証する
+    resolver: zodResolver(createRuleValueFormSchema(registered)),
     // 追加したあと、reset() でこの値（空）に戻す
     defaultValues: { value: '' },
   });
 
   const onSubmit = ({ value }: RuleValueFormOutput) => {
-    if (registered.includes(value)) {
-      setError('value', { message: 'duplicate' satisfies RuleValueError });
-      return;
-    }
     onAdd(value);
     reset();
   };
