@@ -60,8 +60,9 @@ test.describe('ルールの設定', () => {
 
   test('カウントしない行の先頭文字を追加・削除できる', async ({ page }) => {
     const group = ignoreLinePrefixes(page);
-    await group.getByRole('textbox').fill('#');
-    await group.getByRole('button', { name: '追加' }).click();
+    // Enter でも追加できる
+    await group.getByRole('textbox', { name: '追加する文字' }).fill('#');
+    await page.keyboard.press('Enter');
     await expect(
       group.getByRole('listitem').filter({ hasText: '#' }),
     ).toBeVisible();

@@ -1,3 +1,4 @@
+import { Description, Field, Label } from '@headlessui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -33,6 +34,7 @@ type RuleValueFormProps = {
 /**
  * カウントルールの一覧（カウントしない文字・行の先頭文字）に、値を追加するフォーム。
  * 空・空白だけ・登録済みの値は、エラーを表示して追加しない。
+ * Enter でも追加できる。エラーは入力欄に結び付け、表示したときに読み上げる。
  */
 export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
   const {
@@ -43,7 +45,7 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
     setError,
   } = useForm<RuleValueFormInput, unknown, RuleValueFormOutput>({
     resolver: zodResolver(ruleValueFormSchema),
-    // reset() で入力欄を空に戻すために必要（<form> 要素がないので、初期値がないと何も消えない）
+    // 追加したあと、reset() でこの値（空）に戻す
     defaultValues: { value: '' },
   });
 
@@ -57,23 +59,25 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
   };
 
   return (
-    <>
-      <InputGroup className="w-60">
-        <Input
-          className="flex-1"
-          placeholder="文字を入力"
-          {...register('value')}
-        />
-        <Button
-          size="icon"
-          icon={Plus}
-          aria-label="追加"
-          onClick={handleSubmit(onSubmit)}
-        />
-      </InputGroup>
-      {errors.value && (
-        <p className="text-error">{toErrorMessage(errors.value.message)}</p>
-      )}
-    </>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Field className="flex flex-col gap-y-2">
+        {/* 見た目は囲みの見出しでわかるので、読み上げ用の名前だけを付ける */}
+        <Label className="sr-only">追加する文字</Label>
+        <InputGroup className="w-60">
+          <Input
+            className="flex-1"
+            placeholder="文字を入力"
+            invalid={errors.value !== undefined}
+            {...register('value')}
+          />
+          <Button type="submit" size="icon" icon={Plus} aria-label="追加" />
+        </InputGroup>
+        {errors.value && (
+          <Description role="alert" className="text-error">
+            {toErrorMessage(errors.value.message)}
+          </Description>
+        )}
+      </Field>
+    </form>
   );
 };
