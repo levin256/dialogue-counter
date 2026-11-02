@@ -5,6 +5,34 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>台詞カウンター</title>
+    <meta
+      name="description"
+      content="台本などの台詞の文字数を、記号・空白・コメント行などを除いて、リアルタイムに数える Web アプリです。"
+    />
+    <link rel="canonical" href="https://dialogue-counter.web.app/" />
+    <!-- スマホのブラウザのバーの色を、ページの背景（index.css の --color-background）に合わせる -->
+    <meta
+      name="theme-color"
+      content="#f5f5f5"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#242424"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <!-- SNS などで URL を共有したときの表示（OGP）。画像は、画面を変えるたびに古くなるので付けない -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="台詞カウンター" />
+    <meta property="og:title" content="台詞カウンター" />
+    <meta
+      property="og:description"
+      content="台詞の文字数を、記号・空白・コメント行などを除いて、リアルタイムに数えます。"
+    />
+    <meta property="og:url" content="https://dialogue-counter.web.app/" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta name="twitter:card" content="summary" />
     <script>
       // 保存したテーマを、描画の前に付ける（React が読むまで OS のテーマで表示されるのを防ぐ）。
       // 保存形式は src/features/theme/stores/theme.ts の persist に合わせる
