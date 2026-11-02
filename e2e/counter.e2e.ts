@@ -10,7 +10,7 @@ const skipHowToUse = (page: Page) =>
   });
 
 const textInput = (page: Page) =>
-  page.getByRole('group', { name: 'テキスト' }).getByRole('textbox');
+  page.getByRole('textbox', { name: 'テキスト' });
 const ignoreStrings = (page: Page) =>
   page.getByRole('group', { name: 'カウントしない文字' });
 const ignoreLinePrefixes = (page: Page) =>
@@ -53,6 +53,8 @@ test.describe('ルールの設定', () => {
     await expect(group.getByRole('textbox')).toHaveValue('');
 
     await group.getByRole('button', { name: '「ー」を削除' }).click();
+    // 押したボタンは消えるので、フォーカスは追加の入力欄に移る
+    await expect(group.getByRole('textbox')).toBeFocused();
     await expect(
       group.getByRole('listitem').filter({ hasText: 'ー' }),
     ).toHaveCount(0);

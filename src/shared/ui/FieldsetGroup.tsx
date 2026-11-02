@@ -5,18 +5,17 @@ type FieldsetGroupProps = {
   legend: React.ReactNode;
   children: React.ReactNode;
   className?: string;
-  legendClassName?: string;
 };
 
+/** 見出し（legend）付きで、関係する入力をまとめる。読み上げでは、見出しがグループの名前になる。 */
 export const FieldsetGroup = ({
   legend,
   children,
   className,
-  legendClassName,
 }: FieldsetGroupProps) => {
   return (
     <Fieldset className={className}>
-      <Legend className={legendClassName}>{legend}</Legend>
+      <Legend className="font-semibold">{legend}</Legend>
       {children}
     </Fieldset>
   );

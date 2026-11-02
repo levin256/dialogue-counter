@@ -29,6 +29,8 @@ type RuleValueFormProps = {
   registered: readonly RuleValue[];
   /** 登録できる値が入力されたときに呼ばれる */
   onAdd: (value: RuleValue) => void;
+  /** 外から入力欄にフォーカスを移すときに使う */
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 };
 
 /**
@@ -36,7 +38,11 @@ type RuleValueFormProps = {
  * 空・空白だけ・登録済みの値は、エラーを表示して追加しない。
  * Enter でも追加できる。エラーは入力欄に結び付け、表示したときに読み上げる。
  */
-export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
+export const RuleValueForm = ({
+  registered,
+  onAdd,
+  inputRef,
+}: RuleValueFormProps) => {
   const {
     register,
     handleSubmit,
@@ -58,6 +64,13 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
     reset();
   };
 
+  // register() の ref は入力欄を見つけるのに使うので、外の ref と両方に入れる
+  const { ref: registerRef, ...valueField } = register('value');
+  const setInputRef = (element: HTMLInputElement | null) => {
+    registerRef(element);
+    if (inputRef) inputRef.current = element;
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Field className="flex flex-col gap-y-2">
@@ -68,7 +81,8 @@ export const RuleValueForm = ({ registered, onAdd }: RuleValueFormProps) => {
             className="flex-1"
             placeholder="文字を入力"
             invalid={errors.value !== undefined}
-            {...register('value')}
+            {...valueField}
+            ref={setInputRef}
           />
           <Button type="submit" size="icon" icon={Plus} aria-label="追加" />
         </InputGroup>
