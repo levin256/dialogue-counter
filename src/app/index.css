@@ -4,6 +4,11 @@
   --font-app-default:
     "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --default-font-family: var(--font-app-default);
+  /*
+   * 登録した値と、その入力欄の文字。全角と半角（「！」と「!」）の違いが見分けられるように、
+   * 半角がちょうど全角の半分になる日本語の等幅フォントにする。英数字用の等幅フォントでは、日本語が別のフォントになり幅がそろわない
+   */
+  --font-mono: "BIZ UDGothic", ui-monospace, monospace;
 
   /*
    * 色の名前は shadcn/ui に合わせる。

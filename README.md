@@ -24,6 +24,7 @@ https://dialogue-counter.web.app/
 
 - React 19 / TypeScript 7 / Vite 8
 - Tailwind CSS v4 / Headless UI / class-variance-authority / lucide-react
+- BIZ UDゴシック（`@fontsource/biz-udgothic`。登録した値を表示する、日本語の等幅フォント）
 - zustand（状態と保存）
 - react-hook-form / Zod（`zod/mini`。フォームの検証とドメインの値）
 - Vitest（単体テスト）/ Playwright（E2E）

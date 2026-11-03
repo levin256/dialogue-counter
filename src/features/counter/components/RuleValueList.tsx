@@ -1,9 +1,11 @@
 import { Description, Field, Label } from '@headlessui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, X } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useForm } from 'react-hook-form';
+import { cn } from '@/shared/lib/cn';
+import { displayWidth } from '@/shared/lib/displayWidth';
 import { withViewTransition } from '@/shared/lib/viewTransition';
 import { Button } from '@/shared/ui/Button';
 import { CodeLabel } from '@/shared/ui/CodeLabel';
@@ -34,6 +36,18 @@ type RuleValueListProps = {
    */
   onRemove: (value: RuleValue, restore: () => void) => void;
 };
+
+// 1マスに収まるのは、全角1文字（半角2文字）まで。マスが1つ増えるごとに、全角4文字ほど入る。
+// いちばん狭いマス（3.5rem）でも全角1文字が入るように、マスの中の余白は詰めてある
+const columnSpanOf = (value: RuleValue) => {
+  const width = displayWidth(value);
+  if (width <= 2) return 1;
+  if (width <= 10) return 2;
+  // 狭い画面でも1行のマスは4つあるので、3つまでにする（それより長いと末尾を「…」にする）
+  return 3;
+};
+
+const COLUMN_SPAN = { 1: '', 2: 'col-span-2', 3: 'col-span-3' } as const;
 
 /**
  * カウントルールの一覧（カウントしない文字・行の先頭文字）。登録済みの値と、値を追加するフォームを並べる。
@@ -94,18 +108,26 @@ export const RuleValueList = ({
   return (
     <FieldsetGroup legend={legend} className="flex flex-col gap-y-2">
       {description}
-      {/* 1つずつは短いので、横に並べて折り返す */}
-      <ul className="flex flex-wrap gap-2">
+      {/*
+        1つずつは短いので、同じ幅のマスに並べて折り返す（マスは、欄の幅いっぱいに広げる）。
+        長い値は、幅に合わせて複数のマスを使う
+      */}
+      <ul className="grid grid-cols-[repeat(auto-fill,minmax(3.5rem,1fr))] gap-2">
         {values.map((value) => (
           <li
             key={value}
             // 削除のアニメーションで、項目ごとに動かす目印
             data-rule-value
-            className="flex items-center gap-0.5 rounded-md border border-input bg-muted py-0.5 ps-2 pe-0.5"
+            className={cn(
+              'flex min-w-0 items-center gap-1 rounded-md border border-input bg-muted py-0.5 ps-1.5 pe-0.5',
+              COLUMN_SPAN[columnSpanOf(value)],
+            )}
           >
-            <CodeLabel className="max-w-40 bg-transparent p-0">
+            <CodeLabel className="min-w-0 bg-transparent p-0">
               {value}
             </CodeLabel>
+            {/* 値と削除ボタンを分けて、ボタンが値の文字に見えないようにする */}
+            <span aria-hidden="true" className="h-4 w-px shrink-0 bg-input" />
             <Button
               ref={(element) => {
                 if (element) removeButtons.current.set(value, element);
@@ -115,9 +137,9 @@ export const RuleValueList = ({
               }}
               variant="ghost"
               size="inline"
-              icon={X}
+              icon={Trash2}
               // 枠が項目の外にはみ出さないように、フォーカスの枠を離さない
-              className="rounded-full p-1 text-muted-foreground hover:bg-error/15 hover:text-error hover:brightness-100 focus-visible:outline-offset-0"
+              className="shrink-0 rounded-full p-1 text-muted-foreground hover:bg-error/15 hover:text-error hover:brightness-100 focus-visible:outline-offset-0 [&>svg]:size-3.5"
               aria-label={`「${value}」を削除`}
               onClick={() => remove(value)}
             />
@@ -133,8 +155,9 @@ export const RuleValueList = ({
           <Label className="sr-only">{`${legend}を入力`}</Label>
           {/* 入力欄とボタンは離して置く。くっつけると、フォーカスの枠が隣に重なり、角丸も片側だけになる */}
           <div className="flex gap-2">
+            {/* 登録したあとの見た目（等幅）と同じ文字で入力する。全角と半角の違いも見分けやすい */}
             <Input
-              className="flex-1"
+              className="flex-1 font-mono"
               placeholder={placeholder}
               invalid={errors.value !== undefined}
               {...register('value')}
