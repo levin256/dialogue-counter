@@ -68,10 +68,10 @@ PR がたまってマージできなくなったら、パッチとマイナー�
 
 次の3つは、`ci.yml` の中で版を固定していますが、Dependabot は上げません。上げるときは、公開から 7 日たった版にして、手で書き換えます。
 
-| もの | 場所 |
-|---|---|
-| OS（`ubuntu-24.04`） | 各ジョブの `runs-on`。GitHub が提供をやめる前に、予告が出る |
-| mise | `jdx/mise-action` の `version`（`check` と `e2e` の2か所）。手元の mise と同じ版にする |
-| firebase-tools | `FirebaseExtended/action-hosting-deploy` の `firebaseToolsVersion` |
+| もの                 | 場所                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| OS（`ubuntu-24.04`） | 各ジョブの `runs-on`。GitHub が提供をやめる前に、予告が出る                            |
+| mise                 | `jdx/mise-action` の `version`（`check` と `e2e` の2か所）。手元の mise と同じ版にする |
+| firebase-tools       | `FirebaseExtended/action-hosting-deploy` の `firebaseToolsVersion`                     |
 
 Node は `mise.toml` で固定しています。これも Dependabot は上げないので、手で書き換えます。

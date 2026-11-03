@@ -8,7 +8,7 @@ const SOURCE_URL = 'https://github.com/levin256/dialogue-counter';
  * 使い方ダイアログと、画面の下に置く。
  */
 export const PrivacyNote = ({ className }: { className?: string }) => (
-  <p className={cn('text-muted-foreground text-sm', className)}>
+  <p className={cn('text-sm text-muted-foreground', className)}>
     入力したテキストは、このブラウザの中だけで数えています。どこにも送らず、保存もしません。
     <a
       href={SOURCE_URL}

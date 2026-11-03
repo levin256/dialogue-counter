@@ -26,7 +26,7 @@ export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
         <li>指定した文字で始まる行を数えない</li>
       </ul>
       <PrivacyNote className="mt-4" />
-      <p className="mt-2 text-muted-foreground text-sm">
+      <p className="mt-2 text-sm text-muted-foreground">
         この説明は、右上の「使い方」からいつでも開けます。
       </p>
       <div className="mt-3 flex justify-end">
