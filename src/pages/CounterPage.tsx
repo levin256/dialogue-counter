@@ -39,7 +39,7 @@ export const CounterPage = () => {
             variant="ghost"
             size="inline"
             icon={CircleHelp}
-            className="whitespace-nowrap px-2 py-1.5"
+            className="px-2 py-1.5 whitespace-nowrap"
             onClick={() => setIsOpen(true)}
           >
             {/* とても狭い画面では、アイコンだけにする（文字は読み上げ用に残す） */}
@@ -54,7 +54,7 @@ export const CounterPage = () => {
             // 縦に並べたときは、テキストが長いと設定が遠くなるので、飛ぶリンクを置く
             <a
               href={`#${SETTINGS_ID}`}
-              className="flex items-center gap-1 whitespace-nowrap rounded-md px-1 py-1.5 text-link text-sm hover:brightness-80 lg:hidden"
+              className="flex items-center gap-1 rounded-md px-1 py-1.5 text-sm whitespace-nowrap text-link hover:brightness-80 lg:hidden"
             >
               <SlidersHorizontal className="size-4" />
               <span className="max-[380px]:sr-only">設定</span>

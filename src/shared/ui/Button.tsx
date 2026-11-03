@@ -13,7 +13,7 @@ const buttonVariants = cva(
         ghost: 'text-link',
       },
       size: {
-        default: 'px-3 py-1.5 font-semibold text-sm/6',
+        default: 'px-3 py-1.5 text-sm/6 font-semibold',
         // アイコンだけのボタン。高さは入力欄と同じ 36px
         icon: 'px-3 py-2.5',
         // 文字の横に並べる。余白を付けない

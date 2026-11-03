@@ -48,7 +48,7 @@ export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
           行頭のスペースやタブは無視して判定するので、インデントされた行も対象になります。
         </p>
       </section>
-      <p className="mt-4 text-muted-foreground text-sm">
+      <p className="mt-4 text-sm text-muted-foreground">
         この説明は、右上の「使い方」からいつでも開けます。
       </p>
       <div className="mt-3 flex justify-end">

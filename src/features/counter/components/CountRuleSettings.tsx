@@ -52,7 +52,7 @@ export const CountRuleSettings = ({ id }: CountRuleSettingsProps) => {
       // 飛んできたとき、見出しが画面の端に貼り付かないように少し空ける
       className="flex scroll-mt-4 flex-col gap-5 rounded-xl bg-card p-5 lg:sticky lg:top-4"
     >
-      <Legend className="font-semibold text-xl">設定</Legend>
+      <Legend className="text-xl font-semibold">設定</Legend>
 
       <FieldsetGroup
         legend="特殊文字のカウント設定"
@@ -86,7 +86,7 @@ export const CountRuleSettings = ({ id }: CountRuleSettingsProps) => {
       <RuleValueList
         legend="カウントしない行の先頭文字"
         description={
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             行頭のスペースやタブは無視して判定します（例:
             <code className="whitespace-pre">{'「  // メモ」'}</code>
             も対象）
