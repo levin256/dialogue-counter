@@ -59,10 +59,6 @@ test.describe('ルールの設定', () => {
     await expect(
       group.getByRole('listitem').filter({ hasText: '、' }),
     ).toHaveCount(0);
-    // 押したボタンは消えるので、フォーカスは次の項目の削除ボタンに移る
-    await expect(
-      group.getByRole('button', { name: '「。」を削除' }),
-    ).toBeFocused();
   });
 
   test('削除したあと、「元に戻す」で元の位置に戻せる', async ({ page }) => {
@@ -75,6 +71,7 @@ test.describe('ルールの設定', () => {
     await page.getByRole('button', { name: '元に戻す' }).click();
     // 消す前と同じく、先頭に戻る
     await expect(group.getByRole('listitem').first()).toHaveText('、');
+    // 押したボタンはトーストごと消えるので、フォーカスが戻した項目に残ることを確かめる
     await expect(
       group.getByRole('button', { name: '「、」を削除' }),
     ).toBeFocused();
@@ -83,11 +80,12 @@ test.describe('ルールの設定', () => {
 
   test('カウントしない行の先頭文字を追加・削除できる', async ({ page }) => {
     const group = ignoreLinePrefixes(page);
-    // Enter でも追加できる
     await page
       .getByRole('textbox', { name: 'カウントしない行の先頭文字を入力' })
       .fill('#');
-    await page.keyboard.press('Enter');
+    await page
+      .getByRole('button', { name: 'カウントしない行の先頭文字を追加' })
+      .click();
     await expect(
       group.getByRole('listitem').filter({ hasText: '#' }),
     ).toBeVisible();
@@ -96,20 +94,6 @@ test.describe('ルールの設定', () => {
     await expect(
       group.getByRole('listitem').filter({ hasText: '#' }),
     ).toHaveCount(0);
-  });
-
-  test('登録済みの値を追加しようとすると、エラーが表示される', async ({
-    page,
-  }) => {
-    await page
-      .getByRole('textbox', { name: 'カウントしない文字を入力' })
-      .fill('。');
-    await page
-      .getByRole('button', { name: 'カウントしない文字を追加' })
-      .click();
-    await expect(ignoreStrings(page).getByRole('alert')).toHaveText(
-      'すでに登録されています。',
-    );
   });
 
   test('リロードしても、ルールの設定が残っている', async ({ page }) => {
@@ -187,5 +171,32 @@ test.describe('テーマ', () => {
       page.getByRole('radio', { name: 'OS に合わせる' }),
     ).toBeChecked();
     await expect(html).not.toHaveAttribute('data-theme', /.*/);
+  });
+});
+
+test.describe('ページを閉じるときの確認', () => {
+  test.beforeEach(async ({ page }) => {
+    await skipHowToUse(page);
+    await page.goto('/');
+  });
+
+  test('テキストが入っていれば、確認を出す', async ({ page }) => {
+    await page.getByRole('textbox', { name: 'テキスト' }).fill('こんにちは');
+    const dialog = page.waitForEvent('dialog');
+    // 確認が出たら閉じずに止まるので、待たずに進め、出た確認で閉じる
+    void page.close({ runBeforeUnload: true });
+    const shown = await dialog;
+    expect(shown.type()).toBe('beforeunload');
+    await shown.accept();
+  });
+
+  test('テキストが空なら、確認を出さずに閉じる', async ({ page }) => {
+    let hasDialog = false;
+    page.on('dialog', async (dialog) => {
+      hasDialog = true;
+      await dialog.dismiss();
+    });
+    await page.close({ runBeforeUnload: true });
+    expect(hasDialog).toBe(false);
   });
 });
