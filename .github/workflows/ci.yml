@@ -35,6 +35,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
+      # コンポーネントテストは、本物の Chromium で部品を描く
+      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test
       - run: pnpm build
       # デプロイのジョブで、確かめたものと同じビルドを使う
