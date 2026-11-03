@@ -1,10 +1,11 @@
-import { Field, Label } from '@headlessui/react';
+import { Description, Field, Label } from '@headlessui/react';
 import { useState } from 'react';
 import { useAnimatedNumber } from '@/shared/hooks/useAnimatedNumber';
 import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
 import { Textarea } from '@/shared/ui/Input';
 import { countText } from '../domain/countRule';
 import { useCountRuleStore } from '../stores/countRule';
+import { PrivacyNote } from './PrivacyNote';
 
 type TextCounterProps = {
   /** 文字数の横に置く操作（狭い画面で、設定へ飛ぶリンクなど） */
@@ -47,11 +48,15 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
       <Textarea
         // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
         // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける
-        className="mx-5 mt-1 mb-5 field-sizing-content min-h-[60dvh] resize-none"
+        className="mx-5 mt-1 field-sizing-content min-h-[60dvh] resize-none"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="カウントしたい台詞を入力・貼り付けしてください"
       />
+      {/* 貼り付けるときに目に入るよう、入力欄のすぐ下に置く。Description にして、入力欄の説明として読み上げる */}
+      <Description as="div" className="mx-5 mt-2 mb-5">
+        <PrivacyNote />
+      </Description>
     </Field>
   );
 };

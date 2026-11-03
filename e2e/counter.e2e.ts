@@ -141,6 +141,35 @@ test('使い方ダイアログは初回だけ自動で開き、「使い方」�
   await expect(title).toBeVisible();
 });
 
+test.describe('入力したテキストを送らないことの説明', () => {
+  const NOTE = 'どこにも送らず、保存もしません。';
+
+  test('使い方ダイアログに、説明とソースコードへのリンクがある', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const dialog = page.getByRole('dialog', { name: 'これはなに？' });
+    await expect(dialog.getByText(NOTE)).toBeVisible();
+    await expect(
+      dialog.getByRole('link', { name: 'ソースコード' }),
+    ).toHaveAttribute('href', 'https://github.com/levin256/dialogue-counter');
+  });
+
+  test('テキストの入力欄の下に、説明とソースコードへのリンクがある', async ({
+    page,
+  }) => {
+    await skipHowToUse(page);
+    await page.goto('/');
+    // 入力欄の説明として読み上げられる
+    await expect(
+      page.getByRole('textbox', { name: 'テキスト' }),
+    ).toHaveAccessibleDescription(new RegExp(NOTE));
+    await expect(
+      page.getByRole('link', { name: 'ソースコード' }),
+    ).toHaveAttribute('href', 'https://github.com/levin256/dialogue-counter');
+  });
+});
+
 test.describe('テーマ', () => {
   test.beforeEach(async ({ page }) => {
     await skipHowToUse(page);
