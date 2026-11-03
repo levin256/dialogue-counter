@@ -1,0 +1,24 @@
+# 依存の更新を、月に1回 PR で受け取る。マージは CI と中身を確かめてから手で行う（自動マージはしない）
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    # 公開から 7 日たった版だけを PR にする（pnpm-workspace.yaml の minimumReleaseAge と同じ考え方）
+    cooldown:
+      default-days: 7
+    groups:
+      # マイナー・パッチはまとめて1つの PR にする。メジャーは影響が大きいので、1つずつ別の PR にする
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]

@@ -4,6 +4,11 @@
   --font-app-default:
     "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --default-font-family: var(--font-app-default);
+  /*
+   * 登録した値と、その入力欄の文字。全角と半角（「！」と「!」）の違いが見分けられるように、
+   * 半角がちょうど全角の半分になる日本語の等幅フォントにする。英数字用の等幅フォントでは、日本語が別のフォントになり幅がそろわない
+   */
+  --font-mono: "BIZ UDGothic", ui-monospace, monospace;
 
   /*
    * 色の名前は shadcn/ui に合わせる。
@@ -26,7 +31,8 @@
   );
 
   /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベルと入力欄（muted） */
-  --color-card: light-dark(var(--color-white), rgb(255 255 255 / 0.06));
+  /* card は、上に貼り付けた文字数の後ろが透けないように、不透明にする（ダークは白 6% を重ねた色） */
+  --color-card: light-dark(var(--color-white), #313131);
   --color-popover: light-dark(var(--color-white), var(--color-neutral-700));
   --color-muted: light-dark(var(--color-neutral-100), var(--color-neutral-700));
 
@@ -38,12 +44,15 @@
     var(--color-neutral-600)
   );
 
-  /* メインの色（追加などのボタン、トグルの ON、「?」）と、その上の文字 */
+  /* メインの色（追加などのボタン、トグルの ON）と、その上の文字 */
   --color-primary: light-dark(var(--color-teal-600), var(--color-teal-700));
   --color-primary-foreground: light-dark(
     var(--color-white),
     rgb(255 255 255 / 0.87)
   );
+
+  /* 背景のない、文字だけのボタンとリンク（「使い方」「元に戻す」など）。primary だと暗い面の上で読みにくいので、ダークでは明るくする */
+  --color-link: light-dark(var(--color-teal-700), var(--color-teal-400));
 
   /* 危険な操作（削除ボタン）の背景と、その上の文字 */
   --color-destructive: light-dark(var(--color-red-600), var(--color-red-800));
@@ -68,6 +77,10 @@
   --color-switch-thumb: var(--color-white);
 }
 
+/*
+ * 要素の既定の見た目（ページの色、テーマ、フォーカスの枠、カーソルなど）。
+ * View Transitions のアニメーションは量が多いので、下の別のブロックにまとめる。
+ */
 @layer base {
   :root {
     color-scheme: light dark;
@@ -94,8 +107,62 @@
     outline-offset: 2px;
   }
 
+  /* ページの中のリンク（狭い画面の「設定」）で飛ぶときに、どこへ動いたかわかるようにする */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      scroll-behavior: smooth;
+    }
+  }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+/*
+ * View Transitions API のアニメーション（src/shared/lib/viewTransition.ts の withViewTransition で始める）。
+ * 種類ごとに :active-view-transition-type() で分ける。OS で動きを減らす設定のときは、始めないので動かない。
+ */
+@layer base {
+  /* テーマの切り替え: 画面全体を、前の色からゆっくりフェードさせる */
+  :root:active-view-transition-type(theme)::view-transition-old(root),
+  :root:active-view-transition-type(theme)::view-transition-new(root) {
+    animation-duration: 400ms;
+  }
+
+  /* 登録した値の削除: 消える項目をフェードで消してから、残りを詰める */
+  :root:active-view-transition-type(remove-rule-value) [data-rule-value] {
+    view-transition-name: match-element;
+    view-transition-class: rule-value;
+  }
+  /* ページのほかの部分は、すぐに新しい画面にする */
+  :root:active-view-transition-type(remove-rule-value)::view-transition-old(
+    root
+  ),
+  :root:active-view-transition-type(remove-rule-value)::view-transition-new(
+    root
+  ) {
+    animation: none;
+  }
+  /* 消える項目（新しい画面にないもの）だけをフェードで消す */
+  :root:active-view-transition-type(remove-rule-value)::view-transition-old(
+    .rule-value
+  ):only-child {
+    animation: 150ms ease-out both fade-out;
+  }
+  /* 残りは、フェードが終わってから詰める。待つあいだは元の位置に置く（backwards） */
+  :root:active-view-transition-type(remove-rule-value)::view-transition-group(
+    .rule-value
+  ) {
+    animation-duration: 200ms;
+    animation-delay: 150ms;
+    animation-fill-mode: backwards;
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
   }
 }

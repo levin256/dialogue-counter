@@ -2,7 +2,9 @@ import { Fieldset, Legend } from '@headlessui/react';
 import type React from 'react';
 
 type FieldsetGroupProps = {
+  /** グループの見出し。読み上げでは、グループの名前になる */
   legend: React.ReactNode;
+  /** まとめる入力 */
   children: React.ReactNode;
   className?: string;
 };

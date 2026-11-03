@@ -75,4 +75,15 @@ describe('createCountRuleStore', () => {
       DEFAULT_COUNT_RULE.ignoreStrings,
     );
   });
+
+  it('位置を渡すと、その位置に追加する', () => {
+    const storage = createMemoryStorage();
+    const store = createCountRuleStore(() => storage);
+    const [first, ...rest] = DEFAULT_COUNT_RULE.ignoreStrings;
+
+    store.getState().removeIgnoreString(RuleValue.parse(first));
+    store.getState().addIgnoreString(RuleValue.parse(first), 0);
+
+    expect(store.getState().ignoreStrings).toEqual([first, ...rest]);
+  });
 });

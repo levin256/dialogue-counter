@@ -27,18 +27,18 @@ test.describe('ルールの設定', () => {
       // 初期値では、記号・空白・改行と、// で始まる行を数えない
       '「はい。」 そうです\n// メモ',
     );
-    await expect(page.getByText('文字数 : 6')).toBeVisible();
+    await expect(page.getByText('文字数 6 文字')).toBeVisible();
   });
 
   test('空白・改行のトグルを切り替えると、文字数が変わる', async ({ page }) => {
     await page.getByRole('textbox', { name: 'テキスト' }).fill('あ い\nう');
-    await expect(page.getByText('文字数 : 3')).toBeVisible();
+    await expect(page.getByText('文字数 3 文字')).toBeVisible();
 
     await page.getByRole('switch', { name: '空白をカウントしない' }).click();
-    await expect(page.getByText('文字数 : 4')).toBeVisible();
+    await expect(page.getByText('文字数 4 文字')).toBeVisible();
 
     await page.getByRole('switch', { name: '改行をカウントしない' }).click();
-    await expect(page.getByText('文字数 : 5')).toBeVisible();
+    await expect(page.getByText('文字数 5 文字')).toBeVisible();
   });
 
   test('カウントしない文字を追加・削除できる', async ({ page }) => {
@@ -63,6 +63,22 @@ test.describe('ルールの設定', () => {
     await expect(
       group.getByRole('button', { name: '「。」を削除' }),
     ).toBeFocused();
+  });
+
+  test('削除したあと、「元に戻す」で元の位置に戻せる', async ({ page }) => {
+    const group = ignoreStrings(page);
+    await group.getByRole('button', { name: '「、」を削除' }).click();
+    await expect(page.getByRole('status')).toContainText(
+      '「、」を削除しました',
+    );
+
+    await page.getByRole('button', { name: '元に戻す' }).click();
+    // 消す前と同じく、先頭に戻る
+    await expect(group.getByRole('listitem').first()).toHaveText('、');
+    await expect(
+      group.getByRole('button', { name: '「、」を削除' }),
+    ).toBeFocused();
+    await expect(page.getByRole('status')).toBeEmpty();
   });
 
   test('カウントしない行の先頭文字を追加・削除できる', async ({ page }) => {
@@ -119,7 +135,7 @@ test.describe('ルールの設定', () => {
   });
 });
 
-test('使い方ダイアログは初回だけ自動で開き、「?」ボタンからは開ける', async ({
+test('使い方ダイアログは初回だけ自動で開き、「使い方」ボタンからは開ける', async ({
   page,
 }) => {
   await page.goto('/');
@@ -137,6 +153,39 @@ test('使い方ダイアログは初回だけ自動で開き、「?」ボタン�
   ).toBeVisible();
   await expect(dialog).toBeHidden();
 
-  await page.getByRole('button', { name: '使い方を開く' }).click();
+  await page.getByRole('button', { name: '使い方' }).click();
   await expect(title).toBeVisible();
+});
+
+test.describe('テーマ', () => {
+  test.beforeEach(async ({ page }) => {
+    await skipHowToUse(page);
+    // OS はライトにしておき、ダークを選んだことが OS の設定と区別できるようにする
+    await page.emulateMedia({ colorScheme: 'light' });
+    await page.goto('/');
+  });
+
+  test('選んだテーマは保存され、React より先に付く', async ({ page }) => {
+    const html = page.locator('html');
+    await page.getByRole('radio', { name: 'ダーク' }).click();
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+
+    // アプリの JS を読み込ませずに開き直し、index.html のスクリプトだけで付くことを確かめる
+    await page.route('**/src/app/main.tsx', (route) => route.abort());
+    await page.reload();
+    await expect(html).toHaveAttribute('data-theme', 'dark');
+  });
+
+  test('「OS に合わせる」を選ぶと、data-theme を外す', async ({ page }) => {
+    const html = page.locator('html');
+    await page.getByRole('radio', { name: 'ダーク' }).click();
+    await page.getByRole('radio', { name: 'OS に合わせる' }).click();
+    await expect(html).not.toHaveAttribute('data-theme', /.*/);
+
+    await page.reload();
+    await expect(
+      page.getByRole('radio', { name: 'OS に合わせる' }),
+    ).toBeChecked();
+    await expect(html).not.toHaveAttribute('data-theme', /.*/);
+  });
 });

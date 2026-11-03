@@ -10,7 +10,7 @@ const buttonVariants = cva(
       variant: {
         primary: 'bg-primary text-primary-foreground',
         destructive: 'bg-destructive text-destructive-foreground',
-        ghost: 'text-primary',
+        ghost: 'text-link',
       },
       size: {
         default: 'px-3 py-1.5 font-semibold text-sm/6',
@@ -29,6 +29,7 @@ type ButtonContent =
   | { children: React.ReactNode; icon?: LucideIcon }
   | { children?: never; icon: LucideIcon; 'aria-label': string };
 
+/** Button の props。`<button>` の属性に、見た目（variant・size）とアイコンを足したもの。 */
 export type ButtonProps = Omit<React.ComponentProps<'button'>, 'children'> &
   VariantProps<typeof buttonVariants> &
   ButtonContent;
