@@ -21,13 +21,4 @@ describe('animatedValueAt', () => {
   });
 });
 
-// フック（useAnimatedNumber）そのものは、React を描く環境（Testing Library の renderHook と、
-// ブラウザか jsdom）がないとテストできない。単体テストはブラウザのない Node で動かしていて、
-// その環境はまだ入れていないので、入れるまで todo にしておく。
-// 最後に目標の値で止まることは、E2E の文字数の表示（「文字数 6 文字」など）でも確かめている。
-describe('useAnimatedNumber', () => {
-  it.todo('時間がたつと、最後は目標の値になる');
-  it.todo('動いている途中で目標が変わったら、表示中の値から続けて動く');
-  it.todo('OS で動きを減らす設定のときは、すぐに目標の値になる');
-  it.todo('部品が消えたら、予約したアニメーションを取り消す');
-});
+// フック（useAnimatedNumber）そのものは、React で描く必要があるので、useAnimatedNumber.browser.test.ts でブラウザで確かめる
