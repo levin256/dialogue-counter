@@ -6,8 +6,9 @@ export const CodeLabel = ({
   ...props
 }: React.ComponentProps<'code'>) => (
   <code
+    // 末尾の「…」（text-overflow）は flex の中の文字には効かないので、block にする
     className={cn(
-      'flex flex-1 items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-muted px-2 py-1 text-left text-sm underline decoration-muted-foreground underline-offset-4',
+      'block flex-1 truncate rounded-md bg-muted px-2 py-1 text-left text-sm underline decoration-muted-foreground underline-offset-4',
       className,
     )}
     {...props}
