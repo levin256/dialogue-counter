@@ -171,13 +171,17 @@ test.describe('入力したテキストを送らないことの説明', () => {
     ).toHaveAttribute('href', 'https://github.com/levin256/dialogue-counter');
   });
 
-  test('画面の下に、説明とソースコードへのリンクがある', async ({ page }) => {
+  test('テキストの入力欄の下に、説明とソースコードへのリンクがある', async ({
+    page,
+  }) => {
     await skipHowToUse(page);
     await page.goto('/');
-    const footer = page.getByRole('contentinfo');
-    await expect(footer.getByText(NOTE)).toBeVisible();
+    // 入力欄の説明として読み上げられる
     await expect(
-      footer.getByRole('link', { name: 'ソースコード' }),
+      page.getByRole('textbox', { name: 'テキスト' }),
+    ).toHaveAccessibleDescription(new RegExp(NOTE));
+    await expect(
+      page.getByRole('link', { name: 'ソースコード' }),
     ).toHaveAttribute('href', 'https://github.com/levin256/dialogue-counter');
   });
 });

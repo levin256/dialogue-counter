@@ -2,7 +2,6 @@ import { CircleHelp, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import { CountRuleSettings } from '@/features/counter/components/CountRuleSettings';
 import { HowToUseDialog } from '@/features/counter/components/HowToUseDialog';
-import { PrivacyNote } from '@/features/counter/components/PrivacyNote';
 import { TextCounter } from '@/features/counter/components/TextCounter';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { ThemeSwitcher } from '@/features/theme/components/ThemeSwitcher';
@@ -64,9 +63,6 @@ export const CounterPage = () => {
         />
         <CountRuleSettings id={SETTINGS_ID} />
       </main>
-      <footer>
-        <PrivacyNote />
-      </footer>
       <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
     </div>
   );

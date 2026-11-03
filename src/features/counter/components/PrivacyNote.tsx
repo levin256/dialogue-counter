@@ -5,7 +5,7 @@ const SOURCE_URL = 'https://github.com/levin256/dialogue-counter';
 
 /**
  * 入力したテキストを外に送らないことの説明と、それを確かめられるソースコードへのリンク。
- * 使い方ダイアログと、画面の下に置く。
+ * 使い方ダイアログと、テキストの入力欄の下に置く。
  */
 export const PrivacyNote = ({ className }: { className?: string }) => (
   <p className={cn('text-sm text-muted-foreground', className)}>
