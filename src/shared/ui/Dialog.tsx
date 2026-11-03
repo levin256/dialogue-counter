@@ -38,7 +38,7 @@ export const Dialog = ({ open, onClose, children, className }: DialogProps) => (
         <DialogPanel
           transition
           className={cn(
-            'data-[closed]:transform-[scale(90%)] w-full max-w-md rounded-xl bg-popover p-6 duration-300 ease-out data-[closed]:opacity-0 motion-reduce:transition-none',
+            'w-full max-w-md rounded-xl bg-popover p-6 duration-300 ease-out data-[closed]:transform-[scale(90%)] data-[closed]:opacity-0 motion-reduce:transition-none',
             className,
           )}
         >
@@ -57,7 +57,7 @@ export const DialogTitle = ({
   className?: string;
   children: React.ReactNode;
 }) => (
-  <HeadlessDialogTitle className={cn('mb-3 font-bold text-xl', className)}>
+  <HeadlessDialogTitle className={cn('mb-3 text-xl font-bold', className)}>
     {children}
   </HeadlessDialogTitle>
 );
