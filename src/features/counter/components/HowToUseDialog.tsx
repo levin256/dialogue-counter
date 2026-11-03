@@ -1,5 +1,6 @@
 import { Button } from '@/shared/ui/Button';
 import { Dialog, DialogTitle } from '@/shared/ui/Dialog';
+import { PrivacyNote } from './PrivacyNote';
 
 type HowToUseDialogProps = {
   /** 開いているか */
@@ -24,7 +25,8 @@ export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
         <li>指定した文字を数えない</li>
         <li>指定した文字で始まる行を数えない</li>
       </ul>
-      <p className="mt-4 text-muted-foreground text-sm">
+      <PrivacyNote className="mt-4" />
+      <p className="mt-2 text-muted-foreground text-sm">
         この説明は、右上の「使い方」からいつでも開けます。
       </p>
       <div className="mt-3 flex justify-end">
