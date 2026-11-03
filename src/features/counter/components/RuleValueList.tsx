@@ -158,6 +158,8 @@ export const RuleValueList = ({
             {/* 登録したあとの見た目（等幅）と同じ文字で入力する。全角と半角の違いも見分けやすい */}
             <Input
               className="flex-1 font-mono"
+              // 登録した値は一覧に出ているので、ブラウザが覚えた入力の候補は出さない
+              autoComplete="off"
               placeholder={placeholder}
               invalid={errors.value !== undefined}
               {...register('value')}
