@@ -56,6 +56,16 @@
   },
   "overrides": [
     {
+      "includes": ["**/*.browser.test.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["src/**"],
       "linter": {
         "rules": {
