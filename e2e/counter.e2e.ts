@@ -119,6 +119,60 @@ test.describe('ルールの設定', () => {
   });
 });
 
+test.describe('入力と確認の切り替え', () => {
+  test.beforeEach(async ({ page }) => {
+    await skipHowToUse(page);
+    await page.goto('/');
+  });
+
+  test('「確認」では、数えない部分が薄い区間になり、薄くない文字の数が文字数と一致する', async ({
+    page,
+  }) => {
+    await page
+      .getByRole('textbox', { name: 'テキスト' })
+      .fill('「はい。」 そうです\n// メモ');
+    await page.getByRole('tab', { name: '確認' }).click();
+
+    const review = page.getByRole('tabpanel', { name: '確認' });
+    await expect(review).toBeVisible();
+    // toHaveText は空白と改行をまとめてしまうので、textContent をそのまま比べる
+    const textsOf = (counted: boolean) =>
+      review
+        .locator(`[data-counted="${counted}"]`)
+        .evaluateAll((spans) => spans.map((span) => span.textContent));
+    expect(await textsOf(false)).toEqual(['「', '。」 ', '\n// メモ']);
+
+    // 薄くない区間を見た目の 1 文字ずつ数え、上に出ている文字数と比べる
+    const countedLength = await review
+      .locator('[data-counted="true"]')
+      .evaluateAll(
+        (spans) =>
+          [
+            ...new Intl.Segmenter('ja', { granularity: 'grapheme' }).segment(
+              spans.map((span) => span.textContent).join(''),
+            ),
+          ].length,
+      );
+    expect(countedLength).toBe(6);
+    await expect(page.getByText(`文字数 ${countedLength} 文字`)).toBeVisible();
+  });
+
+  test('「入力」に戻ると、入力欄が残っていて、確認の前の編集を取り消せる', async ({
+    page,
+  }) => {
+    const textbox = page.getByRole('textbox', { name: 'テキスト' });
+    await textbox.pressSequentially('あい');
+    await page.getByRole('tab', { name: '確認' }).click();
+    await expect(textbox).toBeHidden();
+
+    await page.getByRole('tab', { name: '入力' }).click();
+    await expect(textbox).toHaveValue('あい');
+    // 入力欄を作り直していたら、取り消しの履歴がなくなっていて、値が変わらない
+    await textbox.press('ControlOrMeta+z');
+    await expect(textbox).not.toHaveValue('あい');
+  });
+});
+
 test('使い方ダイアログは初回だけ自動で開き、「使い方」ボタンからは開ける', async ({
   page,
 }) => {
@@ -242,11 +296,8 @@ test.describe('スマホの幅（360px）', () => {
   test('ページが横にはみ出さず、テキストと設定の囲みの幅がそろう', async ({
     page,
   }) => {
-    // 入力欄の親がテキストの囲み
-    const textCard = await page
-      .getByRole('textbox', { name: 'テキスト' })
-      .locator('..')
-      .boundingBox();
+    // main の1つ目がテキストの囲み。囲みの中の作り（タブなど）が変わっても測れるように、外から数える
+    const textCard = await page.locator('main > *').first().boundingBox();
     const settingsCard = await page
       .getByRole('group', { name: '設定', exact: true })
       .boundingBox();
