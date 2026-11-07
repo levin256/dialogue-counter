@@ -33,6 +33,12 @@
     rgb(255 255 255 / 0.65)
   );
 
+  /* 「確認」で、カウントしない部分の文字。カウントする部分との差がひと目でわかるように、控えめな文字よりさらに薄くする */
+  --color-uncounted-foreground: light-dark(
+    var(--color-neutral-400),
+    rgb(255 255 255 / 0.38)
+  );
+
   /* 面の背景: 囲み（card）、ダイアログ（popover）、登録した文字のラベルと入力欄（muted） */
   /* card は、上に貼り付けた文字数の後ろが透けないように、不透明にする（ダークは白 6% を重ねた色） */
   --color-card: light-dark(var(--color-white), #313131);

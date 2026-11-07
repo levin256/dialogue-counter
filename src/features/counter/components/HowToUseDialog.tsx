@@ -24,6 +24,7 @@ export const HowToUseDialog = ({ isOpen, onClose }: HowToUseDialogProps) => {
         <li>空白・改行を数えるか選べる</li>
         <li>指定した文字を数えない</li>
         <li>指定した文字で始まる行を数えない</li>
+        <li>「確認」で、数えない部分を薄くして確かめられる</li>
       </ul>
       <PrivacyNote className="mt-4" />
       <p className="mt-2 text-sm text-muted-foreground">

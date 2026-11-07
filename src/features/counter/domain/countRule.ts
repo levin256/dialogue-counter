@@ -63,7 +63,7 @@ export type RuleValue = z.infer<typeof RuleValue>;
  * 保存データのように、外から来た値は {@link CountRule}.safeParse で検証してから使う。
  */
 export const CountRule = z.object({
-  /** カウントしない文字（列）。登録順に取り除く */
+  /** カウントしない文字（列）。どれも元のテキストの上で探すので、登録順は結果に影響しない */
   ignoreStrings: z.readonly(z.array(RuleValue)),
   /** この文字で始まる行はカウントしない。行頭の空白は読み飛ばして判定する */
   ignoreLinePrefixes: z.readonly(z.array(RuleValue)),
@@ -84,12 +84,25 @@ export const DEFAULT_COUNT_RULE: CountRule = {
   ignoreLineBreak: true,
 };
 
+/** 元のテキストの一部と、それをカウントするか。 */
+export type CountSegment = {
+  text: string;
+  counted: boolean;
+};
+
 /**
- * ルールに従って、カウントしない部分を取り除いたテキストを返す。
- * 行の除外 → 除外文字 → 空白 → 改行 の順に適用する。
+ * ルールに従って、元のテキストを「カウントする区間」と「カウントしない区間」に分ける。
+ * 区間をすべてつなげると、元のテキストに戻る。隣り合う区間は、counted が必ず違う。
+ *
+ * 行・除外文字・空白・改行は、どれも元のテキストの上で探し、見つかった範囲をすべて合わせてカウントしない。
+ * そのため、適用する順番で結果は変わらない。
  *
  * @param text 元のテキスト
  * @param rule 何をカウントしないか
+ *
+ * @example
+ * applyCountRule('「はい」', DEFAULT_COUNT_RULE)
+ * // => [{ text: '「', counted: false }, { text: 'はい', counted: true }, { text: '」', counted: false }]
  */
 export const applyCountRule = (
   text: string,
@@ -99,7 +112,34 @@ export const applyCountRule = (
     ignoreSpace,
     ignoreLineBreak,
   }: CountRule,
-) => {
+): CountSegment[] => {
+  // 元のテキストの位置（UTF-16 の 1 単位）ごとに、カウントしないか
+  const ignored = new Array<boolean>(text.length).fill(false);
+
+  // 行頭の空白は読み飛ばして判定する（インデントされた行も除外する）
+  const prefixes = ignoreLinePrefixes.map((prefix) =>
+    prefix.replace(leadingSpaceRegex, ''),
+  );
+  const lines = text.split('\n');
+  const isIgnoredLine = lines.map((line) => {
+    const trimmedLine = line.replace(leadingSpaceRegex, '');
+    return prefixes.some((prefix) => trimmedLine.startsWith(prefix));
+  });
+  // 行を取り除いたのと同じ数の改行を残すため、残る行より前の行は後ろの改行を、後ろの行は前の改行を、行と一緒に除外する
+  const lastCountedLine = isIgnoredLine.lastIndexOf(false);
+  let lineStart = 0;
+  lines.forEach((line, i) => {
+    const lineEnd = lineStart + line.length;
+    if (isIgnoredLine[i]) {
+      if (i < lastCountedLine) {
+        ignored.fill(true, lineStart, lineEnd + 1);
+      } else {
+        ignored.fill(true, Math.max(lineStart - 1, 0), lineEnd);
+      }
+    }
+    lineStart = lineEnd + 1;
+  });
+
   const ignorePatterns = [
     ...ignoreStrings.map(
       (ignoreString) => new RegExp(escapeRegExp(ignoreString), 'g'),
@@ -107,25 +147,25 @@ export const applyCountRule = (
     ...(ignoreSpace ? [spaceRegex] : []),
     ...(ignoreLineBreak ? [/\n/g] : []),
   ];
+  for (const regex of ignorePatterns) {
+    for (const match of text.matchAll(regex)) {
+      ignored.fill(true, match.index, match.index + match[0].length);
+    }
+  }
 
-  // 行頭の空白は読み飛ばして判定する（インデントされた行も除外する）
-  const textWithoutIgnoreLine = ignoreLinePrefixes.reduce(
-    (currentText, ignoreLinePrefix) => {
-      const prefix = ignoreLinePrefix.replace(leadingSpaceRegex, '');
-      const lines = currentText.split(/\n/);
-      return lines
-        .filter(
-          (line) => !line.replace(leadingSpaceRegex, '').startsWith(prefix),
-        )
-        .join('\n');
-    },
-    text,
-  );
-  const textWithoutIgnoreString = ignorePatterns.reduce(
-    (currentText, regex) => currentText.replaceAll(regex, ''),
-    textWithoutIgnoreLine,
-  );
-  return textWithoutIgnoreString;
+  // カウントするかが同じ位置の並びを、1 つの区間にまとめる
+  const segments: CountSegment[] = [];
+  let segmentStart = 0;
+  for (let i = 1; i <= text.length; i++) {
+    if (i === text.length || ignored[i] !== ignored[segmentStart]) {
+      segments.push({
+        text: text.slice(segmentStart, i),
+        counted: !ignored[segmentStart],
+      });
+      segmentStart = i;
+    }
+  }
+  return segments;
 };
 
 /**
@@ -138,4 +178,10 @@ export const applyCountRule = (
  * countText('「はい。」', DEFAULT_COUNT_RULE) // => 2
  */
 export const countText = (text: string, rule: CountRule) =>
-  countCharacters(applyCountRule(text, rule));
+  // 区間ごとに数えて足すと、絵文字や結合文字の途中で区間が切れたときに数がずれるので、つなげてから数える
+  countCharacters(
+    applyCountRule(text, rule)
+      .filter(({ counted }) => counted)
+      .map(({ text }) => text)
+      .join(''),
+  );
