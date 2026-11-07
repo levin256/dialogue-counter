@@ -119,11 +119,12 @@ export const RuleValueList = ({
             // 削除のアニメーションで、項目ごとに動かす目印
             data-rule-value
             className={cn(
-              'flex min-w-0 items-center gap-1 rounded-md border border-input bg-muted py-0.5 ps-1.5 pe-0.5',
+              'flex min-w-0 items-center gap-1 rounded-md border border-input bg-muted py-px ps-1.5 pe-0.5',
               COLUMN_SPAN[columnSpanOf(value)],
             )}
           >
-            <CodeLabel className="min-w-0 bg-transparent p-0">
+            {/* 下線が切れないように、上下の余白（py）は残す。その分、項目の上下の余白を詰める */}
+            <CodeLabel className="min-w-0 bg-transparent px-0 py-0.5">
               {value}
             </CodeLabel>
             {/* 値と削除ボタンを分けて、ボタンが値の文字に見えないようにする */}
