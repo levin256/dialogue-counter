@@ -49,8 +49,9 @@ export const CountRuleSettings = ({ id }: CountRuleSettingsProps) => {
   return (
     <Fieldset
       id={id}
-      // 飛んできたとき、見出しが画面の端に貼り付かないように少し空ける
-      className="flex scroll-mt-4 flex-col gap-5 rounded-xl bg-card p-5 lg:sticky lg:top-4"
+      // 飛んできたとき、見出しが画面の端に貼り付かないように少し空ける。
+      // fieldset は既定で中身より狭くならないので、min-w-0 がないと狭い画面ではみ出す
+      className="flex min-w-0 scroll-mt-4 flex-col gap-5 rounded-xl bg-card p-5 lg:sticky lg:top-4"
     >
       <Legend className="text-xl font-semibold">設定</Legend>
 

@@ -34,11 +34,12 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
         </Label>
         {/*
           見出しではなく値なので、p にする。入力のたびに読み上げるとうるさいので、aria-live は付けない。
-          間の空白は、読み上げとコピーで「文字数 6 文字」と区切られるように入れる（見た目の間隔は gap で付ける）
+          間の空白は、読み上げとコピーで「文字数 6 文字」と区切られるように入れる（見た目の間隔は gap で付ける）。
+          「文字数」は読み上げ用。見せると、スマホで桁が増えたとき「設定」が次の行に落ちる
         */}
         <p className="flex items-baseline gap-1.5 whitespace-nowrap">
-          <span className="text-sm text-muted-foreground">文字数</span>{' '}
-          <span className="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">
+          <span className="sr-only">文字数</span>{' '}
+          <span className="text-2xl font-bold tracking-tight tabular-nums sm:text-3xl">
             {displayedCount.toLocaleString('ja-JP')}
           </span>{' '}
           <span className="text-sm">文字</span>
@@ -47,8 +48,9 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
       </div>
       <Textarea
         // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
-        // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける
-        className="mx-5 mt-1 field-sizing-content min-h-[60dvh] resize-none"
+        // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける。
+        // 高さの下限は svh で決める。dvh だと、アドレスバーが出入りするたびに欄が伸び縮みする
+        className="mx-5 mt-1 field-sizing-content min-h-[60svh] resize-none"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="カウントしたい台詞を入力・貼り付けしてください"

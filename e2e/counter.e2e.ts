@@ -229,3 +229,33 @@ test.describe('ページを閉じるときの確認', () => {
     expect(hasDialog).toBe(false);
   });
 });
+
+// よくあるスマホのいちばん狭い幅。ここで収まれば、広い幅でも収まる
+test.describe('スマホの幅（360px）', () => {
+  test.use({ viewport: { width: 360, height: 740 } });
+
+  test.beforeEach(async ({ page }) => {
+    await skipHowToUse(page);
+    await page.goto('/');
+  });
+
+  test('ページが横にはみ出さず、テキストと設定の囲みの幅がそろう', async ({
+    page,
+  }) => {
+    // 入力欄の親がテキストの囲み
+    const textCard = await page
+      .getByRole('textbox', { name: 'テキスト' })
+      .locator('..')
+      .boundingBox();
+    const settingsCard = await page
+      .getByRole('group', { name: '設定', exact: true })
+      .boundingBox();
+    expect(settingsCard?.width).toBe(textCard?.width);
+
+    // 描かれる前に測ると、はみ出していても通ってしまうので、囲みを測ったあとに測る
+    const scrollWidth = await page.evaluate(
+      () => document.documentElement.scrollWidth,
+    );
+    expect(scrollWidth).toBeLessThanOrEqual(360);
+  });
+});
