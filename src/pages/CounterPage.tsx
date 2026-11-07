@@ -9,6 +9,7 @@ import { useKeepFocusedInputVisible } from '@/shared/hooks/useKeepFocusedInputVi
 import { useStableViewportHeight } from '@/shared/hooks/useStableViewportHeight';
 import { Button } from '@/shared/ui/Button';
 import { Heading } from '@/shared/ui/Heading';
+import { ViewportDebugPanel } from '@/shared/ui/ViewportDebugPanel';
 
 const SETTINGS_ID = 'count-rule-settings';
 
@@ -69,6 +70,10 @@ export const CounterPage = () => {
         <CountRuleSettings id={SETTINGS_ID} />
       </main>
       <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
+      {/* TODO(#25): 実機の調査用。マージする前に消す */}
+      {new URLSearchParams(window.location.search).has('debug') && (
+        <ViewportDebugPanel />
+      )}
     </div>
   );
 };
