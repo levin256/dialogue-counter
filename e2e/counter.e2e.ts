@@ -230,8 +230,7 @@ test.describe('ページを閉じるときの確認', () => {
   });
 });
 
-// 囲みの幅は、部品をページに並べたときにしか決まらないので、E2E で確かめる。
-// よくあるスマホのいちばん狭い幅で確かめる。ここではみ出さなければ、それより広い幅でもはみ出さない
+// よくあるスマホのいちばん狭い幅。ここで収まれば、広い幅でも収まる
 test.describe('スマホの幅（360px）', () => {
   test.use({ viewport: { width: 360, height: 740 } });
 
@@ -243,7 +242,7 @@ test.describe('スマホの幅（360px）', () => {
   test('ページが横にはみ出さず、テキストと設定の囲みの幅がそろう', async ({
     page,
   }) => {
-    // テキストの囲みは、入力欄のすぐ外の要素
+    // 入力欄の親がテキストの囲み
     const textCard = await page
       .getByRole('textbox', { name: 'テキスト' })
       .locator('..')
@@ -253,7 +252,7 @@ test.describe('スマホの幅（360px）', () => {
       .boundingBox();
     expect(settingsCard?.width).toBe(textCard?.width);
 
-    // 囲みが描かれるのを待ってから測る（描く前は、はみ出しようがない）
+    // 描かれる前に測ると、はみ出していても通ってしまうので、囲みを測ったあとに測る
     const scrollWidth = await page.evaluate(
       () => document.documentElement.scrollWidth,
     );

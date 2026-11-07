@@ -1,21 +1,17 @@
 import { useEffect } from 'react';
 
-/** 画面の高さ（px）を入れる CSS 変数の名前。JS が動く前は、CSS で 100svh を代わりに使う */
+/** 開いたときの画面の高さ（px）。JS が動く前は、CSS 側で 100svh を使う */
 export const STABLE_VIEWPORT_HEIGHT = '--stable-viewport-height';
 
 /**
- * 開いたときの画面の高さを、CSS 変数 `--stable-viewport-height` に px で入れる。
- * 高さだけが変わったとき（キーボードやアドレスバーの出入り）は入れ直さず、
- * 幅が変わったとき（画面の回転、ウィンドウの大きさの変更）だけ入れ直す。
- *
- * svh などの単位は、スマホのブラウザによっては、キーボードが出ると小さくなる（iPhone の Chrome など）。
- * それを高さに使うと、入力欄にフォーカスしただけで、欄が縮んで下のものが動くので、こちらを使う。
+ * 開いたときの画面の高さを、CSS 変数 `--stable-viewport-height` に入れる。測り直すのは、幅が変わったとき（画面の回転など）だけ。
+ * svh などは iPhone の Chrome ではキーボードが出ると小さくなり、入力欄にフォーカスしただけで欄が縮むため。
  */
 export const useStableViewportHeight = () => {
   useEffect(() => {
     const root = document.documentElement;
     let width = window.innerWidth;
-    // clientHeight は、アドレスバーが出ているときの高さ（svh と同じ）
+    // アドレスバーが出ているときの高さ（svh と同じ）
     const update = () => {
       root.style.setProperty(STABLE_VIEWPORT_HEIGHT, `${root.clientHeight}px`);
     };

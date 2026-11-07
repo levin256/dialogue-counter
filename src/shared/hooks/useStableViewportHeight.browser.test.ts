@@ -12,7 +12,7 @@ const HEIGHT = 800;
 const stableHeight = () =>
   document.documentElement.style.getPropertyValue(STABLE_VIEWPORT_HEIGHT);
 
-// resize は、大きさが変わったあとに届くので、1回分の描画を待つ
+// resize が届くのを待つ
 const waitForResize = () =>
   new Promise((resolve) => requestAnimationFrame(resolve));
 
@@ -20,7 +20,7 @@ afterEach(async () => {
   await page.viewport(WIDTH, HEIGHT);
 });
 
-// 本物のキーボードは出せないので、ビューポートの高さを変えて、キーボードが出たときの代わりにする
+// 本物のキーボードは出せないので、ビューポートの高さを変えて代わりにする
 describe('useStableViewportHeight', () => {
   it('開いたときの画面の高さを、px で入れる', async () => {
     await page.viewport(WIDTH, HEIGHT);

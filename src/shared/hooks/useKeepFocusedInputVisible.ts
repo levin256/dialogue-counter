@@ -1,21 +1,15 @@
 import { useEffect } from 'react';
 
-/** キーボードの高さ（px）を入れる CSS 変数の名前。index.css で、ページの下の余白に足す */
+/** キーボードの高さ（px）。index.css で、ページの下の余白にする */
 export const KEYBOARD_INSET = '--keyboard-inset';
 
-/** 入力欄の下の端と、キーボードのあいだに空ける間隔（px） */
+/** フォームとキーボードのあいだの間隔（px） */
 const GAP = 8;
 
 /**
- * スマホでキーボードが出たときに、フォーカス中の1行の入力欄（とそのフォーム）が、キーボードに隠れないようにする。
- *
- * スマホのブラウザは、キーボードが出てもページの大きさを変えず、見えている範囲（visual viewport）だけを狭くする（iPhone など）。
- * ふつうはブラウザが入力欄を見える位置まで動かすが、ページのいちばん下の入力欄は、それ以上スクロールできずに隠れることがある。
- * そこで、キーボードが出ているあいだは、
- * 1. キーボードの高さを CSS 変数 `--keyboard-inset` に入れ、ページの下に同じだけ余白を足す（スクロールできる分を作る）
- * 2. フォームの下の端（エラーの文を含む）が見える範囲の外なら、見える位置までスクロールする
- *
- * 複数行の入力欄（テキストの入力欄）は縦に長く、動かすと文字を打っている位置から離れるので、ブラウザに任せる。
+ * スマホでキーボードが出たとき、フォーカス中の1行の入力欄のフォーム（エラーの文を含む）が隠れていれば、見える位置までスクロールする。
+ * いちばん下の入力欄はそれ以上スクロールできずに隠れるので、キーボードの高さだけページの下に余白を足す。
+ * 複数行の入力欄は、動かすと打っている位置から離れるので、ブラウザに任せる。
  */
 export const useKeepFocusedInputVisible = () => {
   useEffect(() => {
@@ -25,7 +19,7 @@ export const useKeepFocusedInputVisible = () => {
     let frame = 0;
 
     const handleResize = () => {
-      // 拡大しているときも見える範囲は狭くなるので、拡大の分を戻してから、キーボードの高さを出す
+      // ピンチで拡大したときも見える範囲は狭くなるので、拡大の分は除く
       const inset = Math.max(
         0,
         Math.round(root.clientHeight - viewport.height * viewport.scale),
@@ -38,7 +32,6 @@ export const useKeepFocusedInputVisible = () => {
       frame = requestAnimationFrame(() => {
         const input = document.activeElement;
         if (!(input instanceof HTMLInputElement)) return;
-        // エラーの文も見えるように、フォーム全体を見える範囲に入れる
         const { bottom } = (input.form ?? input).getBoundingClientRect();
         const visibleBottom = viewport.offsetTop + viewport.height;
         if (bottom + GAP > visibleBottom) {

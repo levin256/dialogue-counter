@@ -7,10 +7,8 @@ export const CodeLabel = ({
 }: React.ComponentProps<'code'>) => (
   <code
     // 末尾の「…」（text-overflow）は flex の中の文字には効かないので、block にする。
-    // truncate ははみ出した分を切るので、下線は下の余白（py）の中に収まるように引く。余白がないと、
-    // フォントや画面の倍率しだいで、下線が切れたり切れなかったりする。
-    // 太さは、倍率で消えないように 1px に決める。点の細かい画面（スマホなど）では 1px だと太く見えるので、
-    // 0.5px にする（2倍以上の画面なので、画面の点 1つ以上になり、消えない）
+    // 下線は truncate に切られないよう、余白（py）の内側に引く。
+    // 太さは倍率で消えないよう 1px にし、点の細かい画面では太く見えるので 0.5px にする
     className={cn(
       'block flex-1 truncate rounded-md bg-muted px-2 py-1 text-left text-sm underline decoration-muted-foreground decoration-1 underline-offset-4 hidpi:decoration-[0.5px]',
       className,

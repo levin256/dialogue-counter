@@ -123,7 +123,7 @@ export const RuleValueList = ({
               COLUMN_SPAN[columnSpanOf(value)],
             )}
           >
-            {/* 下線が切れないように、上下の余白（py）は残す。その分、項目の上下の余白を詰める */}
+            {/* 下線が truncate に切られないよう、上下の余白は残す */}
             <CodeLabel className="min-w-0 bg-transparent px-0 py-0.5">
               {value}
             </CodeLabel>

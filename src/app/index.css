@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* 点の細かい画面（スマホや Retina のディスプレイなど、1px を画面の点 2つ以上で描く画面） */
+/* 1px を画面の点 2つ以上で描く画面（スマホ、Retina など） */
 @custom-variant hidpi (@media (min-resolution: 2dppx));
 
 @theme {
@@ -96,10 +96,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /*
-   * スマホでキーボードが出ているあいだは、ページの下にキーボードの高さだけ余白を足す。
-   * いちばん下の入力欄を、キーボードの上までスクロールできるようにする（useKeepFocusedInputVisible）
-   */
+  /* いちばん下の入力欄を、キーボードの上までスクロールできるようにする（useKeepFocusedInputVisible） */
   body {
     padding-bottom: var(--keyboard-inset, 0px);
   }

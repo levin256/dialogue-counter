@@ -5,13 +5,12 @@ import {
   useKeepFocusedInputVisible,
 } from './useKeepFocusedInputVisible';
 
-// 本物のキーボードは出せないので、visualViewport を偽物にして、見える範囲が狭くなったことにする
+// 本物のキーボードは出せないので、visualViewport を偽物にする
 class FakeVisualViewport extends EventTarget {
   height = document.documentElement.clientHeight;
   offsetTop = 0;
   scale = 1;
 
-  /** キーボードを出す（見える範囲の下を、その高さだけ狭くする） */
   showKeyboard(height: number) {
     this.height = document.documentElement.clientHeight - height;
     this.dispatchEvent(new Event('resize'));
@@ -42,7 +41,7 @@ afterEach(() => {
 const keyboardInset = () =>
   document.documentElement.style.getPropertyValue(KEYBOARD_INSET);
 
-// 余白が付いてからスクロールするので、描画を2回分待つ
+// フックは次の描画でスクロールするので、描画を2回分待つ
 const waitForScroll = () =>
   new Promise((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(resolve)),
@@ -50,7 +49,7 @@ const waitForScroll = () =>
 
 const visibleBottom = () => viewport.offsetTop + viewport.height;
 
-/** 画面の高さより下に、1行の入力欄のフォームと、複数行の入力欄を置く */
+/** 1行の入力欄が、画面のいちばん下に来るページ */
 const Page = () => {
   useKeepFocusedInputVisible();
   const below = document.documentElement.clientHeight;
@@ -62,7 +61,7 @@ const Page = () => {
         <p style={{ height: 40 }}>エラーの文</p>
       </form>
       <textarea aria-label="複数行" />
-      {/* スクロールできる分。実際のページでは、index.css の --keyboard-inset の余白で作る */}
+      {/* スクロールできる分（実際のページでは index.css の余白で作る） */}
       <div style={{ height: 600 }} />
     </>
   );

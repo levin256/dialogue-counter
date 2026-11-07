@@ -17,7 +17,7 @@ export const FieldsetGroup = ({
   className,
 }: FieldsetGroupProps) => {
   return (
-    // fieldset は既定で中身より狭くならないので、min-w-0 で外の幅に合わせる（狭い画面ではみ出さないように）
+    // fieldset は既定で中身より狭くならないので、min-w-0 がないと狭い画面ではみ出す
     <Fieldset className={cn('min-w-0', className)}>
       <Legend className="font-semibold">{legend}</Legend>
       {children}

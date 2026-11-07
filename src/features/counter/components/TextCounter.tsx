@@ -35,8 +35,7 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
         {/*
           見出しではなく値なので、p にする。入力のたびに読み上げるとうるさいので、aria-live は付けない。
           間の空白は、読み上げとコピーで「文字数 6 文字」と区切られるように入れる（見た目の間隔は gap で付ける）。
-          「文字数」は、数字と「文字」で何かわかるので見た目からは消し、読み上げ用にだけ残す。
-          消さないと、スマホの幅で桁が増えたときに、横の「設定」が次の行に落ちる
+          「文字数」は読み上げ用。見せると、スマホで桁が増えたとき「設定」が次の行に落ちる
         */}
         <p className="flex items-baseline gap-1.5 whitespace-nowrap">
           <span className="sr-only">文字数</span>{' '}
@@ -50,8 +49,7 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
       <Textarea
         // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
         // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける。
-        // 高さの下限は、開いたときの画面の高さの 60%（useStableViewportHeight）。dvh や svh だと、スマホで
-        // アドレスバーやキーボードが出入りするたびに欄が伸び縮みし、下のものが上下に動く。JS が動く前は svh を使う
+        // 高さの下限は、開いたときの画面の高さの 60%。svh などはキーボードで変わり、欄が伸び縮みする
         className="mx-5 mt-1 field-sizing-content min-h-[calc(var(--stable-viewport-height,100svh)*0.6)] resize-none"
         value={text}
         onChange={(e) => setText(e.target.value)}
