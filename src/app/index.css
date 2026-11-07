@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* 点の細かい画面（スマホや Retina のディスプレイなど、1px を画面の点 2つ以上で描く画面） */
+@custom-variant hidpi (@media (min-resolution: 2dppx));
+
 @theme {
   --font-app-default:
     "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
