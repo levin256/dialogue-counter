@@ -47,8 +47,10 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
       </div>
       <Textarea
         // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
-        // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける
-        className="mx-5 mt-1 field-sizing-content min-h-[60dvh] resize-none"
+        // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける。
+        // 高さの下限は svh（アドレスバーが出ているときの画面の高さ）で決める。dvh だと、スマホでスクロールして
+        // アドレスバーが出入りするたびに欄が伸び縮みし、下のものが上下に動く
+        className="mx-5 mt-1 field-sizing-content min-h-[60svh] resize-none"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="カウントしたい台詞を入力・貼り付けしてください"
