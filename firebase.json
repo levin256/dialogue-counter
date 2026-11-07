@@ -8,7 +8,11 @@
         "headers": [
           {
             "key": "Content-Security-Policy",
-            "value": "connect-src 'none'"
+            "value": "connect-src 'none'; frame-ancestors 'none'"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
           }
         ]
       }
