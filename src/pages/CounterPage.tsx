@@ -5,11 +5,8 @@ import { HowToUseDialog } from '@/features/counter/components/HowToUseDialog';
 import { TextCounter } from '@/features/counter/components/TextCounter';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { ThemeSwitcher } from '@/features/theme/components/ThemeSwitcher';
-import { useKeepFocusedInputVisible } from '@/shared/hooks/useKeepFocusedInputVisible';
-import { useStableViewportHeight } from '@/shared/hooks/useStableViewportHeight';
 import { Button } from '@/shared/ui/Button';
 import { Heading } from '@/shared/ui/Heading';
-import { ViewportDebugPanel } from '@/shared/ui/ViewportDebugPanel';
 
 const SETTINGS_ID = 'count-rule-settings';
 
@@ -25,8 +22,6 @@ export const CounterPage = () => {
     setIsOpen(false);
     markAsSeen();
   };
-  useStableViewportHeight();
-  useKeepFocusedInputVisible();
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 p-4 lg:p-6">
@@ -70,10 +65,6 @@ export const CounterPage = () => {
         <CountRuleSettings id={SETTINGS_ID} />
       </main>
       <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
-      {/* TODO(#25): 実機の調査用。マージする前に消す */}
-      {new URLSearchParams(window.location.search).has('debug') && (
-        <ViewportDebugPanel />
-      )}
     </div>
   );
 };

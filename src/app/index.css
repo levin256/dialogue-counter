@@ -96,11 +96,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* いちばん下の入力欄を、キーボードの上までスクロールできるようにする（useKeepFocusedInputVisible） */
-  body {
-    padding-bottom: var(--keyboard-inset, 0px);
-  }
-
   /* 普段は OS の設定に合わせる。data-theme を付けると、そちらを優先する */
   :root[data-theme="light"] {
     color-scheme: light;
