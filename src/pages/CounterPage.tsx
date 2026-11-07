@@ -63,7 +63,8 @@ export const CounterPage = () => {
               className="flex items-center gap-1 rounded-md px-1 py-1.5 text-sm whitespace-nowrap text-link hover:brightness-80 lg:hidden"
             >
               <SlidersHorizontal className="size-4" />
-              <span className="max-[380px]:sr-only">設定</span>
+              {/* スマホの幅では、桁の多い文字数と1行に並ぶように、アイコンだけにする（文字は読み上げ用に残す） */}
+              <span className="max-sm:sr-only">設定</span>
             </a>
           }
         />

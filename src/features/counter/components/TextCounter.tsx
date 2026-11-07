@@ -34,11 +34,13 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
         </Label>
         {/*
           見出しではなく値なので、p にする。入力のたびに読み上げるとうるさいので、aria-live は付けない。
-          間の空白は、読み上げとコピーで「文字数 6 文字」と区切られるように入れる（見た目の間隔は gap で付ける）
+          間の空白は、読み上げとコピーで「文字数 6 文字」と区切られるように入れる（見た目の間隔は gap で付ける）。
+          「文字数」は、数字と「文字」で何かわかるので見た目からは消し、読み上げ用にだけ残す。
+          消さないと、スマホの幅で桁が増えたときに、横の「設定」が次の行に落ちる
         */}
         <p className="flex items-baseline gap-1.5 whitespace-nowrap">
-          <span className="text-sm text-muted-foreground">文字数</span>{' '}
-          <span className="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">
+          <span className="sr-only">文字数</span>{' '}
+          <span className="text-2xl font-bold tracking-tight tabular-nums sm:text-3xl">
             {displayedCount.toLocaleString('ja-JP')}
           </span>{' '}
           <span className="text-sm">文字</span>
