@@ -78,9 +78,10 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
           <TabPanel unmount={false} tabIndex={-1}>
             <Textarea
               // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
-              // 高さの下限は svh で決める。dvh だと、アドレスバーが出入りするたびに欄が伸び縮みする。
+              // 高さの下限は、画面の高さによらない決まった値にする。svh などの画面の高さの単位は、
+              // iPhone の Chrome ではキーボードが出ると小さくなり、欄が縮んで下のものが動く。
               // block にして、文字の行に並べたときの下の隙間をなくし、確認の欄と高さをそろえる
-              className="block field-sizing-content min-h-[60svh] w-full resize-none rounded-tl-none"
+              className="block field-sizing-content min-h-80 w-full resize-none rounded-tl-none lg:min-h-144"
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="カウントしたい台詞を入力・貼り付けしてください"
@@ -91,7 +92,7 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
             <CountReview
               text={text}
               countRule={countRule}
-              className="min-h-[60svh] rounded-tl-none"
+              className="min-h-80 rounded-tl-none lg:min-h-144"
             />
           </TabPanel>
         </TabPanels>
