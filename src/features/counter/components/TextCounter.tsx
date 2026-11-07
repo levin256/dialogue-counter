@@ -49,8 +49,9 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
       <Textarea
         // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
         // 上の余白は、フォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける。
-        // 高さの下限は svh で決める。dvh だと、アドレスバーが出入りするたびに欄が伸び縮みする
-        className="mx-5 mt-1 field-sizing-content min-h-[60svh] resize-none"
+        // 高さの下限は、画面の高さによらない決まった値にする。svh などの画面の高さの単位は、
+        // iPhone の Chrome ではキーボードが出ると小さくなり、欄が縮んで下のものが動く
+        className="mx-5 mt-1 field-sizing-content min-h-80 resize-none lg:min-h-144"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="カウントしたい台詞を入力・貼り付けしてください"
