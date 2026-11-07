@@ -5,6 +5,8 @@ import { HowToUseDialog } from '@/features/counter/components/HowToUseDialog';
 import { TextCounter } from '@/features/counter/components/TextCounter';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { ThemeSwitcher } from '@/features/theme/components/ThemeSwitcher';
+import { useKeepFocusedInputVisible } from '@/shared/hooks/useKeepFocusedInputVisible';
+import { useStableViewportHeight } from '@/shared/hooks/useStableViewportHeight';
 import { Button } from '@/shared/ui/Button';
 import { Heading } from '@/shared/ui/Heading';
 
@@ -22,6 +24,10 @@ export const CounterPage = () => {
     setIsOpen(false);
     markAsSeen();
   };
+  // スマホで、アドレスバーやキーボードが出入りしても、テキストの入力欄の高さを変えない
+  useStableViewportHeight();
+  // スマホで、いちばん下の入力欄にフォーカスしたとき、キーボードに隠れないようにする
+  useKeepFocusedInputVisible();
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 p-4 lg:p-6">
