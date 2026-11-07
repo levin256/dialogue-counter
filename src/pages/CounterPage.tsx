@@ -7,7 +7,6 @@ import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { ThemeSwitcher } from '@/features/theme/components/ThemeSwitcher';
 import { Button } from '@/shared/ui/Button';
 import { Heading } from '@/shared/ui/Heading';
-import { ViewportDebugPanel } from '@/shared/ui/ViewportDebugPanel';
 
 const SETTINGS_ID = 'count-rule-settings';
 
@@ -66,10 +65,6 @@ export const CounterPage = () => {
         <CountRuleSettings id={SETTINGS_ID} />
       </main>
       <HowToUseDialog isOpen={isOpen} onClose={closeHowToUse} />
-      {/* TODO(#27): 実機の調査用。issue を閉じる前に消す */}
-      {new URLSearchParams(window.location.search).has('debug') && (
-        <ViewportDebugPanel />
-      )}
     </div>
   );
 };
