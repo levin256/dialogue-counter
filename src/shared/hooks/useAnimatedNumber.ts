@@ -6,7 +6,7 @@ import { prefersReducedMotion } from '@/shared/lib/prefersReducedMotion';
  *
  * @param from 動き始めたときに表示していた値
  * @param target 最終的に表示する値
- * @param progress 進み具合。0 で from、1 で target になる
+ * @param progress 進み具合。0 で from、1 で target になる。0〜1 の外は、近いほうの端として扱う
  * @returns 表示する値（整数）
  */
 export const animatedValueAt = (
@@ -14,7 +14,9 @@ export const animatedValueAt = (
   target: number,
   progress: number,
 ) => {
-  const eased = 1 - (1 - progress) ** 3;
+  // フレームの時刻が動き始めより前だとマイナスになり、from の外の値（-0 など）が出るため
+  const clamped = Math.min(Math.max(progress, 0), 1);
+  const eased = 1 - (1 - clamped) ** 3;
   return Math.round(from + (target - from) * eased);
 };
 
@@ -42,7 +44,7 @@ export const useAnimatedNumber = (target: number, duration = 300) => {
     const start = performance.now();
     let frame = 0;
     const step = (now: number) => {
-      const progress = Math.min((now - start) / duration, 1);
+      const progress = (now - start) / duration;
       valueRef.current = animatedValueAt(from, target, progress);
       setValue(valueRef.current);
       if (progress < 1) frame = requestAnimationFrame(step);
