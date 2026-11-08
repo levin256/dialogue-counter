@@ -5,7 +5,7 @@
 https://dialogue-counter.web.app/
 
 <p>
-  <img src="docs/screenshot-pc.png" alt="PC の画面。左にテキスト、右に設定が並ぶ" width="640" />
+  <img src="docs/screenshot-pc.png" alt="PC の画面。左に、数えない部分を薄くした「確認」のテキスト、右に設定が並ぶ" width="640" />
   <img src="docs/screenshot-mobile.png" alt="スマホの画面。テキストの上に文字数が出る" width="180" />
 </p>
 
