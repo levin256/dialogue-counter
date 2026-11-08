@@ -1,13 +1,4 @@
-import {
-  Description,
-  Field,
-  Label,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from '@headlessui/react';
+import { Description, Field, Label } from '@headlessui/react';
 import { useState } from 'react';
 import { useAnimatedNumber } from '@/shared/hooks/useAnimatedNumber';
 import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
@@ -15,6 +6,7 @@ import { Textarea } from '@/shared/ui/Input';
 import { countText } from '../domain/countRule';
 import { useCountRuleStore } from '../stores/countRule';
 import { CountReview } from './CountReview';
+import { InputReviewTabs } from './InputReviewTabs';
 import { PrivacyNote } from './PrivacyNote';
 
 type TextCounterProps = {
@@ -58,45 +50,29 @@ export const TextCounter = ({ headerAction }: TextCounterProps) => {
         {headerAction}
       </div>
       {/* 上の余白は、タブのフォーカスの枠が、貼り付けた文字数の帯に隠れないように空ける */}
-      <TabGroup className="mx-5 mt-1">
-        {/* 選んだタブは、下の枠と同じ背景にして、枠にくっついて見えるようにする */}
-        <TabList className="flex">
-          {['入力', '確認'].map((label) => (
-            <Tab
-              key={label}
-              className="relative -mb-px rounded-t-md border border-transparent px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground data-selected:border-input data-selected:border-b-muted data-selected:bg-muted data-selected:text-foreground"
-            >
-              {label}
-            </Tab>
-          ))}
-        </TabList>
-        <TabPanels>
-          {/*
-            確認を開いているあいだも、入力欄は隠すだけで残す。消すと、戻ったときに Cmd+Z の履歴とカーソルの位置がなくなる。
-            パネルではなく、中の入力欄にフォーカスが止まればよいので、パネルは Tab キーで止まらないようにする
-          */}
-          <TabPanel unmount={false} tabIndex={-1}>
-            <Textarea
-              // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
-              // 高さの下限は、画面の高さによらない決まった値にする。svh などの画面の高さの単位は、
-              // iPhone の Chrome ではキーボードが出ると小さくなり、欄が縮んで下のものが動く。
-              // block にして、文字の行に並べたときの下の隙間をなくし、確認の欄と高さをそろえる
-              className="block field-sizing-content min-h-80 w-full resize-none rounded-tl-none lg:min-h-144"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="カウントしたい台詞を入力・貼り付けしてください"
-            />
-          </TabPanel>
-          {/* 長いテキストで入力のたびに区間を描かないように、開いているときだけ描く（Headless UI の既定） */}
-          <TabPanel>
-            <CountReview
-              text={text}
-              countRule={countRule}
-              className="min-h-80 rounded-tl-none lg:min-h-144"
-            />
-          </TabPanel>
-        </TabPanels>
-      </TabGroup>
+      <InputReviewTabs
+        className="mx-5 mt-1"
+        input={
+          <Textarea
+            // 入力に合わせて伸ばし、欄の中にはスクロールを作らない（ページのスクロールだけにする）。
+            // 高さの下限は、画面の高さによらない決まった値にする。svh などの画面の高さの単位は、
+            // iPhone の Chrome ではキーボードが出ると小さくなり、欄が縮んで下のものが動く。
+            // 枠はタブの側が描くので、入力欄の枠と背景は消す。
+            // block にして、文字の行に並べたときの下の隙間をなくし、確認の欄と高さをそろえる
+            className="block field-sizing-content min-h-80 w-full resize-none rounded-none border-0 bg-transparent lg:min-h-144"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="カウントしたい台詞を入力・貼り付けしてください"
+          />
+        }
+        review={
+          <CountReview
+            text={text}
+            countRule={countRule}
+            className="min-h-80 lg:min-h-144"
+          />
+        }
+      />
       {/* 貼り付けるときに目に入るよう、入力欄のすぐ下に置く。Description にして、入力欄の説明として読み上げる */}
       <Description as="div" className="mx-5 mt-2 mb-5">
         <PrivacyNote />
