@@ -18,13 +18,10 @@ export type CountSegment = {
  * countText('「はい。」', DEFAULT_COUNT_RULE) // => 2
  */
 export const countText = (text: string, rule: CountRule) =>
-  // 区間ごとに数えて足すと、絵文字や結合文字の途中で区間が切れたときに数がずれるので、つなげてから数える
-  countCharacters(
-    applyCountRule(text, rule)
-      .filter(({ counted }) => counted)
-      .map(({ text }) => text)
-      .join(''),
-  );
+  // 区間ごとに数えて足す。つなげてから数えると、除外した文字の両側がくっつくことがある（🇯X🇵 の X を除くと 🇯🇵）
+  applyCountRule(text, rule)
+    .filter(({ counted }) => counted)
+    .reduce((sum, { text }) => sum + countCharacters(text), 0);
 
 /**
  * ルールに従って、元のテキストを「カウントする区間」と「カウントしない区間」に分ける。
@@ -32,6 +29,7 @@ export const countText = (text: string, rule: CountRule) =>
  *
  * 行・除外文字・空白・改行は、どれも元のテキストの上で探し、見つかった範囲をすべて合わせてカウントしない。
  * そのため、適用する順番で結果は変わらない。
+ * 見た目の 1 文字（書記素）の途中で始まる・終わる一致は使わないので、区間は見た目の 1 文字の途中で切れない。
  *
  * @param text 元のテキスト
  * @param rule 何をカウントしないか
@@ -49,16 +47,20 @@ export const applyCountRule = (
     ignoreLineBreak,
   }: CountRule,
 ): CountSegment[] => {
+  const boundaries = graphemeBoundaries(text);
   const ignorePatterns = [
-    ...ignoreStrings.map(
-      (ignoreString) => new RegExp(escapeRegExp(ignoreString), 'g'),
-    ),
     ...(ignoreSpace ? [spaceRegex] : []),
     ...(ignoreLineBreak ? [/\n/g] : []),
   ];
   const ignoredRanges = [
-    ...ignoredLineRanges(text, ignoreLinePrefixes),
-    ...ignorePatterns.flatMap((regex) => matchRanges(text, regex)),
+    ...ignoredLineRanges(text, ignoreLinePrefixes, boundaries),
+    ...ignoreStrings.flatMap((ignoreString) =>
+      findStringRanges(text, ignoreString, boundaries),
+    ),
+    // 空白・改行は 1 単位ずつの一致なので、切れ目にない一致を捨てても、ほかの一致を見落とさない
+    ...ignorePatterns
+      .flatMap((regex) => matchRanges(text, regex))
+      .filter(([start, end]) => boundaries[start] && boundaries[end]),
   ];
 
   // 元のテキストの位置（UTF-16 の 1 単位）ごとに、カウントしないか
@@ -104,6 +106,7 @@ type Range = [start: number, end: number];
 /**
  * 指定した文字で始まる行を探し、その行と隣の改行 1 つを合わせた範囲を返す。
  * 行頭の空白は読み飛ばして判定する（インデントされた行も除外する）。
+ * 先頭文字が、見た目の 1 文字の途中で終わる行は除外しない（先頭文字 👍 で、👍🏽 で始まる行など）。
  *
  * 隣の改行を含めるのは、行を取り除いて残りの行を改行でつないだときと、残る改行の数を同じにするため。
  * - 後ろに数える行が残っていれば、後ろの改行を含める
@@ -112,29 +115,40 @@ type Range = [start: number, end: number];
  *
  * @param text 元のテキスト
  * @param linePrefixes この文字で始まる行を除外する
+ * @param boundaries {@link graphemeBoundaries} で求めた、テキストの見た目の 1 文字の切れ目
  *
  * @example
- * ignoredLineRanges('a\n//b\nc', ['//']) // => [[2, 6]]（'//b\n'）
- * ignoredLineRanges('a\n//b', ['//']) // => [[1, 5]]（'\n//b'）
- * ignoredLineRanges('//a\n//b', ['//']) // => [[0, 3], [3, 7]]（'//a' と '\n//b'）
+ * ignoredLineRanges('a\n//b\nc', ['//'], boundaries) // => [[2, 6]]（'//b\n'）
+ * ignoredLineRanges('a\n//b', ['//'], boundaries) // => [[1, 5]]（'\n//b'）
+ * ignoredLineRanges('//a\n//b', ['//'], boundaries) // => [[0, 3], [3, 7]]（'//a' と '\n//b'）
  */
 const ignoredLineRanges = (
   text: string,
   linePrefixes: readonly string[],
+  boundaries: readonly boolean[],
 ): Range[] => {
   const prefixes = linePrefixes.map((prefix) =>
     prefix.replace(leadingSpaceRegex, ''),
   );
   const lines = text.split('\n');
-  const isIgnoredLine = lines.map((line) => {
-    const trimmedLine = line.replace(leadingSpaceRegex, '');
-    return prefixes.some((prefix) => trimmedLine.startsWith(prefix));
+  // 各行の先頭の位置。行と行のあいだには、改行が 1 つある
+  const lineStarts: number[] = [];
+  let lineStart = 0;
+  for (const line of lines) {
+    lineStarts.push(lineStart);
+    lineStart += line.length + 1;
+  }
+  const isIgnoredLine = lines.map((line, i) => {
+    const indent = line.length - line.replace(leadingSpaceRegex, '').length;
+    return prefixes.some((prefix) =>
+      matchesAt(text, prefix, lineStarts[i] + indent, boundaries),
+    );
   });
   const lastCountedLine = isIgnoredLine.lastIndexOf(false);
 
   const ranges: Range[] = [];
-  let lineStart = 0;
   lines.forEach((line, i) => {
+    const lineStart = lineStarts[i];
     // 行の最後の文字の次の位置。後ろに改行があれば、その改行の位置になる
     const lineEnd = lineStart + line.length;
     if (isIgnoredLine[i]) {
@@ -145,10 +159,79 @@ const ignoredLineRanges = (
           : [Math.max(lineStart - 1, 0), lineEnd],
       );
     }
-    // 改行を 1 つ飛ばして、次の行の先頭へ
-    lineStart = lineEnd + 1;
   });
   return ranges;
+};
+
+/**
+ * 文字列を前から探し、見た目の 1 文字の切れ目で始まって切れ目で終わる範囲を、すべて返す。
+ * 見つけた範囲どうしは重ねず、見つけた範囲の後ろから続きを探す。
+ *
+ * 一致を探してから切れ目にないものを捨てるのではなく、切れ目の位置ごとに調べる。
+ * 捨てた一致の途中から始まる、正しい一致を見落とさないため。
+ *
+ * @param text 元のテキスト
+ * @param string 探す文字列（空でない）
+ * @param boundaries {@link graphemeBoundaries} で求めた、テキストの見た目の 1 文字の切れ目
+ *
+ * @example
+ * findStringRanges('👍🏽👍', '👍', boundaries) // => [[4, 6]]（'👍🏽' の中の '👍' には一致しない）
+ */
+const findStringRanges = (
+  text: string,
+  string: string,
+  boundaries: readonly boolean[],
+): Range[] => {
+  const ranges: Range[] = [];
+  let start = 0;
+  while (start < text.length) {
+    if (matchesAt(text, string, start, boundaries)) {
+      ranges.push([start, start + string.length]);
+      start += string.length;
+    } else {
+      start++;
+    }
+  }
+  return ranges;
+};
+
+/**
+ * テキストの start の位置から文字列が始まり、その範囲が見た目の 1 文字の切れ目で始まって切れ目で終わるか。
+ *
+ * @param text 元のテキスト
+ * @param string 探す文字列
+ * @param start 調べる位置
+ * @param boundaries {@link graphemeBoundaries} で求めた、テキストの見た目の 1 文字の切れ目
+ *
+ * @example
+ * matchesAt('👍🏽', '👍', 0, boundaries) // => false（'👍' の後ろは切れ目ではない）
+ */
+const matchesAt = (
+  text: string,
+  string: string,
+  start: number,
+  boundaries: readonly boolean[],
+) =>
+  text.startsWith(string, start) &&
+  boundaries[start] &&
+  boundaries[start + string.length];
+
+/**
+ * 元のテキストの位置（UTF-16 の位置）ごとに、見た目の 1 文字の切れ目かを返す。
+ * 長さはテキストより 1 つ長く、テキストの先頭と末尾も切れ目にする。
+ *
+ * @param text 元のテキスト
+ *
+ * @example
+ * graphemeBoundaries('a👍🏽') // => [true, true, false, false, false, true]
+ */
+const graphemeBoundaries = (text: string) => {
+  const boundaries = new Array<boolean>(text.length + 1).fill(false);
+  for (const { index } of graphemeSegmenter.segment(text)) {
+    boundaries[index] = true;
+  }
+  boundaries[text.length] = true;
+  return boundaries;
 };
 
 /**
@@ -165,14 +248,6 @@ const matchRanges = (text: string, regex: RegExp): Range[] =>
     text.matchAll(regex),
     (match): Range => [match.index, match.index + match[0].length],
   );
-
-/**
- * 正規表現の特殊文字をエスケープして、文字どおりに一致させる。
- *
- * @param string 正規表現に埋め込みたい文字列
- */
-const escapeRegExp = (string: string) =>
-  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // 改行以外の空白（半角・全角スペース、タブなど）
 const spaceRegex = /[^\S\n]/g;
