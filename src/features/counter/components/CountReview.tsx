@@ -1,5 +1,6 @@
 import { cn } from '@/shared/lib/cn';
-import { applyCountRule, type CountRule } from '../domain/countRule';
+import type { CountRule } from '../domain/countRule';
+import { applyCountRule } from '../domain/countText';
 
 type CountReviewProps = {
   /** 入力したテキスト */
@@ -11,7 +12,8 @@ type CountReviewProps = {
 
 /**
  * 入力したテキストを読み取り専用で出し、カウントしない部分を薄くする。
- * 改行と折り返しは、入力欄（textarea の既定の pre-wrap と break-word）に合わせる。
+ * 改行と折り返しは、入力欄（textarea の既定の pre-wrap と break-word）に、内側の余白は入力欄の p-3 に合わせる。
+ * 枠は持たない（置く側が描く）。
  * 区間はここで計算するので、この部品を描いているあいだしか計算しない。
  */
 export const CountReview = ({
@@ -19,12 +21,7 @@ export const CountReview = ({
   countRule,
   className,
 }: CountReviewProps) => (
-  <div
-    className={cn(
-      'rounded-md border border-input bg-muted p-3 wrap-break-word whitespace-pre-wrap',
-      className,
-    )}
-  >
+  <div className={cn('p-3 wrap-break-word whitespace-pre-wrap', className)}>
     {text === '' ? (
       <p className="text-muted-foreground">
         テキストを入力すると、カウントしない部分を薄くして表示します

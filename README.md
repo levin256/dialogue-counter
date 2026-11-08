@@ -5,7 +5,7 @@
 https://dialogue-counter.web.app/
 
 <p>
-  <img src="docs/screenshot-pc.png" alt="PC の画面。左にテキスト、右に設定が並ぶ" width="640" />
+  <img src="docs/screenshot-pc.png" alt="PC の画面。左に、数えない部分を薄くした「確認」のテキスト、右に設定が並ぶ" width="640" />
   <img src="docs/screenshot-mobile.png" alt="スマホの画面。テキストの上に文字数が出る" width="180" />
 </p>
 
@@ -44,7 +44,7 @@ https://dialogue-counter.web.app/
   - 数えない文字を除いたあとで、探し直すことはしない。`X` と `ab` を登録して `aXb` を数えると、数えないのは `X` だけで、2文字になる
   - 数えない文字どうしが重なっていたら、どちらも数えない。`ab` と `bc` を登録して `abc` を数えると、0文字になる
 
-仕様は `src/features/counter/domain/countRule.test.ts` に、テストとして書いてあります。
+仕様は `src/features/counter/domain/countText.test.ts` に、テストとして書いてあります。
 
 ### ディレクトリと依存の向き
 
