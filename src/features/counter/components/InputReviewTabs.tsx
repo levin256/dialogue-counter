@@ -46,12 +46,10 @@ export const InputReviewTabs = ({
       ))}
     </TabList>
     {/*
-      中身ではなく枠に、フォーカスの枠を描く。中身に描くと、中身の角は四角いので、角の丸い枠と形が合わない。
-      左端の「入力」を選んでいるときは（選んだパネルに data-selected が付く）、
-      - 左上の角を、タブとつながるように四角くする
-      - 背景を入力欄の色にする。確認のときは周りと同じ色にして、入力できそうに見えないようにする
+      フォーカスの枠は、中身ではなく枠の内側に描き、relative でタブより手前に出す（外側だとタブにかかる）。
+      「入力」を選んでいるときは、左上の角を四角くし、背景を入力欄の色にする
     */}
-    <TabPanels className="rounded-md border border-input bg-card **:focus-visible:outline-none has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring has-[>[data-selected]:first-child]:rounded-tl-none has-[>[data-selected]:first-child]:bg-muted">
+    <TabPanels className="rounded-md border border-input bg-card **:focus-visible:outline-none has-focus-visible:relative has-focus-visible:outline-2 has-focus-visible:-outline-offset-2 has-focus-visible:outline-ring has-[>[data-selected]:first-child]:rounded-tl-none has-[>[data-selected]:first-child]:bg-muted">
       {/*
         確認を開いているあいだも、入力の中身は隠すだけで残す。消すと、戻ったときに Cmd+Z の履歴とカーソルの位置がなくなる。
         パネルではなく、中の入力欄にフォーカスが止まればよいので、パネルは Tab キーで止まらないようにする
