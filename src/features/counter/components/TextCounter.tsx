@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAnimatedNumber } from '@/shared/hooks/useAnimatedNumber';
 import { useWarnIfUnsavedChanges } from '@/shared/hooks/useWarnIfUnsavedChanges';
 import { Textarea } from '@/shared/ui/Input';
-import { countText } from '../domain/countRule';
+import { countText } from '../domain/countText';
 import { useCountRuleStore } from '../stores/countRule';
 import { CountReview } from './CountReview';
 import { InputReviewTabs } from './InputReviewTabs';

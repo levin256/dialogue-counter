@@ -44,7 +44,7 @@ https://dialogue-counter.web.app/
   - 数えない文字を除いたあとで、探し直すことはしない。`X` と `ab` を登録して `aXb` を数えると、数えないのは `X` だけで、2文字になる
   - 数えない文字どうしが重なっていたら、どちらも数えない。`ab` と `bc` を登録して `abc` を数えると、0文字になる
 
-仕様は `src/features/counter/domain/countRule.test.ts` に、テストとして書いてあります。
+仕様は `src/features/counter/domain/countText.test.ts` に、テストとして書いてあります。
 
 ### ディレクトリと依存の向き
 

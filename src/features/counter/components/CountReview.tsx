@@ -1,5 +1,6 @@
 import { cn } from '@/shared/lib/cn';
-import { applyCountRule, type CountRule } from '../domain/countRule';
+import type { CountRule } from '../domain/countRule';
+import { applyCountRule } from '../domain/countText';
 
 type CountReviewProps = {
   /** 入力したテキスト */
