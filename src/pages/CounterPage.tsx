@@ -5,6 +5,7 @@ import { HowToUseDialog } from '@/features/counter/components/HowToUseDialog';
 import { TextCounter } from '@/features/counter/components/TextCounter';
 import { useHowToUseStore } from '@/features/counter/stores/howToUse';
 import { ThemeSwitcher } from '@/features/theme/components/ThemeSwitcher';
+import { useRevealInputOnKeyboard } from '@/shared/hooks/useRevealInputOnKeyboard';
 import { Button } from '@/shared/ui/Button';
 import { Heading } from '@/shared/ui/Heading';
 
@@ -22,6 +23,8 @@ export const CounterPage = () => {
     setIsOpen(false);
     markAsSeen();
   };
+  // スマホで、下のほうの入力欄にフォーカスしたとき、キーボードに隠れないようにする
+  useRevealInputOnKeyboard();
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 p-4 lg:p-6">

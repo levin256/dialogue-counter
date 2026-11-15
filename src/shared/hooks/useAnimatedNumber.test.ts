@@ -16,6 +16,17 @@ describe('animatedValueAt', () => {
     expect(animatedValueAt(1000, 0, 0.5)).toBe(125);
   });
 
+  it('進み具合がマイナスなら、元の値になる', () => {
+    // toBe は -0 と 0 を見分けるので、「-0」と表示される値も見つけられる
+    expect(animatedValueAt(0, 5, -0.01)).toBe(0);
+    expect(animatedValueAt(0, 3000, -0.05)).toBe(0);
+    expect(animatedValueAt(100, 0, -0.05)).toBe(100);
+  });
+
+  it('進み具合が 1 を超えたら、目標の値になる', () => {
+    expect(animatedValueAt(0, 100, 1.5)).toBe(100);
+  });
+
   it('文字数として出すので、整数に丸める', () => {
     expect(Number.isInteger(animatedValueAt(0, 7, 0.3))).toBe(true);
   });
