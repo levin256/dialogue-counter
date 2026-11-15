@@ -12,6 +12,20 @@ export const SETTLE_DELAY = 300;
 /** フォームとキーボードのあいだの間隔（px） */
 const GAP = 8;
 
+/** フォーカス中の1行の入力欄のフォームが隠れていれば、はみ出した分だけスクロールする */
+const revealFocusedInput = (viewport: VisualViewport) => {
+  const input = document.activeElement;
+  if (!(input instanceof HTMLInputElement)) return;
+  // エラーの文が出ていれば、それも見せる
+  const { bottom } = (input.form ?? input).getBoundingClientRect();
+  const visibleBottom = viewport.offsetTop + viewport.height;
+  if (bottom + GAP > visibleBottom) {
+    // index.css のなめらかなスクロールに従い、どこへ動いたかを目で追えるようにする。
+    // behavior を指定しないので、動きを減らす設定の人には、すぐに動く
+    window.scrollBy({ top: bottom + GAP - visibleBottom });
+  }
+};
+
 /**
  * キーボードが出たとき、フォーカス中の1行の入力欄のフォームが隠れていれば、見える位置までスクロールする。
  *
@@ -28,20 +42,6 @@ export const useRevealInputOnKeyboard = () => {
     let lastHeight = unscaledHeight();
     let timer = 0;
 
-    /** フォーカス中の1行の入力欄のフォームが隠れていれば、はみ出した分だけスクロールする */
-    const revealFocusedInput = () => {
-      const input = document.activeElement;
-      if (!(input instanceof HTMLInputElement)) return;
-      // エラーの文が出ていれば、それも見せる
-      const { bottom } = (input.form ?? input).getBoundingClientRect();
-      const visibleBottom = viewport.offsetTop + viewport.height;
-      if (bottom + GAP > visibleBottom) {
-        // index.css のなめらかなスクロールに従い、どこへ動いたかを目で追えるようにする。
-        // behavior を指定しないので、動きを減らす設定の人には、すぐに動く
-        window.scrollBy({ top: bottom + GAP - visibleBottom });
-      }
-    };
-
     /** 見えている範囲が大きく縮んだとき（キーボードが出たとき）だけ、revealFocusedInput を予約する */
     const handleResize = () => {
       const height = unscaledHeight();
@@ -49,7 +49,10 @@ export const useRevealInputOnKeyboard = () => {
       lastHeight = height;
       if (shrunk <= KEYBOARD_MIN_HEIGHT) return;
       clearTimeout(timer);
-      timer = window.setTimeout(revealFocusedInput, SETTLE_DELAY);
+      timer = window.setTimeout(
+        () => revealFocusedInput(viewport),
+        SETTLE_DELAY,
+      );
     };
 
     viewport.addEventListener('resize', handleResize);
