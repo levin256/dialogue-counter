@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type CountRule, DEFAULT_COUNT_RULE, RuleValue } from './countRule';
-import { applyCountRule, countCharacters, countText } from './countText';
+import { applyCountRule, countText } from './countText';
 
 type Overrides = {
   ignoreStrings?: string[];
@@ -43,7 +43,25 @@ describe('countText', () => {
     ).toBe(3);
   });
 
-  it('カウントする区間ごとに数えて足す', () => {
+  it.each([
+    ['ひらがな・漢字', 'あい漢字', 4],
+    ['空文字', '', 0],
+    ['絵文字', '😀', 1],
+    ['サロゲートペアの漢字', '𠮷', 1],
+    ['肌の色付きの絵文字', '👍🏽', 1],
+    ['国旗', '🇯🇵', 1],
+    ['ZWJ でつないだ絵文字', '👨‍👩‍👧', 1],
+    ['結合文字の濁点', 'が', 1],
+    ['異体字セレクタ付きの漢字', '葛\u{E0100}', 1],
+  ])('見た目の 1 文字を 1 と数える: %s', (_, text, expected) => {
+    expect(countText(text, toRule())).toBe(expected);
+  });
+
+  it('改行も 1 文字と数える', () => {
+    expect(countText('a\nb', toRule())).toBe(3);
+  });
+
+  it('数えない部分の両側の文字は、くっつけずに別々に数える', () => {
     // つなげてから数えると、'🇯🇵' が国旗 1 文字になって 1 になる
     expect(countText('🇯X🇵', toRule({ ignoreStrings: ['X'] }))).toBe(2);
   });
@@ -273,25 +291,5 @@ describe('applyCountRule', () => {
     it('同じ除外文字どうしは重ねずに、前から探す', () => {
       expect(exclude('aaa', { ignoreStrings: ['aa'] })).toBe('[aa]a');
     });
-  });
-});
-
-describe('countCharacters', () => {
-  it.each([
-    ['ひらがな・漢字', 'あい漢字', 4],
-    ['空文字', '', 0],
-    ['絵文字', '😀', 1],
-    ['サロゲートペアの漢字', '𠮷', 1],
-    ['肌の色付きの絵文字', '👍🏽', 1],
-    ['国旗', '🇯🇵', 1],
-    ['ZWJ でつないだ絵文字', '👨‍👩‍👧', 1],
-    ['結合文字の濁点', 'か\u3099', 1],
-    ['異体字セレクタ付きの漢字', '葛\u{E0100}', 1],
-  ])('見た目の 1 文字を 1 と数える: %s', (_, text, expected) => {
-    expect(countCharacters(text)).toBe(expected);
-  });
-
-  it('改行も 1 文字と数える', () => {
-    expect(countCharacters('a\nb')).toBe(3);
   });
 });

@@ -9,7 +9,8 @@ export type CountSegment = {
 };
 
 /**
- * テキストの文字数を、ルールに従って数える。
+ * テキストの文字数を、ルールに従って数える。見た目の 1 文字（書記素）を 1 と数えるので、絵文字や結合文字も 1 文字になる。
+ * 数えない部分の両側の文字は、くっつけずに別々に数える（🇯X🇵 の X を除いても、🇯🇵 の国旗 1 文字にはしない）。
  *
  * @param text 数えるテキスト
  * @param rule 何をカウントしないか
@@ -18,10 +19,7 @@ export type CountSegment = {
  * countText('「はい。」', DEFAULT_COUNT_RULE) // => 2
  */
 export const countText = (text: string, rule: CountRule) =>
-  // 区間ごとに数えて足す。つなげてから数えると、除外した文字の両側がくっつくことがある（🇯X🇵 の X を除くと 🇯🇵）
-  applyCountRule(text, rule)
-    .filter(({ counted }) => counted)
-    .reduce((sum, { text }) => sum + countCharacters(text), 0);
+  markGraphemes(text, rule).filter(({ counted }) => counted).length;
 
 /**
  * ルールに従って、元のテキストを「カウントする区間」と「カウントしない区間」に分ける。
@@ -41,13 +39,47 @@ export const countText = (text: string, rule: CountRule) =>
  */
 export const applyCountRule = (
   text: string,
+  rule: CountRule,
+): CountSegment[] => {
+  // カウントするかが同じ文字の並びを、1 つの区間にまとめる
+  const segments: CountSegment[] = [];
+  for (const grapheme of markGraphemes(text, rule)) {
+    const lastSegment = segments.at(-1);
+    if (lastSegment?.counted === grapheme.counted) {
+      lastSegment.text += grapheme.text;
+    } else {
+      segments.push({ ...grapheme });
+    }
+  }
+  return segments;
+};
+
+/** 見た目の 1 文字（書記素）と、それをカウントするか。 */
+type Grapheme = {
+  text: string;
+  counted: boolean;
+};
+
+/**
+ * ルールに従って、元のテキストを見た目の 1 文字ずつに分け、それぞれにカウントするかを付ける。
+ * 1 文字ずつつなげると、元のテキストに戻る。
+ *
+ * @param text 元のテキスト
+ * @param rule 何をカウントしないか
+ *
+ * @example
+ * markGraphemes('「👍🏽」', DEFAULT_COUNT_RULE)
+ * // => [{ text: '「', counted: false }, { text: '👍🏽', counted: true }, { text: '」', counted: false }]
+ */
+const markGraphemes = (
+  text: string,
   {
     ignoreStrings,
     ignoreLinePrefixes,
     ignoreSpace,
     ignoreLineBreak,
   }: CountRule,
-): CountSegment[] => {
+): Grapheme[] => {
   const boundaries = graphemeBoundaries(text);
   const ignorePatterns = [
     ...(ignoreSpace ? [spaceRegex] : []),
@@ -69,36 +101,11 @@ export const applyCountRule = (
   for (const [start, end] of ignoredRanges) {
     ignored.fill(true, start, end);
   }
-
-  // カウントするかが同じ位置の並びを、1 つの区間にまとめる
-  const segments: CountSegment[] = [];
-  let segmentStart = 0;
-  for (let i = 1; i <= text.length; i++) {
-    if (i === text.length || ignored[i] !== ignored[segmentStart]) {
-      segments.push({
-        text: text.slice(segmentStart, i),
-        counted: !ignored[segmentStart],
-      });
-      segmentStart = i;
-    }
-  }
-  return segments;
-};
-
-/**
- * 文字数を数える。見た目の1文字（書記素）を1と数えるので、絵文字や結合文字も1文字になる。
- *
- * @param text 数えるテキスト
- *
- * @example
- * countCharacters('👍🏽が') // => 2
- */
-export const countCharacters = (text: string) => {
-  let count = 0;
-  for (const _ of graphemeSegmenter.segment(text)) {
-    count++;
-  }
-  return count;
+  // 範囲はどれも見た目の 1 文字の切れ目で始まって終わるので、1 文字の先頭の位置を見れば足りる
+  return Array.from(graphemeSegmenter.segment(text), ({ segment, index }) => ({
+    text: segment,
+    counted: !ignored[index],
+  }));
 };
 
 /** 元のテキストの範囲（UTF-16 の位置）。start から、end の手前まで。 */
