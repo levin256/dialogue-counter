@@ -147,7 +147,7 @@ const ignoredLineRanges = (
     lineStart += line.length + 1;
   }
   const isIgnoredLine = lines.map((line, i) => {
-    const indent = line.length - line.replace(leadingSpaceRegex, '').length;
+    const indent = line.match(leadingSpaceRegex)?.[0].length ?? 0;
     return prefixes.some((prefix) =>
       matchesAt(text, prefix, lineStarts[i] + indent, boundaries),
     );
