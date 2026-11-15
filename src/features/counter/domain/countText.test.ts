@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type CountRule, DEFAULT_COUNT_RULE, RuleValue } from './countRule';
-import { applyCountRule, countCharacters, countText } from './countText';
+import { applyCountRule, countText } from './countText';
 
 type Overrides = {
   ignoreStrings?: string[];
@@ -43,10 +43,41 @@ describe('countText', () => {
     ).toBe(3);
   });
 
-  it('カウントする区間をつなげてから数える', () => {
-    // 区間ごとに数えると '👍' と '🏽' で 2 になる
-    expect(countText('👍X🏽', toRule({ ignoreStrings: ['X'] }))).toBe(1);
+  it.each([
+    ['ひらがな・漢字', 'あい漢字', 4],
+    ['空文字', '', 0],
+    ['絵文字', '😀', 1],
+    ['サロゲートペアの漢字', '𠮷', 1],
+    ['肌の色付きの絵文字', '👍🏽', 1],
+    ['国旗', '🇯🇵', 1],
+    ['ZWJ でつないだ絵文字', '👨‍👩‍👧', 1],
+    ['結合文字の濁点', 'が', 1],
+    ['異体字セレクタ付きの漢字', '葛\u{E0100}', 1],
+  ])('見た目の 1 文字を 1 と数える: %s', (_, text, expected) => {
+    expect(countText(text, toRule())).toBe(expected);
   });
+
+  it('改行も 1 文字と数える', () => {
+    expect(countText('a\nb', toRule())).toBe(3);
+  });
+
+  it('数えない部分の両側の文字は、くっつけずに別々に数える', () => {
+    // つなげてから数えると、'🇯🇵' が国旗 1 文字になって 1 になる
+    expect(countText('🇯X🇵', toRule({ ignoreStrings: ['X'] }))).toBe(2);
+  });
+
+  it.each([
+    ['👍', '👍🏽'],
+    ['か', 'か\u3099'],
+    ['👨', '👨‍👩‍👧'],
+  ])(
+    '除外文字 %j は、%j の一部に一致しない。見た目の 1 文字として数える',
+    (ignoreString, text) => {
+      expect(countText(text, toRule({ ignoreStrings: [ignoreString] }))).toBe(
+        1,
+      );
+    },
+  );
 
   it.each([
     ['「はい。」 そうです\n// メモ', 6],
@@ -103,6 +134,54 @@ describe('applyCountRule', () => {
 
     it('複数文字の除外文字は、その並びだけを除外する', () => {
       expect(exclude('……と…', { ignoreStrings: ['……'] })).toBe('[……]と…');
+    });
+  });
+
+  describe('見た目の 1 文字（書記素）の途中', () => {
+    it.each([
+      ['肌の色付きの絵文字', '👍', '👍🏽'],
+      ['結合文字の濁点', 'か', 'か\u3099'],
+      ['ZWJ でつないだ絵文字', '👨', '👨‍👩‍👧'],
+      ['国旗の組み合わせの途中', '🇵🇺', '🇯🇵🇺🇸'],
+      // 肌の色の修飾子は、前の文字が何でもくっつく
+      ['修飾子が後ろに付いた文字', 'X', '👍X🏽'],
+      // ここから下は、1 文字の途中から始まり、次の文字の終わりまで続く
+      ['修飾子と、次の文字', '🏽X', '👍🏽X'],
+      ['結合文字の濁点と、次の文字', '\u3099か', 'か\u3099か'],
+    ])(
+      'で始まる・終わる除外文字には一致しない: %s',
+      (_, ignoreString, text) => {
+        expect(exclude(text, { ignoreStrings: [ignoreString] })).toBe(text);
+      },
+    );
+
+    it('見た目の 1 文字の切れ目で始まって切れ目で終わる除外文字は、除外する', () => {
+      expect(exclude('a👍🏽b🇯🇵🇺🇸', { ignoreStrings: ['👍🏽', '🇺🇸'] })).toBe(
+        'a[👍🏽]b🇯🇵[🇺🇸]',
+      );
+    });
+
+    it('途中で終わる一致があっても、その中から始まる一致を見落とさない', () => {
+      // 位置    0  1     2  3     4
+      // 単位    か 濁点  か 濁点  か
+      // 見た目  [が    ] [が    ] [か]
+      // 除外文字「がか」は 0〜3 にも並ぶが、3 は 2 つ目の が の途中なので使わない。2〜5 で見つける
+      expect(
+        exclude('か\u3099か\u3099か', { ignoreStrings: ['か\u3099か'] }),
+      ).toBe('か\u3099[か\u3099か]');
+    });
+
+    it('先頭文字が見た目の 1 文字の途中で終わる行は、除外しない', () => {
+      expect(
+        exclude('👍🏽 a\n👍 b\n  👍🏽 c', { ignoreLinePrefixes: ['👍'] }),
+      ).toBe('👍🏽 a\n[👍 b\n]  👍🏽 c');
+    });
+
+    it('見た目の 1 文字の一部になっている空白は、除外しない', () => {
+      // スペースの後ろに結合文字（アクセント記号）が付くと、見た目の 1 文字になる
+      expect(exclude('a \u0301b c', { ignoreSpace: true })).toBe(
+        'a \u0301b[ ]c',
+      );
     });
   });
 
@@ -218,25 +297,5 @@ describe('applyCountRule', () => {
     it('同じ除外文字どうしは重ねずに、前から探す', () => {
       expect(exclude('aaa', { ignoreStrings: ['aa'] })).toBe('[aa]a');
     });
-  });
-});
-
-describe('countCharacters', () => {
-  it.each([
-    ['ひらがな・漢字', 'あい漢字', 4],
-    ['空文字', '', 0],
-    ['絵文字', '😀', 1],
-    ['サロゲートペアの漢字', '𠮷', 1],
-    ['肌の色付きの絵文字', '👍🏽', 1],
-    ['国旗', '🇯🇵', 1],
-    ['ZWJ でつないだ絵文字', '👨‍👩‍👧', 1],
-    ['結合文字の濁点', 'か\u3099', 1],
-    ['異体字セレクタ付きの漢字', '葛\u{E0100}', 1],
-  ])('見た目の 1 文字を 1 と数える: %s', (_, text, expected) => {
-    expect(countCharacters(text)).toBe(expected);
-  });
-
-  it('改行も 1 文字と数える', () => {
-    expect(countCharacters('a\nb')).toBe(3);
   });
 });
