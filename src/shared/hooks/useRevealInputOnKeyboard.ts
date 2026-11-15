@@ -28,6 +28,7 @@ export const useRevealInputOnKeyboard = () => {
     let lastHeight = unscaledHeight();
     let timer = 0;
 
+    /** フォーカス中の1行の入力欄のフォームが隠れていれば、はみ出した分だけスクロールする */
     const revealFocusedInput = () => {
       const input = document.activeElement;
       if (!(input instanceof HTMLInputElement)) return;
@@ -41,6 +42,7 @@ export const useRevealInputOnKeyboard = () => {
       }
     };
 
+    /** 見えている範囲が大きく縮んだとき（キーボードが出たとき）だけ、revealFocusedInput を予約する */
     const handleResize = () => {
       const height = unscaledHeight();
       const shrunk = lastHeight - height;
