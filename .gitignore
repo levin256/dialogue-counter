@@ -31,3 +31,7 @@ blob-report
 *.sln
 *.sw?
 .vitest
+
+# Claude Code（設定・フック・スキルはコミットする）
+.claude/worktrees/
+.claude/launch.json
