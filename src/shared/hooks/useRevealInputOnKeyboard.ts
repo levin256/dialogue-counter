@@ -35,11 +35,9 @@ export const useRevealInputOnKeyboard = () => {
       const { bottom } = (input.form ?? input).getBoundingClientRect();
       const visibleBottom = viewport.offsetTop + viewport.height;
       if (bottom + GAP > visibleBottom) {
-        // 'instant' にしないと、index.css のなめらかなスクロールになる
-        window.scrollBy({
-          top: bottom + GAP - visibleBottom,
-          behavior: 'instant',
-        });
+        // index.css のなめらかなスクロールに従い、どこへ動いたかを目で追えるようにする。
+        // behavior を指定しないので、動きを減らす設定の人には、すぐに動く
+        window.scrollBy({ top: bottom + GAP - visibleBottom });
       }
     };
 
