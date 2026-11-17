@@ -161,8 +161,14 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["**", "!zod/mini", "!vitest", "!./*"],
-                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイルだけを読める。"
+                    "group": [
+                      "**",
+                      "!zod/mini",
+                      "!vitest",
+                      "!./*",
+                      "!@/shared/lib/graphemes"
+                    ],
+                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイル、@/shared/lib/graphemes だけを読める。"
                   }
                 ]
               }
