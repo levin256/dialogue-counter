@@ -63,6 +63,8 @@ src/
 
 依存は外側から内側への一方向にしています（`app` → `pages` → `features` → `shared`、機能の中では `components` → `stores` → `domain`）。この向きは、Biome の `noRestrictedImports`（`biome.json`）で lint のエラーにしています。
 
+`shared/lib` は、ドメインの言葉（数える・ルールなど）を知りません。たとえば、テキストを見た目の1文字に分けて探す部品は `shared/lib/graphemes.ts` に、何を数えないかの仕様は `domain/countText.ts` に置いています。
+
 ### 状態と保存
 
 - ルールの値（`RuleValue`）は、Zod の brand 付きの schema で表す。空や空白だけの文字列は、この型にならない
