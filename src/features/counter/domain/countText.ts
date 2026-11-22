@@ -1,6 +1,7 @@
 import {
   findStringRanges,
   type GraphemeRange,
+  type Graphemes,
   lineRanges,
   matchesAt,
   splitGraphemes,
@@ -130,7 +131,7 @@ const markGraphemes = (
  * ignoredLineRanges(splitGraphemes('//a\n//b'), ['//']) // => [[0, 3], [3, 7]]（'//a' と '\n//b'）
  */
 const ignoredLineRanges = (
-  graphemes: readonly string[],
+  graphemes: Graphemes,
   linePrefixes: readonly string[],
 ): GraphemeRange[] => {
   const prefixes = linePrefixes.map((prefix) =>

@@ -1,6 +1,14 @@
 // テキストを見た目の 1 文字（書記素）の配列にして扱う。位置はどれも、その配列の番号（0 から数える）で表す。
 // 1 文字の途中を指す番号がないので、1 文字の途中で始まる・終わる一致や範囲は、作れない。
 
+declare const graphemesBrand: unique symbol;
+
+/**
+ * {@link splitGraphemes} で分けた、見た目の 1 文字の配列。
+ * `[...text]` などで分けた配列を渡すと、黙って間違った結果になるので、型で区別する。
+ */
+export type Graphemes = readonly string[] & { readonly [graphemesBrand]: true };
+
 /** 見た目の 1 文字の配列の範囲。start 番から、end 番の手前まで（slice と同じ）。 */
 export type GraphemeRange = [start: number, end: number];
 
@@ -13,22 +21,25 @@ export type GraphemeRange = [start: number, end: number];
  * splitGraphemes('a👍🏽b') // => ['a', '👍🏽', 'b']
  */
 export const splitGraphemes = (text: string) =>
-  Array.from(graphemeSegmenter.segment(text), ({ segment }) => segment);
+  Array.from(
+    graphemeSegmenter.segment(text),
+    ({ segment }) => segment,
+  ) as readonly string[] as Graphemes;
 
 /**
  * index 番の文字から文字列が並び、見た目の 1 文字の切れ目で終わるか。
  * 空文字は、どこにも一致しない。配列の外の index も、一致しない。
  *
- * @param graphemes {@link splitGraphemes} で分けた、見た目の 1 文字の配列
+ * @param graphemes 見た目の 1 文字の配列
  * @param string 探す文字列
  * @param index 調べる文字の番号
  *
  * @example
- * matchesAt(['a', '👍🏽'], '👍🏽', 1) // => true
- * matchesAt(['a', '👍🏽'], '👍', 1) // => false（'👍' は '👍🏽' の途中で終わる）
+ * matchesAt(splitGraphemes('a👍🏽'), '👍🏽', 1) // => true
+ * matchesAt(splitGraphemes('a👍🏽'), '👍', 1) // => false（'👍' は '👍🏽' の途中で終わる）
  */
 export const matchesAt = (
-  graphemes: readonly string[],
+  graphemes: Graphemes,
   string: string,
   index: number,
 ) => matchEnd(graphemes, string, index) !== undefined;
@@ -37,14 +48,14 @@ export const matchesAt = (
  * 文字列を前から探し、見た目の 1 文字の切れ目で始まって切れ目で終わる範囲を、すべて返す。
  * 見つけた範囲どうしは重ねず、見つけた範囲の後ろから続きを探す。空文字は、どこにも一致しない。
  *
- * @param graphemes {@link splitGraphemes} で分けた、見た目の 1 文字の配列
+ * @param graphemes 見た目の 1 文字の配列
  * @param string 探す文字列
  *
  * @example
- * findStringRanges(['👍🏽', '👍'], '👍') // => [[1, 2]]（'👍🏽' の中の '👍' には一致しない）
+ * findStringRanges(splitGraphemes('👍🏽👍'), '👍') // => [[1, 2]]（'👍🏽' の中の '👍' には一致しない）
  */
 export const findStringRanges = (
-  graphemes: readonly string[],
+  graphemes: Graphemes,
   string: string,
 ): GraphemeRange[] => {
   const ranges: GraphemeRange[] = [];
@@ -65,12 +76,12 @@ export const findStringRanges = (
  * 改行（`\n`）で行に分け、各行の範囲を返す。範囲に改行は含まない。
  * `\r\n` は見た目の 1 文字になるので、改行として扱わない。
  *
- * @param graphemes {@link splitGraphemes} で分けた、見た目の 1 文字の配列
+ * @param graphemes 見た目の 1 文字の配列
  *
  * @example
- * lineRanges(['a', '\n', 'b', 'c']) // => [[0, 1], [2, 4]]
+ * lineRanges(splitGraphemes('a\nbc')) // => [[0, 1], [2, 4]]
  */
-export const lineRanges = (graphemes: readonly string[]): GraphemeRange[] => {
+export const lineRanges = (graphemes: Graphemes): GraphemeRange[] => {
   const ranges: GraphemeRange[] = [];
   let start = 0;
   graphemes.forEach((grapheme, i) => {
@@ -92,20 +103,16 @@ export const lineRanges = (graphemes: readonly string[]): GraphemeRange[] => {
  * そのため、1 文字ずつ照合しながら数える。比べるのは見た目の 1 文字まるごとなので、1 文字の途中で終わる一致は外れる。
  * 空文字は、どこにも一致しない。配列の外の index も、一致しない。
  *
- * @param graphemes {@link splitGraphemes} で分けた、見た目の 1 文字の配列
+ * @param graphemes 見た目の 1 文字の配列
  * @param string 探す文字列
  * @param index 調べる文字の番号
  *
  * @example
- * matchEnd(['a', '👍🏽', 'b'], '👍🏽b', 1) // => 3（1 番と 2 番の文字で一致）
- * matchEnd(['a', '👍🏽', 'b'], '👍', 1) // => undefined（'👍' は '👍🏽' の途中で終わる）
- * matchEnd(['か\u3099', 'か\u3099', 'か'], 'か\u3099か', 0) // => undefined（最後の か は、1 番の が の途中で終わる）
+ * matchEnd(splitGraphemes('a👍🏽b'), '👍🏽b', 1) // => 3（1 番と 2 番の文字で一致）
+ * matchEnd(splitGraphemes('a👍🏽b'), '👍', 1) // => undefined（'👍' は '👍🏽' の途中で終わる）
+ * matchEnd(splitGraphemes('か\u3099か\u3099か'), 'か\u3099か', 0) // => undefined（最後の か は、1 番の が の途中で終わる）
  */
-const matchEnd = (
-  graphemes: readonly string[],
-  string: string,
-  index: number,
-) => {
+const matchEnd = (graphemes: Graphemes, string: string, index: number) => {
   if (string === '' || index < 0) {
     return undefined;
   }

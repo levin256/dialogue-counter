@@ -30,6 +30,14 @@ describe('splitGraphemes', () => {
   it('改行は 1 文字にする。\\r\\n は合わせて 1 文字にする', () => {
     expect(splitGraphemes('a\nb\r\nc')).toEqual(['a', '\n', 'b', '\r\n', 'c']);
   });
+
+  it('splitGraphemes で分けていない配列は、ほかの関数に渡せない（型のエラーになる）', () => {
+    // [...text] は、'👍🏽' を '👍' と '🏽' に分けてしまう
+    // @ts-expect-error Graphemes ではない
+    findStringRanges([...'👍🏽'], '👍');
+    // @ts-expect-error Graphemes ではない
+    lineRanges(['a', '\n', 'b']);
+  });
 });
 
 describe('matchesAt', () => {
@@ -103,7 +111,7 @@ describe('findStringRanges', () => {
 
   it('見つからなければ、空の配列を返す', () => {
     expect(findStringRanges(splitGraphemes('abc'), 'x')).toEqual([]);
-    expect(findStringRanges([], 'x')).toEqual([]);
+    expect(findStringRanges(splitGraphemes(''), 'x')).toEqual([]);
   });
 
   it.each([
@@ -177,8 +185,8 @@ describe('lineRanges', () => {
     expect(lineRanges(splitGraphemes('abc'))).toEqual([[0, 3]]);
   });
 
-  it('空の配列は、空の 1 行にする', () => {
-    expect(lineRanges([])).toEqual([[0, 0]]);
+  it('空のテキストは、空の 1 行にする', () => {
+    expect(lineRanges(splitGraphemes(''))).toEqual([[0, 0]]);
   });
 
   it('改行が続くところと、改行で終わるところは、空の行にする', () => {
