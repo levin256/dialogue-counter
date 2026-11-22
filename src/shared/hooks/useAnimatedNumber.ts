@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { prefersReducedMotion } from '@/shared/lib/prefersReducedMotion';
+import { prefersReducedMotion } from '@/shared/browser/prefersReducedMotion';
 
 /**
  * 動き始めてから progress（0〜1）だけ進んだときに、表示する値。終わりに向けてゆっくりにする（ease-out）。
