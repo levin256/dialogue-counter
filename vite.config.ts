@@ -18,11 +18,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'node',
-          include: [
-            'src/**/*.test.ts',
-            'firebase.test.ts',
-            '.claude/hooks/**/*.test.ts',
-          ],
+          include: ['src/**/*.test.ts', 'firebase.test.ts'],
           exclude: [BROWSER_TESTS],
         },
       },
