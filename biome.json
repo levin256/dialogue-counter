@@ -166,11 +166,34 @@
                       "!zod/mini",
                       "!vitest",
                       "!./*",
-                      "!@/shared/lib/graphemes"
+                      "!@/shared/lib/**"
                     ],
-                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイル、@/shared/lib/graphemes だけを読める。"
+                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイル、純粋な部品（@/shared/lib）だけを読める。"
                   }
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/shared/lib/**", "src/features/*/domain/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "window": "純粋な部品は window に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "document": "純粋な部品は document に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "navigator": "純粋な部品は navigator に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "location": "純粋な部品は location に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "localStorage": "純粋な部品は localStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "sessionStorage": "純粋な部品は sessionStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "matchMedia": "純粋な部品は matchMedia に触らない。ブラウザに触る部品は shared/browser に置く。"
+                }
               }
             }
           }
