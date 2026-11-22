@@ -64,7 +64,7 @@ export const applyCountRule = (
 };
 
 /** 見た目の 1 文字（書記素）と、それをカウントするか。 */
-type Grapheme = {
+type MarkedGrapheme = {
   text: string;
   counted: boolean;
 };
@@ -88,7 +88,7 @@ const markGraphemes = (
     ignoreSpace,
     ignoreLineBreak,
   }: CountRule,
-): Grapheme[] => {
+): MarkedGrapheme[] => {
   const graphemes = splitGraphemes(text);
   // 見た目の 1 文字ごとに、カウントしないか。空白・改行は、その 1 文字だけを見て決める
   const ignored = graphemes.map(
