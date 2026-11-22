@@ -70,8 +70,18 @@ describe('matchesAt', () => {
     ['配列の終わり', 1],
     ['配列の終わりより後ろ', 2],
     ['負の数', -1],
-  ])('配列の外の位置には、一致しない: %s', (_, index) => {
+    ['小数', 0.5],
+    ['NaN', Number.NaN],
+  ])('配列の外の位置や、整数でない位置には、一致しない: %s', (_, index) => {
     expect(matchesAt(splitGraphemes('a'), 'a', index)).toBe(false);
+  });
+
+  it.each([
+    ['負の数', -1],
+    ['小数', 0.5],
+  ])('配列で引けない位置でも、例外を投げない: %s', (_, index) => {
+    // 配列を引くと undefined になり、startsWith は 'undefined' という文字列として比べる
+    expect(matchesAt(splitGraphemes('a'), 'undefined', index)).toBe(false);
   });
 
   it('空文字は、どこにも一致しない', () => {

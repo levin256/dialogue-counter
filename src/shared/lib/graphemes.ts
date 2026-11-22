@@ -28,7 +28,7 @@ export const splitGraphemes = (text: string) =>
 
 /**
  * index 番の文字から文字列が並び、見た目の 1 文字の切れ目で終わるか。
- * 空文字は、どこにも一致しない。配列の外の index も、一致しない。
+ * 空文字は、どこにも一致しない。配列の外の index や、整数でない index も、一致しない。
  *
  * @param graphemes 見た目の 1 文字の配列
  * @param string 探す文字列
@@ -101,7 +101,7 @@ export const lineRanges = (graphemes: Graphemes): GraphemeRange[] => {
  *
  * 一致が何文字分になるかは、文字列の長さからは決まらない（'👍🏽b' は UTF-16 では 5 だが、見た目では 2 文字）。
  * そのため、1 文字ずつ照合しながら数える。比べるのは見た目の 1 文字まるごとなので、1 文字の途中で終わる一致は外れる。
- * 空文字は、どこにも一致しない。配列の外の index も、一致しない。
+ * 空文字は、どこにも一致しない。配列の外の index や、整数でない index も、一致しない。
  *
  * @param graphemes 見た目の 1 文字の配列
  * @param string 探す文字列
@@ -113,7 +113,8 @@ export const lineRanges = (graphemes: Graphemes): GraphemeRange[] => {
  * matchEnd(splitGraphemes('か\u3099か\u3099か'), 'か\u3099か', 0) // => undefined（最後の か は、1 番の が の途中で終わる）
  */
 const matchEnd = (graphemes: Graphemes, string: string, index: number) => {
-  if (string === '' || index < 0) {
+  // 配列は、負の数や小数の番号で引くと undefined を返す。照合まで進めると、例外になることがある
+  if (string === '' || !Number.isInteger(index) || index < 0) {
     return undefined;
   }
   // string のうち、照合し終わった長さ（UTF-16）
