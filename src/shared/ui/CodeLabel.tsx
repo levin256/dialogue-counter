@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 /** 短い文字列を、等幅の文字で1行に表示する。長いときは末尾を「…」にする。 */
 export const CodeLabel = ({

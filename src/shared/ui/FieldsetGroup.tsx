@@ -1,6 +1,6 @@
 import { Fieldset, Legend } from '@headlessui/react';
 import type React from 'react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 type FieldsetGroupProps = {
   /** グループの見出し。読み上げでは、グループの名前になる */

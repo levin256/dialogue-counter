@@ -4,7 +4,7 @@ import {
   Textarea as HeadlessTextarea,
   type TextareaProps as HeadlessTextareaProps,
 } from '@headlessui/react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 // 入力欄と複数行の入力欄で、枠と背景をそろえる
 const fieldClassName = 'rounded-md border border-input bg-muted';

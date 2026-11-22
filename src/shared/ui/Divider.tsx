@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 /** 内容の区切りの線。<hr> なので、読み上げでも区切りとして伝わる。 */
 export const Divider = ({
