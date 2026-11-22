@@ -1,6 +1,15 @@
+import {
+  findStringRanges,
+  type GraphemeRange,
+  type Graphemes,
+  lineRanges,
+  matchesAt,
+  splitGraphemes,
+} from '@/shared/lib/graphemes';
 import type { CountRule } from './countRule';
 
 // ルールに従って、テキストの文字数を数える。公開する関数を先に、中で使う部品を後ろに並べる。
+// ここに書くのは、何をカウントしないかの仕様だけ。見た目の 1 文字に分ける・探すのは shared/lib/graphemes.ts。
 
 /** 元のテキストの一部と、それをカウントするか。 */
 export type CountSegment = {
@@ -27,8 +36,8 @@ export const countText = (text: string, rule: CountRule) =>
  *
  * 行・除外文字・空白・改行は、どれも元のテキストの上で探し、見つかった範囲をすべて合わせてカウントしない。
  * そのため、適用する順番で結果は変わらない。
- * 見た目の 1 文字（書記素）の途中で始まる・終わる一致は使わないので、区間は見た目の 1 文字の途中で切れない。
- * 改行は `\n` だけの前提（textarea の値は `\n` にそろう）。`\r\n` は見た目の 1 文字になるので、数がずれる。
+ * テキストを見た目の 1 文字（書記素）ずつに分けてから探すので、区間は見た目の 1 文字の途中で切れない。
+ * 改行は `\n` だけの前提（textarea の値は `\n` にそろう）。`\r\n` は見た目の 1 文字になるので、改行として扱わない。
  *
  * @param text 元のテキスト
  * @param rule 何をカウントしないか
@@ -55,7 +64,7 @@ export const applyCountRule = (
 };
 
 /** 見た目の 1 文字（書記素）と、それをカウントするか。 */
-type Grapheme = {
+type MarkedGrapheme = {
   text: string;
   counted: boolean;
 };
@@ -79,37 +88,29 @@ const markGraphemes = (
     ignoreSpace,
     ignoreLineBreak,
   }: CountRule,
-): Grapheme[] => {
-  const boundaries = graphemeBoundaries(text);
-  const ignorePatterns = [
-    ...(ignoreSpace ? [spaceRegex] : []),
-    ...(ignoreLineBreak ? [/\n/g] : []),
-  ];
+): MarkedGrapheme[] => {
+  const graphemes = splitGraphemes(text);
+  // 見た目の 1 文字ごとに、カウントしないか。空白・改行は、その 1 文字だけを見て決める
+  const ignored = graphemes.map(
+    (grapheme) =>
+      (ignoreSpace && isSpace(grapheme)) ||
+      (ignoreLineBreak && grapheme === '\n'),
+  );
+  // 行・除外文字は、複数の文字にまたがるので、範囲で決める
   const ignoredRanges = [
-    ...ignoredLineRanges(text, ignoreLinePrefixes, boundaries),
+    ...ignoredLineRanges(graphemes, ignoreLinePrefixes),
     ...ignoreStrings.flatMap((ignoreString) =>
-      findStringRanges(text, ignoreString, boundaries),
+      findStringRanges(graphemes, ignoreString),
     ),
-    // 空白・改行は 1 単位ずつの一致なので、切れ目にない一致を捨てても、ほかの一致を見落とさない
-    ...ignorePatterns
-      .flatMap((regex) => matchRanges(text, regex))
-      .filter(([start, end]) => boundaries[start] && boundaries[end]),
   ];
-
-  // 元のテキストの位置（UTF-16 の 1 単位）ごとに、カウントしないか
-  const ignored = new Array<boolean>(text.length).fill(false);
   for (const [start, end] of ignoredRanges) {
     ignored.fill(true, start, end);
   }
-  // 範囲はどれも見た目の 1 文字の切れ目で始まって終わるので、1 文字の先頭の位置を見れば足りる
-  return Array.from(graphemeSegmenter.segment(text), ({ segment, index }) => ({
-    text: segment,
-    counted: !ignored[index],
+  return graphemes.map((grapheme, i) => ({
+    text: grapheme,
+    counted: !ignored[i],
   }));
 };
-
-/** 元のテキストの範囲（UTF-16 の位置）。start から、end の手前まで。 */
-type Range = [start: number, end: number];
 
 /**
  * 指定した文字で始まる行を探し、その行と隣の改行 1 つを合わせた範囲を返す。
@@ -121,144 +122,54 @@ type Range = [start: number, end: number];
  * - 残っていなければ、前の改行を含める。最後の行には、後ろの改行がないことがあるため。
  *   テキストの先頭の行には前の改行もないので、行だけにする
  *
- * @param text 元のテキスト
+ * @param graphemes 元のテキストを、見た目の 1 文字ずつに分けた配列
  * @param linePrefixes この文字で始まる行を除外する
- * @param boundaries {@link graphemeBoundaries} で求めた、テキストの見た目の 1 文字の切れ目
  *
  * @example
- * ignoredLineRanges('a\n//b\nc', ['//'], boundaries) // => [[2, 6]]（'//b\n'）
- * ignoredLineRanges('a\n//b', ['//'], boundaries) // => [[1, 5]]（'\n//b'）
- * ignoredLineRanges('//a\n//b', ['//'], boundaries) // => [[0, 3], [3, 7]]（'//a' と '\n//b'）
+ * ignoredLineRanges(splitGraphemes('a\n//b\nc'), ['//']) // => [[2, 6]]（'//b\n'）
+ * ignoredLineRanges(splitGraphemes('a\n//b'), ['//']) // => [[1, 5]]（'\n//b'）
+ * ignoredLineRanges(splitGraphemes('//a\n//b'), ['//']) // => [[0, 3], [3, 7]]（'//a' と '\n//b'）
  */
 const ignoredLineRanges = (
-  text: string,
+  graphemes: Graphemes,
   linePrefixes: readonly string[],
-  boundaries: readonly boolean[],
-): Range[] => {
+): GraphemeRange[] => {
   const prefixes = linePrefixes.map((prefix) =>
     prefix.replace(leadingSpaceRegex, ''),
   );
-  const lines = text.split('\n');
-  // 各行の先頭の位置。行と行のあいだには、改行が 1 つある
-  const lineStarts: number[] = [];
-  let lineStart = 0;
-  for (const line of lines) {
-    lineStarts.push(lineStart);
-    lineStart += line.length + 1;
-  }
-  const isIgnoredLine = lines.map((line, i) => {
-    const indent = line.match(leadingSpaceRegex)?.[0].length ?? 0;
+  const lines = lineRanges(graphemes);
+  const isIgnoredLine = lines.map(([lineStart, lineEnd]) => {
+    // 行頭の空白の、次の位置
+    let contentStart = lineStart;
+    while (contentStart < lineEnd && isSpace(graphemes[contentStart])) {
+      contentStart++;
+    }
     return prefixes.some((prefix) =>
-      matchesAt(text, prefix, lineStarts[i] + indent, boundaries),
+      matchesAt(graphemes, prefix, contentStart),
     );
   });
   const lastCountedLine = isIgnoredLine.lastIndexOf(false);
 
-  const ranges: Range[] = [];
-  lines.forEach((line, i) => {
-    const lineStart = lineStarts[i];
-    // 行の最後の文字の次の位置。後ろに改行があれば、その改行の位置になる
-    const lineEnd = lineStart + line.length;
-    if (isIgnoredLine[i]) {
-      const hasCountedLineAfter = i < lastCountedLine;
-      ranges.push(
-        hasCountedLineAfter
-          ? [lineStart, lineEnd + 1]
-          : [Math.max(lineStart - 1, 0), lineEnd],
-      );
+  // 行の範囲に改行は含まれない。lineEnd は、後ろに改行があれば、その改行の位置になる
+  return lines.flatMap(([lineStart, lineEnd], i): GraphemeRange[] => {
+    if (!isIgnoredLine[i]) {
+      return [];
     }
+    const hasCountedLineAfter = i < lastCountedLine;
+    return [
+      hasCountedLineAfter
+        ? [lineStart, lineEnd + 1]
+        : [Math.max(lineStart - 1, 0), lineEnd],
+    ];
   });
-  return ranges;
 };
 
 /**
- * 文字列を前から探し、見た目の 1 文字の切れ目で始まって切れ目で終わる範囲を、すべて返す。
- * 見つけた範囲どうしは重ねず、見つけた範囲の後ろから続きを探す。
- *
- * 一致を探してから切れ目にないものを捨てるのではなく、切れ目の位置ごとに調べる。
- * 捨てた一致の途中から始まる、正しい一致を見落とさないため。
- *
- * @param text 元のテキスト
- * @param string 探す文字列（空でない）
- * @param boundaries {@link graphemeBoundaries} で求めた、テキストの見た目の 1 文字の切れ目
- *
- * @example
- * findStringRanges('👍🏽👍', '👍', boundaries) // => [[4, 6]]（'👍🏽' の中の '👍' には一致しない）
+ * 見た目の 1 文字が、改行以外の空白（半角・全角スペース、タブなど）か。
+ * 結合文字が付いて見た目の 1 文字になった空白は、空白として扱わない。
  */
-const findStringRanges = (
-  text: string,
-  string: string,
-  boundaries: readonly boolean[],
-): Range[] => {
-  const ranges: Range[] = [];
-  let start = 0;
-  while (start < text.length) {
-    if (matchesAt(text, string, start, boundaries)) {
-      ranges.push([start, start + string.length]);
-      start += string.length;
-    } else {
-      start++;
-    }
-  }
-  return ranges;
-};
+const isSpace = (grapheme: string) => spaceRegex.test(grapheme);
 
-/**
- * テキストの start の位置から文字列が始まり、その範囲が見た目の 1 文字の切れ目で始まって切れ目で終わるか。
- *
- * @param text 元のテキスト
- * @param string 探す文字列
- * @param start 調べる位置
- * @param boundaries {@link graphemeBoundaries} で求めた、テキストの見た目の 1 文字の切れ目
- *
- * @example
- * matchesAt('👍🏽', '👍', 0, boundaries) // => false（'👍' の後ろは切れ目ではない）
- */
-const matchesAt = (
-  text: string,
-  string: string,
-  start: number,
-  boundaries: readonly boolean[],
-) =>
-  text.startsWith(string, start) &&
-  boundaries[start] &&
-  boundaries[start + string.length];
-
-/**
- * 元のテキストの位置（UTF-16 の位置）ごとに、見た目の 1 文字の切れ目かを返す。
- * 長さはテキストより 1 つ長く、テキストの先頭と末尾も切れ目にする。
- *
- * @param text 元のテキスト
- *
- * @example
- * graphemeBoundaries('a👍🏽') // => [true, true, false, false, false, true]
- */
-const graphemeBoundaries = (text: string) => {
-  const boundaries = new Array<boolean>(text.length + 1).fill(false);
-  for (const { index } of graphemeSegmenter.segment(text)) {
-    boundaries[index] = true;
-  }
-  boundaries[text.length] = true;
-  return boundaries;
-};
-
-/**
- * 正規表現に一致する範囲を、すべて返す。
- *
- * @param text 元のテキスト
- * @param regex g フラグを付けた正規表現
- *
- * @example
- * matchRanges('a。b。', /。/g) // => [[1, 2], [3, 4]]
- */
-const matchRanges = (text: string, regex: RegExp): Range[] =>
-  Array.from(
-    text.matchAll(regex),
-    (match): Range => [match.index, match.index + match[0].length],
-  );
-
-// 改行以外の空白（半角・全角スペース、タブなど）
-const spaceRegex = /[^\S\n]/g;
+// 改行以外の空白
+const spaceRegex = /^[^\S\n]$/;
 const leadingSpaceRegex = /^[^\S\n]+/;
-
-const graphemeSegmenter = new Intl.Segmenter('ja', { granularity: 'grapheme' });
