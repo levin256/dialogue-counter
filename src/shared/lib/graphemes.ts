@@ -1,7 +1,7 @@
-// テキストを見た目の 1 文字（書記素）の配列にして扱う。位置はどれも、配列の番号（見た目の何文字目か）で表す。
+// テキストを見た目の 1 文字（書記素）の配列にして扱う。位置はどれも、その配列の番号（0 から数える）で表す。
 // 1 文字の途中を指す番号がないので、1 文字の途中で始まる・終わる一致や範囲は、作れない。
 
-/** 見た目の 1 文字の配列の範囲。start 文字目から、end 文字目の手前まで。 */
+/** 見た目の 1 文字の配列の範囲。start 番から、end 番の手前まで（slice と同じ）。 */
 export type GraphemeRange = [start: number, end: number];
 
 /**
@@ -16,12 +16,12 @@ export const splitGraphemes = (text: string) =>
   Array.from(graphemeSegmenter.segment(text), ({ segment }) => segment);
 
 /**
- * index 文字目から文字列が並び、見た目の 1 文字の切れ目で終わるか。
+ * index 番の文字から文字列が並び、見た目の 1 文字の切れ目で終わるか。
  * 空文字は、どこにも一致しない。配列の外の index も、一致しない。
  *
  * @param graphemes {@link splitGraphemes} で分けた、見た目の 1 文字の配列
  * @param string 探す文字列
- * @param index 調べる位置
+ * @param index 調べる文字の番号
  *
  * @example
  * matchesAt(['a', '👍🏽'], '👍🏽', 1) // => true
@@ -83,7 +83,24 @@ export const lineRanges = (graphemes: readonly string[]): GraphemeRange[] => {
   return ranges;
 };
 
-/** index 文字目から文字列が並び、見た目の 1 文字の切れ目で終わるなら、終わりの位置を返す。 */
+/**
+ * index 番の文字から文字列が並び、見た目の 1 文字の切れ目で終わるなら、終わりの番号を返す。
+ * 一致した範囲は [index, 返した番号] になる。一致しなければ undefined を返す。
+ * matchesAt と findStringRanges が、共通で使う。
+ *
+ * 一致が何文字分になるかは、文字列の長さからは決まらない（'👍🏽b' は UTF-16 では 5 だが、見た目では 2 文字）。
+ * そのため、1 文字ずつ照合しながら数える。比べるのは見た目の 1 文字まるごとなので、1 文字の途中で終わる一致は外れる。
+ * 空文字は、どこにも一致しない。配列の外の index も、一致しない。
+ *
+ * @param graphemes {@link splitGraphemes} で分けた、見た目の 1 文字の配列
+ * @param string 探す文字列
+ * @param index 調べる文字の番号
+ *
+ * @example
+ * matchEnd(['a', '👍🏽', 'b'], '👍🏽b', 1) // => 3（1 番と 2 番の文字で一致）
+ * matchEnd(['a', '👍🏽', 'b'], '👍', 1) // => undefined（'👍' は '👍🏽' の途中で終わる）
+ * matchEnd(['か\u3099', 'か\u3099', 'か'], 'か\u3099か', 0) // => undefined（最後の か は、1 番の が の途中で終わる）
+ */
 const matchEnd = (
   graphemes: readonly string[],
   string: string,
@@ -92,7 +109,7 @@ const matchEnd = (
   if (string === '' || index < 0) {
     return undefined;
   }
-  // string のうち、ここまでに並んだ長さ
+  // string のうち、照合し終わった長さ（UTF-16）
   let matchedLength = 0;
   for (let end = index; end < graphemes.length; end++) {
     if (!string.startsWith(graphemes[end], matchedLength)) {
