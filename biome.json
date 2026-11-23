@@ -190,13 +190,21 @@
               "level": "error",
               "options": {
                 "deniedGlobals": {
-                  "window": "純粋な部品は window に触らない。ブラウザに触る部品は shared/browser に置く。",
-                  "document": "純粋な部品は document に触らない。ブラウザに触る部品は shared/browser に置く。",
-                  "navigator": "純粋な部品は navigator に触らない。ブラウザに触る部品は shared/browser に置く。",
-                  "location": "純粋な部品は location に触らない。ブラウザに触る部品は shared/browser に置く。",
-                  "localStorage": "純粋な部品は localStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
-                  "sessionStorage": "純粋な部品は sessionStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
-                  "matchMedia": "純粋な部品は matchMedia に触らない。ブラウザに触る部品は shared/browser に置く。"
+                  "window": "lib と domain は純粋な場所なので、window に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "document": "lib と domain は純粋な場所なので、document に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "self": "lib と domain は純粋な場所なので、self に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "globalThis": "lib と domain は純粋な場所なので、globalThis に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "navigator": "lib と domain は純粋な場所なので、navigator に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "location": "lib と domain は純粋な場所なので、location に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "history": "lib と domain は純粋な場所なので、history に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "localStorage": "lib と domain は純粋な場所なので、localStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "sessionStorage": "lib と domain は純粋な場所なので、sessionStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "indexedDB": "lib と domain は純粋な場所なので、indexedDB に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "matchMedia": "lib と domain は純粋な場所なので、matchMedia に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "getComputedStyle": "lib と domain は純粋な場所なので、getComputedStyle に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "requestAnimationFrame": "lib と domain は純粋な場所なので、requestAnimationFrame に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "addEventListener": "lib と domain は純粋な場所なので、addEventListener に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "fetch": "lib と domain は純粋な場所なので、fetch に触らない。ブラウザに触る部品は shared/browser に置く。"
                 }
               }
             }
