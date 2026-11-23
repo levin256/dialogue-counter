@@ -227,6 +227,39 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/shared/lib/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/pages/**", "@/features/**"],
+                    "message": "汎用のものは app・pages・features を読めない。"
+                  },
+                  {
+                    "group": ["../**"],
+                    "message": "フォルダの外は @/ で読む。"
+                  },
+                  {
+                    "group": [
+                      "@/shared/browser/**",
+                      "@/shared/hooks/**",
+                      "@/shared/ui/**",
+                      "**/../**"
+                    ],
+                    "message": "lib は純粋な部品の置き場なので、browser・hooks・ui を読めない。lib を通して、domain から読めてしまうため。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
