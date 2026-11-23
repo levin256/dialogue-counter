@@ -58,10 +58,16 @@ src/
       stores/      ルールの状態と保存（zustand）
       components/  機能の画面の部品
     theme/    テーマの切り替え
-  shared/     機能に依存しない汎用のもの（ui / hooks / lib）
+  shared/     機能に依存しない汎用のもの
+    ui/       画面の部品と、クラスを組み立てる cn
+    hooks/    React のフック（ブラウザに触ってよい）
+    browser/  React に依存しない、ブラウザの API を包む関数
+    lib/      ブラウザに触らない純粋な部品（domain からも読める）
 ```
 
 依存は外側から内側への一方向にしています（`app` → `pages` → `features` → `shared`、機能の中では `components` → `stores` → `domain`）。この向きは、Biome の `noRestrictedImports`（`biome.json`）で lint のエラーにしています。
+
+`domain` が読める部品は `shared/lib` だけです。`shared/lib` と `domain` では、`window`・`document`・`globalThis` など、ブラウザに触る代表的な名前を使うと、`noRestrictedGlobals` で lint のエラーになります。ブラウザの API をすべて止めるものではないので、一覧にない API に気づいたら `biome.json` に足します。ブラウザに触る部品は `shared/browser` に置きます。
 
 `shared/lib` は、ドメインの言葉（数える・ルールなど）を知りません。たとえば、テキストを見た目の1文字に分けて探す部品は `shared/lib/graphemes.ts` に、何を数えないかの仕様は `domain/countText.ts` に置いています。
 

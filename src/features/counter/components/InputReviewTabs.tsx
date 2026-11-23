@@ -1,5 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 type InputReviewTabsProps = {
   /** 「入力」のタブの中身。枠なしで渡す */

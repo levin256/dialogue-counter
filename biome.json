@@ -166,11 +166,46 @@
                       "!zod/mini",
                       "!vitest",
                       "!./*",
-                      "!@/shared/lib/graphemes"
+                      "!@/shared/lib/**"
                     ],
-                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイル、@/shared/lib/graphemes だけを読める。"
+                    "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイル、純粋な部品（@/shared/lib）だけを読める。"
+                  },
+                  {
+                    "group": ["**/../**"],
+                    "message": "パスに .. を書かない。@/shared/lib/../browser のように、許可したフォルダの外に出られるため。"
                   }
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/shared/lib/**", "src/features/*/domain/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedGlobals": {
+              "level": "error",
+              "options": {
+                "deniedGlobals": {
+                  "window": "lib と domain は純粋な場所なので、window に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "document": "lib と domain は純粋な場所なので、document に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "self": "lib と domain は純粋な場所なので、self に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "globalThis": "lib と domain は純粋な場所なので、globalThis に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "navigator": "lib と domain は純粋な場所なので、navigator に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "location": "lib と domain は純粋な場所なので、location に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "history": "lib と domain は純粋な場所なので、history に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "localStorage": "lib と domain は純粋な場所なので、localStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "sessionStorage": "lib と domain は純粋な場所なので、sessionStorage に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "indexedDB": "lib と domain は純粋な場所なので、indexedDB に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "matchMedia": "lib と domain は純粋な場所なので、matchMedia に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "getComputedStyle": "lib と domain は純粋な場所なので、getComputedStyle に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "requestAnimationFrame": "lib と domain は純粋な場所なので、requestAnimationFrame に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "addEventListener": "lib と domain は純粋な場所なので、addEventListener に触らない。ブラウザに触る部品は shared/browser に置く。",
+                  "fetch": "lib と domain は純粋な場所なので、fetch に触らない。ブラウザに触る部品は shared/browser に置く。"
+                }
               }
             }
           }
@@ -193,6 +228,39 @@
                   {
                     "group": ["../**"],
                     "message": "フォルダの外は @/ で読む。"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/shared/lib/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/pages/**", "@/features/**"],
+                    "message": "汎用のものは app・pages・features を読めない。"
+                  },
+                  {
+                    "group": ["../**"],
+                    "message": "フォルダの外は @/ で読む。"
+                  },
+                  {
+                    "group": [
+                      "@/shared/browser/**",
+                      "@/shared/hooks/**",
+                      "@/shared/ui/**",
+                      "**/../**"
+                    ],
+                    "message": "lib は純粋な部品の置き場なので、browser・hooks・ui を読めない。lib を通して、domain から読めてしまうため。"
                   }
                 ]
               }

@@ -1,7 +1,7 @@
 import { Radio, RadioGroup } from '@headlessui/react';
 import { type LucideIcon, Monitor, Moon, Sun } from 'lucide-react';
 import { flushSync } from 'react-dom';
-import { withViewTransition } from '@/shared/lib/viewTransition';
+import { withViewTransition } from '@/shared/browser/viewTransition';
 import { type Theme, useThemeStore } from '../stores/theme';
 
 const OPTIONS: readonly { value: Theme; label: string; icon: LucideIcon }[] = [

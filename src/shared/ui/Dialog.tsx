@@ -4,7 +4,7 @@ import {
   Dialog as HeadlessDialog,
   DialogTitle as HeadlessDialogTitle,
 } from '@headlessui/react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 type DialogProps = {
   /** 開いているか */

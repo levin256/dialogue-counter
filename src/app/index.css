@@ -130,7 +130,7 @@
 }
 
 /*
- * View Transitions API のアニメーション（src/shared/lib/viewTransition.ts の withViewTransition で始める）。
+ * View Transitions API のアニメーション（src/shared/browser/viewTransition.ts の withViewTransition で始める）。
  * 種類ごとに :active-view-transition-type() で分ける。OS で動きを減らす設定のときは、始めないので動かない。
  */
 @layer base {

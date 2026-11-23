@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 import type { CountRule } from '../domain/countRule';
 import { applyCountRule } from '../domain/countText';
 

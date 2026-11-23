@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 const SOURCE_URL = 'https://github.com/levin256/dialogue-counter';
 

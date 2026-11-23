@@ -1,5 +1,5 @@
 import { Switch } from '@headlessui/react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/ui/cn';
 
 type ToggleProps = {
   /** 切り替えたときに、切り替えたあとの値で呼ばれる */
