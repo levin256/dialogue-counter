@@ -31,3 +31,8 @@ blob-report
 *.sln
 *.sw?
 .vitest
+
+# Claude Code（スキルなど共有するものはコミットし、個人用のものは無視する）
+.claude/worktrees/
+.claude/launch.json
+.claude/settings.local.json
