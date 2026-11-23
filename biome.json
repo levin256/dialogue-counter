@@ -169,6 +169,10 @@
                       "!@/shared/lib/**"
                     ],
                     "message": "domain は zod/mini（テストでは vitest）と、同じフォルダのファイル、純粋な部品（@/shared/lib）だけを読める。"
+                  },
+                  {
+                    "group": ["**/../**"],
+                    "message": "パスに .. を書かない。@/shared/lib/../browser のように、許可したフォルダの外に出られるため。"
                   }
                 ]
               }
