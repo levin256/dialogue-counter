@@ -60,8 +60,8 @@ src/
     theme/    テーマの切り替え
   shared/     機能に依存しない汎用のもの
     ui/       画面の部品と、クラスを組み立てる cn
-    hooks/    React のフック
-    browser/  window・document に触る部品
+    hooks/    React のフック（ブラウザに触ってよい）
+    browser/  React に依存しない、ブラウザの API を包む関数
     lib/      ブラウザに触らない純粋な部品（domain からも読める）
 ```
 
